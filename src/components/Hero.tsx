@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Star, Shield, Users, Award } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Threads from '@/Backgrounds/Threads/Threads';
@@ -120,12 +121,13 @@ const Hero = () => {
                         className={`flex items-center rounded-2xl bg-white p-3 shadow-lg border border-gray-100`}
                       >
                         {/* Image Left, Bigger */}
-                        <div className="w-32 h-24 rounded-xl overflow-hidden flex-shrink-0 mr-3">
-                          <img
+                        <div className="w-32 h-24 rounded-xl overflow-hidden flex-shrink-0 mr-3 relative">
+                          <Image
                             src={motorbikes[currentBikeIndex].image}
                             alt={motorbikes[currentBikeIndex].title}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
+                            fill
+                            className="object-cover"
+                            sizes="128px"
                           />
                         </div>
 
@@ -204,11 +206,13 @@ const Hero = () => {
                     transition={{ duration: 0.4 }}
                     className={`aspect-[4/3] rounded-3xl bg-gradient-to-br ${motorbikes[currentBikeIndex].gradient} shadow-2xl overflow-hidden flex items-end relative`}
                   >
-                    <img
+                    <Image
                       src={motorbikes[currentBikeIndex].image}
                       alt={motorbikes[currentBikeIndex].title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                      loading="eager"
+                      fill
+                      className="object-cover"
+                      priority
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </motion.div>
                 </AnimatePresence>

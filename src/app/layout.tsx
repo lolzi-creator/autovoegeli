@@ -1,19 +1,60 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import StructuredData from "@/components/StructuredData";
+import PerformanceOptimizer from "@/components/PerformanceOptimizer";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Auto Vögeli - Ihr Autohaus in der Schweiz",
-  description: "Auto Vögeli - Qualitätsfahrzeuge, professioneller Service und faire Preise. Entdecken Sie unser Sortiment an Neu- und Gebrauchtwagen.",
-  keywords: "Auto Vögeli, Autohaus, Schweiz, Gebrauchtwagen, Neuwagen, Autoverkauf, Autoservice",
-  viewport: "width=device-width, initial-scale=1",
+  metadataBase: new URL('https://autovoegeli.ch'),
+  title: "Auto Vögeli - Ihr Autohaus in der Schweiz | Premium Fahrzeuge & Service",
+  description: "Auto Vögeli - Ihr vertrauensvoller Partner für Premium-Fahrzeuge in der Schweiz. Geprüfte Neu- und Gebrauchtwagen, professionelle Beratung, faire Preise und erstklassiger Service. Jetzt Traumauto finden!",
+  keywords: "Auto Vögeli, Autohaus Schweiz, Gebrauchtwagen, Neuwagen, Motorräder, Premium Fahrzeuge, Autoverkauf, Autoservice, Finanzierung, Probefahrt, YAMAHA, VOGE, BMW, ZONTES, SWM, KOVE, Motorrad Schweiz",
+  authors: [{ name: "Auto Vögeli" }],
+  creator: "Auto Vögeli",
+  publisher: "Auto Vögeli",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   openGraph: {
-    title: "Auto Vögeli - Ihr Autohaus in der Schweiz",
-    description: "Qualitätsfahrzeuge, professioneller Service und faire Preise",
+    title: "Auto Vögeli - Ihr Autohaus in der Schweiz | Premium Fahrzeuge & Service",
+    description: "Ihr vertrauensvoller Partner für Premium-Fahrzeuge in der Schweiz. Geprüfte Neu- und Gebrauchtwagen, professionelle Beratung und erstklassiger Service.",
     type: "website",
     locale: "de_CH",
+    url: "https://autovoegeli.ch",
+    siteName: "Auto Vögeli",
+    images: [
+      {
+        url: "/logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Auto Vögeli - Ihr Autohaus in der Schweiz",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Auto Vögeli - Ihr Autohaus in der Schweiz",
+    description: "Premium-Fahrzeuge, professionelle Beratung und erstklassiger Service in der Schweiz.",
+    images: ["/logo.png"],
+  },
+  alternates: {
+    canonical: "https://autovoegeli.ch",
+  },
+  other: {
+    "google-site-verification": "your-google-site-verification-code", // Replace with actual code
   },
 };
 
@@ -78,6 +119,11 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} antialiased`}>
+        <StructuredData type="organization" />
+        <PerformanceOptimizer />
+        <GoogleAnalytics measurementId="G-XXXXXXXXXX" />
+        <Analytics />
+        <SpeedInsights />
         <div className="min-h-screen flex flex-col">
           {children}
         </div>

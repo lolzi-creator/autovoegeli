@@ -2,16 +2,46 @@ import { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CustomVehicleShowcase from '@/components/CustomVehicleShowcase';
+import StructuredData from '@/components/StructuredData';
 
 export const metadata: Metadata = {
-  title: "Fahrzeuge - Auto Vögeli | Geprüfte Premium-Fahrzeuge",
-  description: "Entdecken Sie unsere aktuellen Fahrzeuge bei Auto Vögeli. Geprüfte Premium-Autos, transparente Preise und professionelle Beratung in der Schweiz.",
-  keywords: "Auto Vögeli, Fahrzeuge, Gebrauchtwagen, Neuwagen, AutoScout24, Premium Autos, Schweiz",
+  title: "Fahrzeuge - Auto Vögeli | Premium Motorräder & Autos in der Schweiz",
+  description: "Entdecken Sie unsere exklusive Auswahl an Premium-Motorrädern und Autos bei Auto Vögeli. YAMAHA, VOGE, BMW, ZONTES, SWM, KOVE - Geprüfte Qualität, transparente Preise, professionelle Beratung. Jetzt Probefahrt vereinbaren!",
+  keywords: "Auto Vögeli Fahrzeuge, Premium Motorräder Schweiz, YAMAHA Motorräder, VOGE Bikes, BMW Motorrad, ZONTES, SWM, KOVE, Gebrauchtwagen, Neuwagen, Motorrad kaufen Schweiz, Probefahrt, Finanzierung",
+  openGraph: {
+    title: "Premium Fahrzeuge bei Auto Vögeli | Motorräder & Autos",
+    description: "Exklusive Auswahl an Premium-Motorrädern und Autos. YAMAHA, VOGE, BMW, ZONTES, SWM, KOVE - Geprüfte Qualität und transparente Preise.",
+    type: "website",
+    url: "https://autovoegeli.ch/fahrzeuge",
+    images: [
+      {
+        url: "/homepage.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Auto Vögeli Fahrzeuge - Premium Motorräder und Autos",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Premium Fahrzeuge bei Auto Vögeli",
+    description: "Exklusive Auswahl an Premium-Motorrädern und Autos in der Schweiz.",
+    images: ["/homepage.jpg"],
+  },
+  alternates: {
+    canonical: "https://autovoegeli.ch/fahrzeuge",
+  },
 };
 
 export default function FahrzeugePage() {
+  const breadcrumbs = [
+    { name: "Home", url: "https://autovoegeli.ch" },
+    { name: "Fahrzeuge", url: "https://autovoegeli.ch/fahrzeuge" }
+  ];
+
   return (
     <main style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+      <StructuredData type="breadcrumb" breadcrumbs={breadcrumbs} />
       <Header />
       
       {/* Page Header */}

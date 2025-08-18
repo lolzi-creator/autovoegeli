@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Block access to admin areas
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+
+# Allow specific important pages
+Allow: /fahrzeuge
+Allow: /kontakt
+Allow: /ueber-uns
+Allow: /finanzierung
+
+# Sitemap location
+Sitemap: https://autovoegeli.ch/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
