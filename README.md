@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Auto Vögeli - Car Dealership Website
 
-## Getting Started
+Ein modernes, benutzerfreundliches Website für das Autohaus Auto Vögeli in der Schweiz. Entwickelt mit Next.js, TypeScript und Tailwind CSS.
 
-First, run the development server:
+## 🚗 Features
 
+- **Modernes Design**: Saubere, professionelle Benutzeroberfläche basierend auf dem Auto Vögeli Logo
+- **Responsive**: Optimiert für alle Geräte (Desktop, Tablet, Mobile)
+- **Deutsche Lokalisierung**: Vollständig auf Deutsch für den Schweizer Markt
+- **Fahrzeug-Galerie**: Ansprechende Darstellung der verfügbaren Fahrzeuge
+- **Suchfunktion**: Einfache Fahrzeugsuche nach Marke, Preis, etc.
+- **Kontaktformulare**: Anfragen und Probefahrt-Buchungen
+- **AutoScout24 Integration**: Vorbereitet für die Integration mit AutoScout24
+
+## 🛠 Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Sprache**: TypeScript
+- **Styling**: Tailwind CSS
+- **Animationen**: Framer Motion
+- **Icons**: Lucide React
+- **Formulare**: React Hook Form
+
+## 🎨 Design System
+
+### Farben (basierend auf dem Auto Vögeli Logo)
+
+- **Primary**: Grün (#8bc442) - Hauptfarbe aus dem Logo
+- **Secondary**: Grau (#64748b) - Sekundärfarbe aus dem Logo
+- **Accent**: Orange (#ed741e) - Akzentfarbe für Highlights
+
+### Komponenten
+
+- Header mit Navigation und Kontaktinformationen
+- Hero-Bereich mit Schnellsuche
+- Fahrzeug-Karten mit detaillierten Informationen
+- Footer mit Kontaktdaten und Links
+
+## 🚀 Getting Started
+
+### Voraussetzungen
+
+- Node.js 18+ 
+- npm oder yarn
+
+### Installation
+
+1. Repository klonen:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone [repository-url]
+cd autovoegeli
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Dependencies installieren:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Entwicklungsserver starten:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Website öffnen: [http://localhost:3000](http://localhost:3000)
 
-## Learn More
+## 📁 Projektstruktur
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── layout.tsx         # Root Layout
+│   ├── page.tsx           # Homepage
+│   └── globals.css        # Globale Styles
+├── components/            # React Komponenten
+│   ├── Header.tsx         # Website Header
+│   ├── Hero.tsx           # Hero Sektion
+│   ├── FeaturedCars.tsx   # Fahrzeug-Galerie
+│   └── Footer.tsx         # Website Footer
+└── lib/                   # Utilities und Services
+    └── autoscout-integration.ts  # AutoScout24 Integration
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🔄 AutoScout24 Integration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Das Projekt enthält eine vorbereitete Integration für AutoScout24, um Fahrzeuge automatisch zu synchronisieren. Dies vermeidet die doppelte Pflege von Inseraten sowohl auf der eigenen Website als auch auf AutoScout24.
 
-## Deploy on Vercel
+### Features der Integration:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Automatischer Import**: Fahrzeuge von AutoScout24 importieren
+- **Bidirektionale Synchronisation**: Änderungen in beide Richtungen synchronisieren
+- **Datenkonvertierung**: Automatische Umwandlung zwischen verschiedenen Datenformaten
+- **Fehlerbehandlung**: Robuste Fehlerbehandlung und Logging
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Setup (Konzept):
+
+1. AutoScout24 API-Schlüssel erhalten
+2. Umgebungsvariable setzen: `AUTOSCOUT24_API_KEY=your_api_key`
+3. Sync-Service konfigurieren
+
+**Hinweis**: AutoScout24 stellt nicht öffentlich eine API zur Verfügung. Eine tatsächliche Integration würde eine direkte Zusammenarbeit mit AutoScout24 erfordern.
+
+## 🎯 Benutzerfreundlichkeit (UX)
+
+- **Einfache Navigation**: Klare Menüstruktur und Breadcrumbs
+- **Schnelle Suche**: Prominente Suchfunktion auf der Startseite
+- **Mobile-First**: Optimiert für mobile Nutzung
+- **Schnelle Ladezeiten**: Optimierte Bilder und Code-Splitting
+- **Barrierefreiheit**: WCAG-konforme Implementierung
+
+## 📱 Responsive Design
+
+Die Website ist vollständig responsive und bietet optimale Darstellung auf:
+
+- **Desktop**: 1920px+
+- **Laptop**: 1024px - 1919px
+- **Tablet**: 768px - 1023px
+- **Mobile**: < 768px
+
+## 🚀 Deployment
+
+### Vercel (Empfohlen)
+
+```bash
+npm run build
+vercel --prod
+```
+
+### Andere Plattformen
+
+```bash
+npm run build
+npm start
+```
+
+## 🔧 Konfiguration
+
+### Umgebungsvariablen
+
+```env
+AUTOSCOUT24_API_KEY=your_api_key_here
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
+
+### Anpassungen
+
+- Logo: Ersetzen Sie das Placeholder-Logo in den Komponenten
+- Kontaktdaten: Aktualisieren Sie die Kontaktinformationen im Header und Footer
+- Fahrzeugdaten: Verbinden Sie mit Ihrer Fahrzeugdatenbank oder API
+
+## 📞 Support
+
+Bei Fragen oder Problemen:
+
+- Email: info@autovoegeli.ch
+- Telefon: +41 XX XXX XX XX
+
+## 📄 Lizenz
+
+Dieses Projekt ist für Auto Vögeli entwickelt. Alle Rechte vorbehalten.
+
+---
+
+**Auto Vögeli** - Ihr Partner für Qualitätsfahrzeuge in der Schweiz

@@ -1,0 +1,53 @@
+{
+  "id": "10800677",
+  "url": "https://www.autoscout24.ch/de/hci/v2/1124/detail/10800677",
+  "scraped_at": "2025-08-14T15:18:32.172Z",
+  "dealer": "Auto Voegeli AG",
+  "title": "ZONTES ZT 350-R",
+  "price": "CHF 4&#x27;990.-",
+  "priceNumber": 4,
+  "month": "14",
+  "year": "1217",
+  "date": "14.1217",
+  "mileage": "50 km",
+  "mileageNumber": 50,
+  "type": "Naked bike",
+  "transmission": "Schaltgetriebe manuell",
+  "fuel": "Benzin",
+  "drive": "Kette",
+  "power": "29 kW",
+  "displacement": null,
+  "consumption": "-",
+  "co2Emission": 2,
+  "phones": [
+    "032 652 11 66",
+    "078 636 06 19"
+  ],
+  "primaryPhone": "032 652 11 66",
+  "whatsappPhone": "078 636 06 19",
+  "businessPhone": "032 652 11 66",
+  "location": "Solothurnstrasse 129, 2540 Grenchen",
+  "equipment": [
+    "Neu bereift"
+  ],
+  "mfk": "Ja",
+  "warranty": "Ja",
+  "warrantyDetails": "!",
+  "warrantyMonths": 36,
+  "warrantyType": "from-first-registration",
+  "occGarantie": false,
+  "fahrzeugbeschreibung": "Hochwertiges Fahrzeug von Auto Vögeli AG",
+  "brand": "ZONTES",
+  "model": "ZT 350-R",
+  "condition": "Gebraucht",
+  "images": [
+    "https://images.autoscout24.ch/public/listing/677/10800677/1.jpg",
+    "https://images.autoscout24.ch/public/listing/677/10800677/5.jpg",
+    "https://images.autoscout24.ch/public/listing/677/10800677/2.jpg",
+    "https://images.autoscout24.ch/public/listing/677/10800677/3.jpg",
+    "https://images.autoscout24.ch/public/listing/677/10800677/4.jpg",
+    "https://images.autoscout24.ch/public/listing/677/10800677/0.jpg",
+    "https://images.autoscout24.ch/public/listing/677/10800677/6.jpg"
+  ],
+  "imageCount": 7
+}

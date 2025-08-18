@@ -1,0 +1,52 @@
+{
+  "id": "11609588",
+  "url": "https://www.autoscout24.ch/de/hci/v2/1124/detail/11609588",
+  "scraped_at": "2025-08-14T15:17:45.322Z",
+  "dealer": "Auto Voegeli AG",
+  "title": "AVERSUS PECCATORE Voll-Carbon   M  25 Km/h",
+  "price": "CHF 4&#x27;000.-",
+  "priceNumber": 4,
+  "month": "14",
+  "year": "1217",
+  "date": "14.1217",
+  "mileage": "50 km",
+  "mileageNumber": 50,
+  "type": "chopper",
+  "transmission": "Stufenlos",
+  "fuel": "Elektro",
+  "drive": "Kette",
+  "power": "-",
+  "displacement": null,
+  "consumption": "-",
+  "co2Emission": 2,
+  "phones": [
+    "032 652 11 66",
+    "078 636 06 19"
+  ],
+  "primaryPhone": "032 652 11 66",
+  "whatsappPhone": "078 636 06 19",
+  "businessPhone": "032 652 11 66",
+  "location": "Solothurnstrasse 129, 2540 Grenchen",
+  "equipment": [
+    "Neu bereift"
+  ],
+  "mfk": "Ja",
+  "warranty": "Ja",
+  "warrantyDetails": "\\\",\\\"inspectedOnly\\\":\\\"Ab MFK\\\",\\\"transmissionType\\\":{\\\"automatic\\\":\\\"Automat\\\",\\\"automatic-stepless\\\":\\\"Stufenlos\\\",\\\"manual\\\":\\\"Schaltgetriebe manuell\\\",\\\"semi-automatic\\\":\\\"Halbautomatisches Getriebe\\\"},\\\"transmissionTypeGroup\\\":{\\\"automatic\\\":\\\"Automatikgetriebe\\\",\\\"manual\\\":\\\"Schaltgetriebe\\\"},\\\"vehicleCategory\\\":{\\\"camper\\\":\\\"Wohnmobil und Wohnwagen\\\",\\\"car\\\":\\\"Personenwagen\\\",\\\"motorcycle\\\":\\\"Motorrad\\\",\\\"trailer\\\":\\\"Anhänger\\\",\\\"truck\\\":\\\"Lastwagen\\\",\\\"utility\\\":\\\"Nutzfahrzeug\\\"}}},\\\"extraOptions\\\":{\\\"availableForExchange\\\":\\\"Eintausch ist möglich\\\",\\\"availableForLeasing\\\":\\\"Leasing ist möglich\\\",\\\"furnitureTransporter\\\":\\\"Möbeltransporter\\\",\\\"hasAdditionalSetOfTires\\\":\\\"8-fach bereift\\\",\\\"hasCrane\\\":\\\"Kran\\\",\\\"hasNewTires\\\":\\\"Neu bereift\\\",\\\"hasTailLift\\\":\\\"Hebebühne\\\",\\\"hasTarpaulin\\\":\\\"Blache/Plane\\\",\\\"hasWinch\\\":\\\"Seilwinde\\\",\\\"refrigerator\\\":\\\"Kühlwagen\\\",\\\"schoolBus\\\":\\\"Schulbus\\\",\\\"transporter\\\":\\\"Autotransporter\\\"}},\\\"minutes\\\":\\\"Min\\\",\\\"no\\\":\\\"Nein\\\",\\\"validation\\\":{\\\"INVALID_EMAIL\\\":\\\"Ungültige E-Mail-Adresse\\\",\\\"INVALID_PHONE\\\":\\\"Ungültige Telefonnummer\\\",\\\"MESSAGE_LEAD_UNKNOWN\\\":\\\"Die Nachricht konnte aus unbekannten Gründen nicht übermittelt werden. Versuchen Sie es bitte erneut und überprüfen Sie die Netzwerkverbindung.\\\",\\\"NOT_FOUND\\\":\\\"Der Datensatz konnte nicht gefunden werden.\\\",\\\"REQUIRED_NOT_BLANK\\\":\\\"Vergessen Sie diese Angabe nicht\\\",\\\"REQUIRED_NOT_NULL\\\":\\\"Vergessen Sie diese Angabe nicht\\\"},\\\"yes\\\":\\\"Ja\\\"},\\\"error\\\":{\\\"pageNotFound\\\":{\\\"description\\\":\\\"Die Seite, die Sie suchen, existiert nicht oder ist vorübergehend nicht verfügbar.\\\",\\\"heading\\\":\\\"Seite nicht gefunden\\\"},\\\"vehicleNotFound\\\":{\\\"description\\\":\\\"Dieses Fahrzeug ist möglicherweise nicht mehr verfügbar oder wurde entfernt.\\\",\\\"goBack\\\":\\\"Zur Fahrzeugliste zurückkehren\\\",\\\"heading\\\":\\\"Das Fahrzeug konnte nicht gefunden werden\\\"}}}},\\\"language\\\":\\\"de\\\",\\\"children\\\":[\\\"$\\\",\\\"$L19\\\",null,{\\\"entity\\\":\\\"vehicle\\\"}]}]}]\\n\"])",
+  "warrantyMonths": 24,
+  "warrantyType": "from-first-registration",
+  "occGarantie": false,
+  "fahrzeugbeschreibung": "⚡ E-BIKE LAGEAUSVERKAUF – JETZT ODER NIE! ⚡\\n\\nWir räumen unser Lager und bieten Top-E-Bikes zu unschlagbaren Preisen!\\nSichere dir jetzt dein neues Bike – nur solange der Vorrat reicht!\\nVoll-Carbon Rahmen + Schwinge , Bafang M600 Motor mit 120Nm , NUR 26.5Kg gewicht",
+  "brand": "Unknown",
+  "model": "AVERSUS PECCATORE Voll-Carbon   M  25 Km/h",
+  "condition": "Gebraucht",
+  "images": [
+    "https://images.autoscout24.ch/public/listing/588/11609588/1531704179.jpg",
+    "https://images.autoscout24.ch/public/listing/588/11609588/1425643715.jpg",
+    "https://images.autoscout24.ch/public/listing/588/11609588/1967737081.jpg",
+    "https://images.autoscout24.ch/public/listing/588/11609588/836824957.jpg",
+    "https://images.autoscout24.ch/public/listing/588/11609588/1288865856.jpg",
+    "https://images.autoscout24.ch/public/listing/588/11609588/273214723.jpg"
+  ],
+  "imageCount": 6
+}
