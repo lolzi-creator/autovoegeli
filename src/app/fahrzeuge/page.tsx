@@ -1,8 +1,20 @@
 import { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import CustomVehicleShowcase from '@/components/CustomVehicleShowcase';
 import StructuredData from '@/components/StructuredData';
+
+// Dynamically import heavy vehicle showcase component
+const CustomVehicleShowcase = dynamic(() => import('@/components/CustomVehicleShowcase'), {
+  loading: () => (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Fahrzeuge werden geladen...</p>
+      </div>
+    </div>
+  )
+});
 
 export const metadata: Metadata = {
   title: "Fahrzeuge - Auto Vögeli | Premium Motorräder & Autos in der Schweiz",

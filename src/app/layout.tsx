@@ -121,7 +121,8 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <StructuredData type="organization" />
         <PerformanceOptimizer />
-        <GoogleAnalytics measurementId="G-XXXXXXXXXX" />
+        {/* Google Analytics - disabled for now, using Vercel Analytics */}
+        {/* <GoogleAnalytics measurementId="G-XXXXXXXXXX" /> */}
         <Analytics />
         <SpeedInsights />
         <div className="min-h-screen flex flex-col">

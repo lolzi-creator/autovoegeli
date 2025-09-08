@@ -1,12 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 /* Reset and base styles */
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
+  /* Performance optimizations */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
@@ -16,6 +20,9 @@ body {
   background-color: #ffffff;
   color: #0f172a;
   line-height: 1.6;
+  /* Improve performance */
+  overflow-x: hidden;
+  will-change: scroll-position;
 }
 
 /* Auto Vögeli Custom Buttons */

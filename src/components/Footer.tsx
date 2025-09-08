@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Phone, Mail, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const [isMobile, setIsMobile] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -30,30 +32,30 @@ const Footer = () => {
 
   const footerSections = {
     services: {
-      title: 'Services',
+      title: t('footer.title_services'),
       links: [
-        { name: 'Fahrzeugverkauf', href: '/fahrzeuge' },
-        { name: 'Finanzierung', href: '/finanzierung' },
-        { name: 'Leasing', href: '/leasing' },
-        { name: 'Service & Wartung', href: '/service' },
+        { name: t('footer.sale'), href: '/fahrzeuge' },
+        { name: t('footer.financing'), href: '/finanzierung' },
+        { name: t('footer.leasing'), href: '/leasing' },
+        { name: t('footer.service_maintenance'), href: '/service' },
       ]
     },
     company: {
-      title: 'Unternehmen',
+      title: t('footer.title_company'),
       links: [
-        { name: 'Über uns', href: '/ueber-uns' },
-        { name: 'Karriere', href: '/karriere' },
-        { name: 'Presse', href: '/presse' },
-        { name: 'Standorte', href: '/standorte' },
+        { name: t('footer.about'), href: '/ueber-uns' },
+        { name: t('footer.career'), href: '/karriere' },
+        { name: t('footer.press'), href: '/presse' },
+        { name: t('footer.locations'), href: '/standorte' },
       ]
     },
     support: {
-      title: 'Support',
+      title: t('footer.title_support'),
       links: [
-        { name: 'Kontakt', href: '/kontakt' },
-        { name: 'FAQ', href: '/faq' },
-        { name: 'Garantie', href: '/garantie' },
-        { name: 'Probefahrt', href: '/probefahrt' },
+        { name: t('footer.contact'), href: '/kontakt' },
+        { name: t('footer.faq'), href: '/faq' },
+        { name: t('footer.warranty'), href: '/garantie' },
+        { name: t('footer.testdrive'), href: '/probefahrt' },
       ]
     }
   };
@@ -132,17 +134,17 @@ const Footer = () => {
             <div className="pt-6 border-t border-gray-700 text-center space-y-4">
               <div className="flex flex-wrap justify-center gap-6 text-sm">
                 <Link href="/impressum" className="text-gray-400 hover:text-green-400 transition-colors">
-                  Impressum
+                  {t('footer.legal_imprint')}
                 </Link>
                 <Link href="/datenschutz" className="text-gray-400 hover:text-green-400 transition-colors">
-                  Datenschutz
+                  {t('footer.legal_privacy')}
                 </Link>
                 <Link href="/agb" className="text-gray-400 hover:text-green-400 transition-colors">
-                  AGB
+                  {t('footer.legal_terms')}
                 </Link>
               </div>
               <div className="text-sm text-gray-500">
-                © {currentYear} Auto Vögeli. Alle Rechte vorbehalten.
+                © {currentYear} Auto Vögeli. {t('footer.copyright')}
               </div>
             </div>
           </div>
@@ -165,10 +167,7 @@ const Footer = () => {
                   />
                 </Link>
                 
-                <p className="text-gray-300 leading-relaxed">
-                  Ihr vertrauensvoller Partner für Premium-Fahrzeuge in der Schweiz. 
-                  Seit über 15 Jahren stehen wir für Qualität und Service.
-                </p>
+                <p className="text-gray-300 leading-relaxed">{t('footer.description')}</p>
 
                 {/* Contact Info */}
                 <div className="space-y-3">
@@ -182,7 +181,7 @@ const Footer = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Clock className="h-5 w-5 text-green-400" />
-                    <span className="text-gray-300">Mo-Fr 8:00-18:00, Sa 9:00-16:00</span>
+                    <span className="text-gray-300">{t('footer.hours')}</span>
                   </div>
                 </div>
               </div>
@@ -213,7 +212,7 @@ const Footer = () => {
             <div className="border-t border-gray-700 pt-8">
               <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
                 <div className="text-gray-400">
-                  © {currentYear} Auto Vögeli. Alle Rechte vorbehalten.
+                  © {currentYear} Auto Vögeli. {t('footer.copyright')}
                 </div>
                 
                 <div className="flex space-x-8">
@@ -221,19 +220,19 @@ const Footer = () => {
                     href="/impressum"
                     className="text-gray-400 hover:text-green-400 transition-colors duration-200"
                   >
-                    Impressum
+                    {t('footer.legal_imprint')}
                   </Link>
                   <Link
                     href="/datenschutz"
                     className="text-gray-400 hover:text-green-400 transition-colors duration-200"
                   >
-                    Datenschutz
+                    {t('footer.legal_privacy')}
                   </Link>
                   <Link
                     href="/agb"
                     className="text-gray-400 hover:text-green-400 transition-colors duration-200"
                   >
-                    AGB
+                    {t('footer.legal_terms')}
                   </Link>
                 </div>
               </div>

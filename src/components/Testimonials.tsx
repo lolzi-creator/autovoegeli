@@ -1,7 +1,9 @@
 "use client";
+"use client";
 
 import { Star, Quote } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from '@/hooks/useTranslation';
 
 const TESTIMONIALS = [
   {
@@ -31,15 +33,16 @@ const TESTIMONIALS = [
 ];
 
 export default function Testimonials() {
+  const { t, locale } = useTranslation();
   return (
     <section className="py-14 md:py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10 md:mb-14">
           <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
-            Kundenstimmen
+            {t('home.testimonials_title')}
           </h2>
           <p className="mt-3 text-gray-600 md:text-lg">
-            Was unsere Kundinnen und Kunden über Auto Vögeli sagen
+            {t('home.testimonials_subtitle')}
           </p>
         </div>
 
@@ -67,7 +70,7 @@ export default function Testimonials() {
               <div className="text-sm text-gray-500 border-t border-gray-200 pt-3">
                 <span className="font-medium text-gray-900">{t.name}</span>
                 <span className="mx-2">•</span>
-                {new Date(t.date).toLocaleDateString("de-CH", {
+                {new Date(t.date).toLocaleDateString(locale === 'fr' ? 'fr-CH' : locale === 'en' ? 'en-GB' : 'de-CH', {
                   month: "long",
                   year: "numeric",
                 })}
@@ -79,6 +82,7 @@ export default function Testimonials() {
     </section>
   );
 }
+
 
 
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 type Brand = { name: string; logo?: string; color?: string };
 
@@ -47,12 +48,15 @@ const BrandsStrip = () => {
                 className="min-w-[96px] h-14 rounded-xl border border-gray-200 bg-white shadow-sm flex items-center justify-center"
               >
                 {brand.logo ? (
-                  <img
-                    src={brand.logo}
-                    alt={brand.name}
-                    className="max-h-8 object-contain grayscale opacity-80"
-                    loading="lazy"
-                  />
+                  <div className="relative w-16 h-8">
+                    <Image
+                      src={brand.logo}
+                      alt={brand.name}
+                      fill
+                      className="object-contain grayscale opacity-80"
+                      sizes="64px"
+                    />
+                  </div>
                 ) : (
                   <svg className="w-16 h-6" viewBox="0 0 160 60" aria-label={brand.name}>
                     <rect x="0" y="8" rx="8" ry="8" width="160" height="44" fill={(brand.color || '#64748b') + '20'} />
@@ -74,12 +78,15 @@ const BrandsStrip = () => {
               className="h-16 rounded-xl border border-gray-200 bg-white shadow-sm flex items-center justify-center hover:shadow-md transition-shadow select-none"
             >
               {brand.logo ? (
-                <img
-                  src={brand.logo}
-                  alt={brand.name}
-                  className="max-h-10 object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition"
-                  loading="lazy"
-                />
+                <div className="relative w-20 h-10">
+                  <Image
+                    src={brand.logo}
+                    alt={brand.name}
+                    fill
+                    className="object-contain grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition"
+                    sizes="80px"
+                  />
+                </div>
               ) : (
                 <svg className="w-28 h-8" viewBox="0 0 180 64" aria-label={brand.name}>
                   <rect x="0" y="10" rx="10" ry="10" width="180" height="44" fill={(brand.color || '#64748b') + '20'} />

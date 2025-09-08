@@ -45,6 +45,8 @@ interface RawScrapedVehicle {
   images: string[];
   imageCount: number;
   totalImagesOnPage: number;
+  vehicleAge?: number;
+  pricePerYear?: number;
 }
 
 // Load vehicle data from scraped JSON files
@@ -53,8 +55,8 @@ export async function loadRealVehicleData(): Promise<ScrapedVehicle[]> {
     // In production, this would load from the JSON file
     // For now, we'll fetch it from the public directory or API
     
-    // Try to load from the scraped data file
-    const response = await fetch('/scraped_vehicles_complete/all_vehicles_complete.json');
+    // Try to load from the improved scraped data file
+    const response = await fetch('/scraped_vehicles_improved/all_vehicles_improved.json');
     
     if (!response.ok) {
       console.warn('Could not load real vehicle data, using fallback');
@@ -78,28 +80,13 @@ function transformVehicleData(raw: RawScrapedVehicle): ScrapedVehicle {
   const brand = raw.brand || extractBrandFromTitle(raw.title);
   const model = raw.model || extractModelFromTitle(raw.title, brand);
   
-  // Clean up price (remove HTML entities and extract number)
-  const cleanPrice = raw.price.replace(/&#x27;/g, "'").replace(/[^\d]/g, '');
-  const price = parseInt(cleanPrice) || raw.priceNumber || 0;
+  // Use the already cleaned price from improved data
+  const price = raw.priceNumber || 0;
   
-  // Parse year from the date field or title
-  let year = 2020; // Default fallback
-  if (raw.date && raw.date !== "14.1217") {
-    // Try to extract year from date
-    const yearMatch = raw.date.match(/\d{4}/);
-    if (yearMatch) {
-      year = parseInt(yearMatch[0]);
-    }
-  }
-  // If that doesn't work, try to extract from title
-  if (year === 2020) {
-    const titleYearMatch = raw.title.match(/\b(19|20)\d{2}\b/);
-    if (titleYearMatch) {
-      year = parseInt(titleYearMatch[0]);
-    }
-  }
+  // Use the already fixed year from improved data
+  const year = parseInt(raw.year) || 2025;
   
-  // Extract mileage number
+  // Use the already cleaned mileage from improved data
   const mileage = raw.mileageNumber || 0;
   
   // Determine condition based on mileage and age
@@ -108,18 +95,8 @@ function transformVehicleData(raw: RawScrapedVehicle): ScrapedVehicle {
     condition = 'new';
   }
   
-  // Clean up power string
-  let power = raw.power || '-';
-  if (power === '-' && raw.title.includes('kw')) {
-    const kwMatch = raw.title.toLowerCase().match(/(\d+)\s*kw/);
-    if (kwMatch) {
-      power = `${kwMatch[1]} kW`;
-    }
-  }
-  // Remove "unknown" power values
-  if (power.toLowerCase().includes('unknown') || power === 'unknown') {
-    power = '-';
-  }
+  // Use the already cleaned power from improved data
+  const power = raw.power || '-';
   
   return {
     id: raw.id,
@@ -153,7 +130,9 @@ function transformVehicleData(raw: RawScrapedVehicle): ScrapedVehicle {
     warrantyMonths: raw.warrantyMonths,
     mfk: raw.mfk,
     displacement: raw.displacement,
-    drive: raw.drive
+    drive: raw.drive,
+    vehicleAge: raw.vehicleAge,
+    pricePerYear: raw.pricePerYear
   };
 }
 

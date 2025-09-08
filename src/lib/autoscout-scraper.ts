@@ -34,6 +34,8 @@ export interface ScrapedVehicle {
   mfk?: string;
   displacement?: number | null;
   drive?: string;
+  vehicleAge?: number;
+  pricePerYear?: number;
 }
 
 // Mock scraper function - in production you'd use a real scraping service

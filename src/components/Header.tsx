@@ -3,11 +3,14 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, X, Phone, Mail } from 'lucide-react';
+import { Menu, X, Phone, Mail, MapPin } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const { t, locale } = useTranslation();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -20,11 +23,19 @@ const Header = () => {
   }, []);
 
   const navigation = [
-    { name: 'Fahrzeuge', href: '/fahrzeuge' },
-    { name: 'Finanzierung', href: '/finanzierung' },
-    { name: 'Über uns', href: '/ueber-uns' },
-    { name: 'Kontakt', href: '/kontakt' },
+    { name: t('navigation.vehicles'), href: `/${locale}/fahrzeuge` },
+    { name: t('navigation.financing'), href: `/${locale}/finanzierung` },
+    { name: t('navigation.about'), href: `/${locale}/ueber-uns` },
+    { name: t('navigation.contact'), href: `/${locale}/kontakt` },
   ];
+
+  const openGoogleMaps = () => {
+    // Auto Vögeli garage address - you can update this with your actual address
+    const address = "Auto Vögeli, 4900 Langenthal, Switzerland";
+    const encodedAddress = encodeURIComponent(address);
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
+    window.open(googleMapsUrl, '_blank');
+  };
 
   return (
     <>
@@ -83,12 +94,21 @@ const Header = () => {
             </nav>
 
             {/* Desktop CTA */}
-            <div className="hidden lg:flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-3">
+              <LanguageSwitcher />
+              <button
+                onClick={openGoogleMaps}
+                className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-medium transition-colors duration-200"
+                title="Route zu uns planen"
+              >
+                <MapPin className="h-4 w-4" />
+                <span>Route</span>
+              </button>
               <Link
-                href="/kontakt"
+                href={`/${locale}/kontakt`}
                 className="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors duration-200"
               >
-                Beratung vereinbaren
+                {t('contact.consultation')}
               </Link>
             </div>
 
@@ -136,13 +156,26 @@ const Header = () => {
               ))}
 
               {/* Mobile CTA */}
-              <div className="px-3 pt-4 pb-2">
+              <div className="px-3 pt-4 pb-2 space-y-3">
+                <div className="flex justify-center">
+                  <LanguageSwitcher />
+                </div>
+                <button
+                  onClick={() => {
+                    openGoogleMaps();
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center justify-center space-x-2 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-lg font-medium transition-colors duration-200"
+                >
+                  <MapPin className="h-4 w-4" />
+                  <span>Route zu uns planen</span>
+                </button>
                 <Link
-                  href="/kontakt"
+                  href={`/${locale}/kontakt`}
                   className="block w-full bg-green-600 hover:bg-green-700 text-white text-center px-4 py-3 rounded-lg font-medium transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Beratung vereinbaren
+                  {t('contact.consultation')}
                 </Link>
               </div>
             </div>

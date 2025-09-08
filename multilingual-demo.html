@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilingual Vehicle Data Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .vehicle-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+        }
+        .vehicle-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .spec-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .spec-label {
+            font-weight: 600;
+            color: #7f8c8d;
+        }
+        .spec-value {
+            color: #2c3e50;
+        }
+        .description {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .features {
+            margin-top: 15px;
+        }
+        .feature-tag {
+            display: inline-block;
+            background-color: #e8f5e8;
+            color: #27ae60;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+        .language-header {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+        }
+        .price {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #e8f5e8;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: #2c3e50;">🌍 Multilingual Vehicle Data Demo</h1>
+    <p style="text-align: center; color: #7f8c8d; font-size: 1.1em;">BMW R 1200 GS ABS in 3 Languages</p>
+    
+    <div class="container">
+        <!-- German -->
+        <div class="vehicle-card">
+            <div class="language-header">🇩🇪 Deutsch</div>
+            <div class="vehicle-title">BMW R 1200 GS ABS</div>
+            <div class="price">CHF 7'990.-</div>
+            
+            <div class="spec-row">
+                <span class="spec-label">Baujahr:</span>
+                <span class="spec-value">2017</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Kilometerstand:</span>
+                <span class="spec-value">500 km</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Kraftstoff:</span>
+                <span class="spec-value">Benzin</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Getriebe:</span>
+                <span class="spec-value">Schaltgetriebe manuell</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Fahrzeugtyp:</span>
+                <span class="spec-value">Enduro</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Zustand:</span>
+                <span class="spec-value">Gebraucht</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Garantie:</span>
+                <span class="spec-value">Ja</span>
+            </div>
+            
+            <div class="description">
+                <strong>Beschreibung:</strong><br>
+                Hochwertiges BMW R 1200 GS ABS Baujahr 2017 von Auto Vögeli AG. Dieses gebraucht Fahrzeug wurde sorgfältig geprüft und wartet auf einen neuen Besitzer. Kontaktieren Sie uns für weitere Informationen und eine Probefahrt.
+            </div>
+            
+            <div class="features">
+                <strong>Ausstattung:</strong><br>
+                <span class="feature-tag">LED Scheinwerfer</span>
+                <span class="feature-tag">Tempomat</span>
+                <span class="feature-tag">Bordcomputer PRO</span>
+                <span class="feature-tag">Handschutz</span>
+                <span class="feature-tag">Kofferhalter</span>
+                <span class="feature-tag">ABS</span>
+                <span class="feature-tag">Garantie</span>
+            </div>
+        </div>
+
+        <!-- French -->
+        <div class="vehicle-card">
+            <div class="language-header">🇫🇷 Français</div>
+            <div class="vehicle-title">BMW R 1200 GS ABS</div>
+            <div class="price">CHF 7'990.-</div>
+            
+            <div class="spec-row">
+                <span class="spec-label">Année:</span>
+                <span class="spec-value">2017</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Kilométrage:</span>
+                <span class="spec-value">500 km</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Carburant:</span>
+                <span class="spec-value">Essence</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Transmission:</span>
+                <span class="spec-value">Transmission manuelle</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Type de véhicule:</span>
+                <span class="spec-value">Enduro</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">État:</span>
+                <span class="spec-value">Occasion</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Garantie:</span>
+                <span class="spec-value">Oui</span>
+            </div>
+            
+            <div class="description">
+                <strong>Description:</strong><br>
+                Véhicule de qualité BMW R 1200 GS ABS de 2017 d'Auto Vögeli AG. Ce véhicule d'occasion a été soigneusement inspecté et attend un nouveau propriétaire. Contactez-nous pour plus d'informations et un essai.
+            </div>
+            
+            <div class="features">
+                <strong>Équipement:</strong><br>
+                <span class="feature-tag">LED Scheinwerfer</span>
+                <span class="feature-tag">Régulateur de vitesse</span>
+                <span class="feature-tag">Ordinateur de bord PRO</span>
+                <span class="feature-tag">Protection des mains</span>
+                <span class="feature-tag">Support de valise</span>
+                <span class="feature-tag">ABS</span>
+                <span class="feature-tag">Garantie</span>
+            </div>
+        </div>
+
+        <!-- English -->
+        <div class="vehicle-card">
+            <div class="language-header">🇬🇧 English</div>
+            <div class="vehicle-title">BMW R 1200 GS ABS</div>
+            <div class="price">CHF 7'990.-</div>
+            
+            <div class="spec-row">
+                <span class="spec-label">Year:</span>
+                <span class="spec-value">2017</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Mileage:</span>
+                <span class="spec-value">500 km</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Fuel:</span>
+                <span class="spec-value">Petrol</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Transmission:</span>
+                <span class="spec-value">Manual transmission</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Vehicle Type:</span>
+                <span class="spec-value">Enduro</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Condition:</span>
+                <span class="spec-value">Used</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Warranty:</span>
+                <span class="spec-value">Yes</span>
+            </div>
+            
+            <div class="description">
+                <strong>Description:</strong><br>
+                High-quality BMW R 1200 GS ABS from 2017 by Auto Vögeli AG. This used vehicle has been carefully inspected and is waiting for a new owner. Contact us for more information and a test drive.
+            </div>
+            
+            <div class="features">
+                <strong>Features:</strong><br>
+                <span class="feature-tag">LED Scheinwerfer</span>
+                <span class="feature-tag">Cruise control</span>
+                <span class="feature-tag">On-board computer PRO</span>
+                <span class="feature-tag">Hand guards</span>
+                <span class="feature-tag">Luggage rack</span>
+                <span class="feature-tag">ABS</span>
+                <span class="feature-tag">Warranty</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #e8f4f8; border-radius: 8px; border-left: 4px solid #3498db;">
+        <h3 style="color: #2c3e50; margin-top: 0;">🎯 What This Demonstrates:</h3>
+        <ul style="color: #34495e; line-height: 1.6;">
+            <li><strong>Brand Names:</strong> BMW stays the same across all languages</li>
+            <li><strong>Technical Terms:</strong> "Benzin" → "Essence" → "Petrol"</li>
+            <li><strong>Transmission:</strong> "Schaltgetriebe manuell" → "Transmission manuelle" → "Manual transmission"</li>
+            <li><strong>Condition:</strong> "Gebraucht" → "Occasion" → "Used"</li>
+            <li><strong>Warranty:</strong> "Ja" → "Oui" → "Yes"</li>
+            <li><strong>Features:</strong> Equipment items translated appropriately</li>
+            <li><strong>Descriptions:</strong> Complete vehicle descriptions in each language</li>
+        </ul>
+    </div>
+</body>
+</html>
+
