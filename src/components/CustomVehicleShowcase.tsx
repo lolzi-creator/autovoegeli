@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { ArrowRight, Heart, Fuel, Calendar, Gauge, MapPin, Phone, MessageCircle, Filter, Settings, X, Eye } from 'lucide-react';
-import { motion } from 'framer-motion';
+// Removed framer-motion for performance
+// import { motion } from 'framer-motion';
 import { loadMultilingualVehicleData, formatPriceMultilingual, formatMileageMultilingual, getMultilingualText, getVehicleTitleMultilingual, type MultilingualVehicle } from '@/lib/multilingual-vehicle-data-loader';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -66,21 +68,17 @@ const VehicleCard = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.05 }}
-      viewport={{ once: true, margin: "-50px" }}
-      className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-lg border border-gray-200 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:border-green-500/30 cursor-pointer"
-    >
+    <div className="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-lg border border-gray-200 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl hover:border-green-500/30 cursor-pointer">
       {/* Mobile Vertical Layout */}
       <div className="md:hidden">
         {/* Mobile Image */}
         <div className="relative h-56 bg-gradient-to-br from-gray-100 via-gray-50 to-white overflow-hidden">
-          <img
+          <Image
             src={vehicle.images[0] || '/placeholder-bike.jpg'}
             alt={vehicle.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 400px"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10" />
           {vehicle.condition === 'new' && (
@@ -93,6 +91,7 @@ const VehicleCard = ({
           {/* Heart Icon */}
           <button
             onClick={(e) => {
+            
               e.stopPropagation();
               setIsLiked(!isLiked);
             }}
@@ -133,10 +132,12 @@ const VehicleCard = ({
       <div className="hidden md:block">
         {/* Vehicle Image */}
         <div className="relative h-72 bg-gradient-to-br from-gray-100 via-gray-50 to-white overflow-hidden">
-          <img
+          <Image
             src={vehicle.images[currentImageIndex] || '/placeholder-bike.jpg'}
             alt={vehicle.title}
-            className="absolute inset-0 w-full h-full object-cover transform hover:scale-110 transition-transform duration-700"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 600px"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/10" />
           
@@ -287,7 +288,7 @@ const VehicleCard = ({
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -549,17 +550,11 @@ const CustomVehicleShowcase = () => {
       paddingBottom: '100px'
     }}>
       <div className="container-width section-padding">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          style={{
+        {/* Section Header - Performance Optimized */}
+        <div style={{
             textAlign: 'center',
             marginBottom: '48px'
-          }}
-        >
+          }}>
           <h2 style={{
             fontSize: 'clamp(2rem, 4vw, 3rem)',
             fontWeight: '700',
@@ -661,13 +656,7 @@ const CustomVehicleShowcase = () => {
 
             {/* Advanced Filters Panel */}
             {showAdvancedFilters && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg"
-              >
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg">
                 <div className="flex items-center gap-2 mb-6">
                   <Settings className="w-5 h-5 text-green-500" />
                   <h3 className="text-lg font-semibold text-gray-900">{t('vehicles.advanced_filters')}</h3>
@@ -764,10 +753,10 @@ const CustomVehicleShowcase = () => {
                     </select>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
           </div>
-        </motion.div>
+        </div>
 
         {/* Loading State */}
         {loading && (

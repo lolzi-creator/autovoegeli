@@ -1,8 +1,14 @@
 // Multilingual Vehicle Data Loader for Auto Vögeli
 // Loads and transforms multilingual scraped vehicle data from JSON files
+// Performance optimized with caching
 
 import { ScrapedVehicle } from './autoscout-scraper';
 import { supabaseClient } from './supabase';
+
+// Simple in-memory cache for performance
+let vehicleCache: MultilingualVehicle[] | null = null;
+let cacheTimestamp = 0;
+const CACHE_DURATION = 60000; // 1 minute cache
 
 // Enhanced interface for multilingual vehicle data
 export interface MultilingualVehicle extends ScrapedVehicle {
@@ -79,6 +85,13 @@ interface RawMultilingualVehicle {
 // Load multilingual vehicle data from consolidated JSON file
 export async function loadMultilingualVehicleData(): Promise<MultilingualVehicle[]> {
   try {
+    // Check cache first for performance
+    const now = Date.now();
+    if (vehicleCache && (now - cacheTimestamp) < CACHE_DURATION) {
+      console.log('✅ Using cached vehicle data for performance');
+      return vehicleCache;
+    }
+
     // If Supabase is configured and flag is on, load from DB
     if (process.env.NEXT_PUBLIC_USE_SUPABASE === '1' && supabaseClient) {
       const { data, error } = await supabaseClient
@@ -89,7 +102,7 @@ export async function loadMultilingualVehicleData(): Promise<MultilingualVehicle
       if (!error && data) {
         const vehicles: MultilingualVehicle[] = data.map((row: any) => {
           const multilingual = typeof row.multilingual === 'string' ? JSON.parse(row.multilingual) : row.multilingual;
-          return transformMultilingualVehicleData({
+          const vehicle = transformMultilingualVehicleData({
             id: row.id,
             title: row.title,
             brand: row.brand,
@@ -117,7 +130,17 @@ export async function loadMultilingualVehicleData(): Promise<MultilingualVehicle
             drive: row.drive,
             multilingual,
           } as any);
+          
+          // Override the category with the actual database value
+          vehicle.category = row.category || 'bike';
+          return vehicle;
         });
+        
+        // Cache the results for performance
+        vehicleCache = vehicles;
+        cacheTimestamp = now;
+        console.log(`✅ Cached ${vehicles.length} vehicles for performance`);
+        
         return vehicles;
       }
     }

@@ -1,22 +1,18 @@
 'use client';
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Car, Eye, EyeOff, Lock, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
 export default function AdminLogin() {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-
     // Simple authentication (replace with real auth later)
     if (credentials.username === 'admin' && credentials.password === 'autovoegeli2024') {
       localStorage.setItem('admin-authenticated', 'true');
@@ -26,13 +22,9 @@ export default function AdminLogin() {
     }
     setLoading(false);
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+      <div
         className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md"
       >
         {/* Logo */}
@@ -43,7 +35,6 @@ export default function AdminLogin() {
           <h1 className="text-2xl font-bold text-gray-900">Auto Vögeli</h1>
           <p className="text-gray-600">Admin Dashboard</p>
         </div>
-
         {/* Login Form */}
         <form onSubmit={handleLogin} className="space-y-6">
           {error && (
@@ -51,7 +42,6 @@ export default function AdminLogin() {
               {error}
             </div>
           )}
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Benutzername
@@ -68,7 +58,6 @@ export default function AdminLogin() {
               />
             </div>
           </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Passwort
@@ -92,7 +81,6 @@ export default function AdminLogin() {
               </button>
             </div>
           </div>
-
           <button
             type="submit"
             disabled={loading}
@@ -101,7 +89,6 @@ export default function AdminLogin() {
             {loading ? 'Anmelden...' : 'Anmelden'}
           </button>
         </form>
-
         {/* Demo Credentials */}
         <div className="mt-6 p-4 bg-gray-50 rounded-lg">
           <p className="text-sm text-gray-600 text-center">
@@ -110,9 +97,7 @@ export default function AdminLogin() {
             Passwort: autovoegeli2024
           </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
-
-

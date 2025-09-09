@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Star, Shield, Users, Award } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Threads from '@/Backgrounds/Threads/Threads';
+// Removed heavy animations for performance
+// import { motion, AnimatePresence } from 'framer-motion';
+// import Threads from '@/Backgrounds/Threads/Threads';
 import ActionBox from './ActionBox';
 import { loadRealVehicleData } from '@/lib/vehicle-data-loader';
 import { type ScrapedVehicle } from '@/lib/autoscout-scraper';
@@ -114,12 +115,13 @@ const Hero = () => {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setCurrentBikeIndex((prev) => (prev + 1) % motorbikes.length);
-    }, 5000);
-    return () => window.clearInterval(intervalId);
-  }, [motorbikes.length]);
+  // Removed auto-rotation for performance - users can manually navigate
+  // useEffect(() => {
+  //   const intervalId = window.setInterval(() => {
+  //     setCurrentBikeIndex((prev) => (prev + 1) % motorbikes.length);
+  //   }, 5000);
+  //   return () => window.clearInterval(intervalId);
+  // }, [motorbikes.length]);
 
   // Show loading state if vehicles are still loading
   if (loading || motorbikes.length === 0) {
@@ -167,16 +169,21 @@ const Hero = () => {
   }
 
   return (
-    <section className={`relative ${isMobile ? 'min-h-[70vh] py-6' : 'min-h-[80vh]'} flex items-center overflow-hidden bg-gradient-to-br from-gray-50 to-white`}>
+    <section className={`relative ${isMobile ? 'min-h-[70vh] py-6' : 'min-h-[80vh]'} flex items-center overflow-hidden bg-gradient-to-br from-green-50 via-white to-green-100/50`}>
       
-      {/* Animated Background */}
-      <div className="absolute inset-0 opacity-30">
-        <Threads 
-          color={[0.55, 0.77, 0.26]}
-          amplitude={1.2}
-          distance={0.3}
-          enableMouseInteraction={false}
-        />
+      {/* Beautiful Green Gradient Background - Performance Optimized */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-green-100/60 via-emerald-50/40 to-green-200/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-green-100/30 via-transparent to-emerald-100/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-50/40 to-transparent"></div>
+        {/* Subtle pattern overlay */}
+        <div className="absolute inset-0 opacity-8" style={{
+          backgroundImage: 'radial-gradient(circle at 2px 2px, #059669 1px, transparent 0)',
+          backgroundSize: '60px 60px'
+        }}></div>
+        {/* Additional depth */}
+        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-green-200/20 to-transparent"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-tl from-emerald-200/30 to-transparent rounded-full blur-3xl"></div>
       </div>
 
       {/* Mobile Background Pattern */}
@@ -193,7 +200,7 @@ const Hero = () => {
               
               {/* Mobile Badge */}
               {isMobile && (
-                <div className="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                <div className="inline-flex items-center px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full text-xs font-semibold shadow-md">
                   <Award className="h-3 w-3 mr-1.5" />
                   {t('hero.badge')}
                 </div>
@@ -201,7 +208,7 @@ const Hero = () => {
 
               {/* Desktop Badge */}
               {!isMobile && (
-                <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full text-sm font-semibold shadow-lg">
                   <Award className="h-4 w-4 mr-2" />
                   {t('hero.badge')}
                 </div>
@@ -222,14 +229,14 @@ const Hero = () => {
               <div className={`flex ${isMobile ? 'flex-col space-y-3 px-4' : 'flex-row space-x-4'} ${isMobile ? 'items-center' : 'items-start'}`}>
                 <Link
                   href="/fahrzeuge"
-                  className={`${isMobile ? 'w-full py-4 text-base' : 'px-8 py-4'} inline-flex items-center justify-center bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition-colors duration-200 shadow-lg`}
+                  className={`${isMobile ? 'w-full py-4 text-base' : 'px-8 py-4'} inline-flex items-center justify-center bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-semibold rounded-xl transition-all duration-200 shadow-xl hover:shadow-green-500/25`}
                 >
                   {t('hero.cta_vehicles')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
                 <Link
                   href="/kontakt"
-                  className={`${isMobile ? 'w-full py-4 text-base' : 'px-8 py-4'} inline-flex items-center justify-center border-2 border-gray-300 hover:border-green-600 text-gray-700 hover:text-green-600 font-semibold rounded-xl transition-colors duration-200 bg-white shadow-lg`}
+                  className={`${isMobile ? 'w-full py-4 text-base' : 'px-8 py-4'} inline-flex items-center justify-center border-2 border-green-300 hover:border-green-500 text-green-700 hover:text-green-800 font-semibold rounded-xl transition-all duration-200 bg-white/90 backdrop-blur-sm shadow-xl hover:shadow-green-500/10`}
                 >
                   {t('hero.cta_consultation')}
                 </Link>
@@ -245,15 +252,8 @@ const Hero = () => {
                 {isMobile ? (
                   /* Mobile Bike Showcase - Compact Horizontal */
                   <div className="mx-4">
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={`mobile-bike-${currentBikeIndex}`}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -12 }}
-                        transition={{ duration: 0.3 }}
-                        className={`flex items-center rounded-2xl bg-white p-3 shadow-lg border border-gray-100`}
-                      >
+                    {/* Removed AnimatePresence and motion for performance */}
+                    <div className={`flex items-center rounded-2xl bg-white p-3 shadow-lg border border-gray-100`}>
                         {/* Image Left, Bigger */}
                         <div className="w-32 h-24 rounded-xl overflow-hidden flex-shrink-0 mr-3 relative">
                           <Image
@@ -290,8 +290,7 @@ const Hero = () => {
                             </Link>
                           </div>
                         </div>
-                      </motion.div>
-                    </AnimatePresence>
+                    </div>
                   </div>
                 ) : (
                   /* Desktop Trust Indicators */
@@ -328,38 +327,22 @@ const Hero = () => {
               </div>
             </div>
 
-            {/* Desktop Bike Showcase */}
+            {/* Desktop Bike Showcase - Performance Optimized */}
             {!isMobile && (
               <div className="relative">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentBikeIndex}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.4 }}
-                    className={`aspect-[4/3] rounded-3xl bg-gradient-to-br ${motorbikes[currentBikeIndex].gradient} shadow-2xl overflow-hidden flex items-end relative`}
-                  >
-                    <Image
-                      src={motorbikes[currentBikeIndex].image}
-                      alt={motorbikes[currentBikeIndex].title}
-                      fill
-                      className="object-cover"
-                      priority
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-                {/* Stats Card Below Image - compact, connected, animated */}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={`desktop-card-${currentBikeIndex}`}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -12 }}
-                    transition={{ duration: 0.3 }}
-                    className="-mt-6 md:-mt-8 mx-4 md:mx-6 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 p-4 max-w-xl"
-                  >
+                {/* Removed AnimatePresence and motion for performance */}
+                <div className={`aspect-[4/3] rounded-3xl bg-gradient-to-br ${motorbikes[currentBikeIndex].gradient} shadow-2xl overflow-hidden flex items-end relative`}>
+                  <Image
+                    src={motorbikes[currentBikeIndex].image}
+                    alt={motorbikes[currentBikeIndex].title}
+                    fill
+                    className="object-cover"
+                    priority
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+                {/* Stats Card Below Image - performance optimized */}
+                <div className="-mt-6 md:-mt-8 mx-4 md:mx-6 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 p-4 max-w-xl">
                     <div className="text-xs uppercase tracking-wider text-gray-500 mb-1">{motorbikes[currentBikeIndex].category}</div>
                     <h3 className="text-xl md:text-2xl font-bold leading-tight mb-3 text-gray-900">{motorbikes[currentBikeIndex].title}</h3>
                     <div className="grid grid-cols-3 gap-3 text-xs mb-3">
@@ -383,8 +366,7 @@ const Hero = () => {
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
                     </div>
-                  </motion.div>
-                </AnimatePresence>
+                </div>
               </div>
             )}
           </div>

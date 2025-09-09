@@ -20,6 +20,36 @@ export default function PerformanceOptimizer() {
       });
     };
 
+    // Disable heavy animations and transitions for better performance
+    const disableHeavyAnimations = () => {
+      const style = document.createElement('style');
+      style.textContent = `
+        /* Reduce motion for performance */
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+          }
+        }
+        
+        /* Optimize transitions */
+        .transition-all {
+          transition-property: transform, box-shadow;
+          transition-duration: 0.2s;
+        }
+        
+        /* Disable expensive transforms on mobile */
+        @media (max-width: 768px) {
+          .hover\\:scale-105:hover,
+          .hover\\:-translate-y-2:hover {
+            transform: none !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    };
+
     // Lazy load non-critical resources
     const lazyLoadResources = () => {
       // Lazy load fonts that aren't critical
@@ -52,6 +82,7 @@ export default function PerformanceOptimizer() {
     };
 
     preloadCriticalImages();
+    disableHeavyAnimations();
     lazyLoadResources();
     optimizeCoreWebVitals();
 

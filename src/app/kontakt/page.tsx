@@ -1,11 +1,9 @@
 'use client';
-
 import { MapPin, Phone, Clock, Send, Car } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-
 export default function Kontakt() {
   const [formData, setFormData] = useState({
     name: '',
@@ -14,36 +12,30 @@ export default function Kontakt() {
     subject: '',
     message: ''
   });
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle form submission here
     console.log('Form submitted:', formData);
     alert('Vielen Dank für Ihre Nachricht! Wir melden uns bald bei Ihnen.');
   };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
-
   return (
     <>
       <Header />
       <main>
       {/* Hero Section */}
-      <section style={{ 
-        paddingTop: '120px', 
+      <section style={{
+        paddingTop: '120px',
         paddingBottom: '80px',
         backgroundColor: '#f8fafc'
       }}>
         <div className="container-width section-padding">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+          <div
             style={{ textAlign: 'center', marginBottom: '60px' }}
           >
             <h1 style={{
@@ -62,13 +54,12 @@ export default function Kontakt() {
               margin: '0 auto',
               lineHeight: '1.6'
             }}>
-              Wir sind für Sie da! Kontaktieren Sie uns für eine persönliche Beratung 
+              Wir sind für Sie da! Kontaktieren Sie uns für eine persönliche Beratung
               oder besuchen Sie uns direkt in unserem Showroom.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
-
       {/* Contact Information */}
       <section style={{ paddingTop: '0px', paddingBottom: '80px' }}>
         <div className="container-width section-padding">
@@ -78,10 +69,7 @@ export default function Kontakt() {
             gap: '32px',
             marginBottom: '80px'
           }}>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
+            <div
               style={{
                 backgroundColor: 'white',
                 padding: '32px',
@@ -119,7 +107,7 @@ export default function Kontakt() {
                 2540 Grenchen<br />
                 Schweiz
               </p>
-              <a 
+              <a
                 href="https://maps.google.com/maps?q=Solothurnstrasse+129,+2540+Grenchen"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -131,12 +119,8 @@ export default function Kontakt() {
               >
                 Route anzeigen →
               </a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+            </div>
+            <div
               style={{
                 backgroundColor: 'white',
                 padding: '32px',
@@ -177,7 +161,7 @@ export default function Kontakt() {
                   078 636 06 19 (WhatsApp)
                 </a>
               </p>
-              <a 
+              <a
                 href="tel:+41326521166"
                 style={{
                   color: '#8bc442',
@@ -187,12 +171,8 @@ export default function Kontakt() {
               >
                 Jetzt anrufen →
               </a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+            </div>
+            <div
               style={{
                 backgroundColor: 'white',
                 padding: '32px',
@@ -240,9 +220,8 @@ export default function Kontakt() {
                   Geschlossen
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
-
           {/* Contact Form */}
           <div style={{
             display: 'grid',
@@ -250,10 +229,7 @@ export default function Kontakt() {
             gap: '80px',
             alignItems: 'start'
           }}>
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
+            <div
             >
               <h2 style={{
                 fontSize: '2.25rem',
@@ -270,11 +246,10 @@ export default function Kontakt() {
                 marginBottom: '32px',
                 lineHeight: '1.7'
               }}>
-                Haben Sie Fragen zu einem Fahrzeug oder möchten Sie einen Beratungstermin 
-                vereinbaren? Füllen Sie einfach das Kontaktformular aus, und wir melden 
+                Haben Sie Fragen zu einem Fahrzeug oder möchten Sie einen Beratungstermin
+                vereinbaren? Füllen Sie einfach das Kontaktformular aus, und wir melden
                 uns schnellstmöglich bei Ihnen.
               </p>
-              
               <div style={{
                 backgroundColor: '#f8fafc',
                 padding: '24px',
@@ -291,16 +266,12 @@ export default function Kontakt() {
                   lineHeight: '1.5',
                   margin: 0
                 }}>
-                  Geben Sie einfach im Betreff &quot;Probefahrt&quot; und das gewünschte Fahrzeug an. 
+                  Geben Sie einfach im Betreff &quot;Probefahrt&quot; und das gewünschte Fahrzeug an.
                   Wir vereinbaren gerne einen Termin mit Ihnen.
                 </p>
               </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+            </div>
+            <div
               style={{
                 backgroundColor: 'white',
                 padding: '40px',
@@ -338,7 +309,6 @@ export default function Kontakt() {
                     onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                   />
                 </div>
-
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                   <div>
                     <label style={{
@@ -369,7 +339,6 @@ export default function Kontakt() {
                       onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                     />
                   </div>
-
                   <div>
                     <label style={{
                       display: 'block',
@@ -399,7 +368,6 @@ export default function Kontakt() {
                     />
                   </div>
                 </div>
-
                 <div>
                   <label style={{
                     display: 'block',
@@ -436,7 +404,6 @@ export default function Kontakt() {
                     <option value="wartung">Wartung & Service</option>
                   </select>
                 </div>
-
                 <div>
                   <label style={{
                     display: 'block',
@@ -469,7 +436,6 @@ export default function Kontakt() {
                     onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
                   />
                 </div>
-
                 <button
                   type="submit"
                   className="btn-primary"
@@ -489,11 +455,10 @@ export default function Kontakt() {
                   Nachricht senden
                 </button>
               </form>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
-
       {/* Mobile Responsive */}
       <style jsx>{`
         @media (max-width: 1024px) {
@@ -503,91 +468,73 @@ export default function Kontakt() {
             gap: 40px !important;
           }
         }
-        
         @media (max-width: 768px) {
           /* Hero section mobile - very compact */
           section[style*="paddingTop: '120px'"] {
             padding-top: 80px !important;
             padding-bottom: 30px !important;
           }
-          
           /* Contact section mobile - much less padding */
           section[style*="paddingBottom: '80px'"] {
             padding-bottom: 40px !important;
           }
-          
           /* Contact info cards mobile - compact */
           div[style*="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))"] {
             grid-template-columns: 1fr !important;
             gap: 16px !important;
             margin-bottom: 40px !important;
           }
-          
           /* Contact info cards padding mobile - very compact */
           div[style*="backgroundColor: white"][style*="padding: 32px"] {
             padding: 16px !important;
           }
-          
           /* Contact form padding mobile - compact */
           div[style*="backgroundColor: white"][style*="padding: 40px"] {
             padding: 16px !important;
           }
-          
           /* Text margins - much smaller */
           div[style*="marginBottom: '60px'"] {
             margin-bottom: 30px !important;
           }
-          
           div[style*="marginBottom: '80px'"] {
             margin-bottom: 40px !important;
           }
-          
           div[style*="marginBottom: '40px'"] {
             margin-bottom: 20px !important;
           }
-          
           div[style*="marginBottom: '32px'"] {
             margin-bottom: 16px !important;
           }
-          
           div[style*="marginBottom: '24px'"] {
             margin-bottom: 12px !important;
           }
-          
           div[style*="marginBottom: '16px'"] {
             margin-bottom: 8px !important;
           }
-          
           /* Grid gaps - smaller */
           div[style*="gap: '80px'"] {
             gap: 30px !important;
           }
-          
           div[style*="gap: '32px'"] {
             gap: 16px !important;
           }
-          
           div[style*="gap: '24px'"] {
             gap: 12px !important;
           }
-          
           /* Form grid mobile - email/phone */
           div[style*="grid-template-columns: 1fr 1fr"][style*="gap: 16px"] {
             grid-template-columns: 1fr !important;
             gap: 12px !important;
           }
-          
           /* Form spacing - much more compact */
           form[style*="gap: '24px'"] {
             gap: 16px !important;
           }
-          
           /* Opening hours text alignment */
           div[style*="textAlign: 'left'"] {
             text-align: center !important;
           }
         }
-        
         @media (max-width: 480px) {
           /* Extra small screens - use more screen space */
           .container-width {
@@ -595,14 +542,12 @@ export default function Kontakt() {
             padding-left: 8px !important;
             padding-right: 8px !important;
           }
-          
           /* Section padding - use more width */
           .section-padding {
             padding-left: 8px !important;
             padding-right: 8px !important;
           }
         }
-        
         @media (max-width: 768px) {
           /* Use more screen width on mobile */
           .container-width {
@@ -610,53 +555,43 @@ export default function Kontakt() {
             padding-left: 12px !important;
             padding-right: 12px !important;
           }
-          
           .section-padding {
             padding-left: 12px !important;
             padding-right: 12px !important;
           }
         }
-          
           /* Smaller fonts on mobile */
           h1 {
             font-size: 2rem !important;
           }
-          
           h2 {
             font-size: 1.75rem !important;
           }
-          
           h3 {
             font-size: 1.1rem !important;
           }
-          
           /* Smaller icons on mobile */
           div[style*="width: 64px"][style*="height: 64px"] {
             width: 48px !important;
             height: 48px !important;
           }
-          
           /* Contact info cards - even more compact */
           div[style*="backgroundColor: white"][style*="padding: 24px"] {
             padding: 20px !important;
           }
-          
           /* Form inputs mobile */
           input, select, textarea {
             font-size: 16px !important;
           }
-          
           /* Button mobile */
           .btn-primary {
             width: 100% !important;
             padding: 14px 24px !important;
           }
-          
           /* Opening hours mobile styling */
           div[style*="textAlign: center"] div {
             margin-bottom: 12px !important;
           }
-          
           div[style*="textAlign: center"] strong {
             font-size: 14px !important;
           }

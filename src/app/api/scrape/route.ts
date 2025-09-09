@@ -169,6 +169,42 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    if (action === 'start_sync_cars') {
+      console.log('🚗 Starting car sync using complete cars scraper...');
+      
+      try {
+        // Use the complete cars scraper
+        const result = await execAsync('node complete-cars-scraper.js', { 
+          cwd: process.cwd(),
+          timeout: 300000, // 5 minutes timeout for cars
+          env: { ...process.env }
+        });
+        
+        console.log('Cars scraper output:', result.stdout);
+        if (result.stderr) {
+          console.error('Cars scraper errors:', result.stderr);
+        }
+        
+        return NextResponse.json({ 
+          success: true, 
+          output: result.stdout,
+          errors: result.stderr ? [result.stderr] : [],
+          timestamp: new Date().toISOString(),
+          vehiclesProcessed: 0,
+          message: 'Successfully updated cars using complete scraper'
+        });
+      } catch (error: any) {
+        console.error('❌ Cars scraper execution error:', error);
+        return NextResponse.json({ 
+          success: false, 
+          error: error.message,
+          timestamp: new Date().toISOString(),
+          vehiclesProcessed: 0,
+          message: 'Failed to update cars'
+        }, { status: 500 });
+      }
+    }
+
     // This is where you'd implement real scraping
     // Options for production:
     

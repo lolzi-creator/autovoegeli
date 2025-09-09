@@ -1,26 +1,21 @@
 'use client';
-
 import { Award, Users, Shield, Clock, MapPin, Phone } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-
 export default function UeberUns() {
   return (
     <>
       <Header />
       <main>
       {/* Hero Section */}
-      <section style={{ 
-        paddingTop: '120px', 
+      <section style={{
+        paddingTop: '120px',
         paddingBottom: '80px',
         backgroundColor: '#f8fafc'
       }}>
         <div className="container-width section-padding">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+          <div
             style={{ textAlign: 'center', marginBottom: '60px' }}
           >
             <h1 style={{
@@ -39,13 +34,12 @@ export default function UeberUns() {
               margin: '0 auto',
               lineHeight: '1.6'
             }}>
-              Seit über 15 Jahren Ihr vertrauensvoller Partner für Premium-Fahrzeuge 
+              Seit über 15 Jahren Ihr vertrauensvoller Partner für Premium-Fahrzeuge
               in der Region Grenchen und darüber hinaus.
             </p>
-          </motion.div>
+          </div>
         </div>
       </section>
-
       {/* Story Section */}
       <section style={{ paddingTop: '80px', paddingBottom: '80px' }}>
         <div className="container-width section-padding">
@@ -55,10 +49,7 @@ export default function UeberUns() {
             gap: '80px',
             alignItems: 'center'
           }}>
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
+            <div
             >
               <h2 style={{
                 fontSize: '2.25rem',
@@ -75,9 +66,9 @@ export default function UeberUns() {
                 marginBottom: '24px',
                 lineHeight: '1.7'
               }}>
-                Auto Vögeli wurde 2008 mit der Vision gegründet, den Fahrzeugkauf zu einem 
-                transparenten und vertrauensvollen Erlebnis zu machen. Was als kleines 
-                Familienunternehmen begann, hat sich zu einem der führenden Autohäuser 
+                Auto Vögeli wurde 2008 mit der Vision gegründet, den Fahrzeugkauf zu einem
+                transparenten und vertrauensvollen Erlebnis zu machen. Was als kleines
+                Familienunternehmen begann, hat sich zu einem der führenden Autohäuser
                 in der Region entwickelt.
               </p>
               <p style={{
@@ -86,11 +77,10 @@ export default function UeberUns() {
                 marginBottom: '32px',
                 lineHeight: '1.7'
               }}>
-                Unser Erfolg basiert auf drei Säulen: Qualität, Vertrauen und persönlicher 
-                Service. Jedes Fahrzeug durchläuft unsere strenge Qualitätsprüfung, und 
+                Unser Erfolg basiert auf drei Säulen: Qualität, Vertrauen und persönlicher
+                Service. Jedes Fahrzeug durchläuft unsere strenge Qualitätsprüfung, und
                 unsere Kunden profitieren von einer ehrlichen, kompetenten Beratung.
               </p>
-              
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(2, 1fr)',
@@ -118,7 +108,6 @@ export default function UeberUns() {
                     Zufriedene Kunden
                   </div>
                 </div>
-                
                 <div style={{
                   padding: '20px',
                   backgroundColor: '#f8fafc',
@@ -142,12 +131,8 @@ export default function UeberUns() {
                   </div>
                 </div>
               </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+            </div>
+            <div
               style={{
                 backgroundColor: '#8bc442',
                 borderRadius: '20px',
@@ -169,25 +154,21 @@ export default function UeberUns() {
                 lineHeight: '1.6',
                 opacity: 0.9
               }}>
-                Alle unsere Fahrzeuge werden von zertifizierten Technikern geprüft 
+                Alle unsere Fahrzeuge werden von zertifizierten Technikern geprüft
                 und kommen mit umfassender Garantie.
               </p>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
-
       {/* Values Section */}
-      <section style={{ 
-        paddingTop: '80px', 
+      <section style={{
+        paddingTop: '80px',
         paddingBottom: '80px',
         backgroundColor: '#f8fafc'
       }}>
         <div className="container-width section-padding">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+          <div
             style={{ textAlign: 'center', marginBottom: '60px' }}
           >
             <h2 style={{
@@ -206,17 +187,13 @@ export default function UeberUns() {
             }}>
               Diese Prinzipien leiten uns bei allem, was wir tun
             </p>
-          </motion.div>
-
+          </div>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             gap: '32px'
           }}>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
+            <div
               style={{
                 backgroundColor: 'white',
                 padding: '32px',
@@ -249,15 +226,11 @@ export default function UeberUns() {
                 color: '#64748b',
                 lineHeight: '1.6'
               }}>
-                Ehrliche Beratung ohne versteckte Kosten. Was wir versprechen, 
+                Ehrliche Beratung ohne versteckte Kosten. Was wir versprechen,
                 das halten wir auch.
               </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+            </div>
+            <div
               style={{
                 backgroundColor: 'white',
                 padding: '32px',
@@ -290,15 +263,11 @@ export default function UeberUns() {
                 color: '#64748b',
                 lineHeight: '1.6'
               }}>
-                Individuelle Beratung und persönliche Betreuung von der ersten 
+                Individuelle Beratung und persönliche Betreuung von der ersten
                 Anfrage bis nach dem Kauf.
               </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+            </div>
+            <div
               style={{
                 backgroundColor: 'white',
                 padding: '32px',
@@ -331,14 +300,13 @@ export default function UeberUns() {
                 color: '#64748b',
                 lineHeight: '1.6'
               }}>
-                Nur sorgfältig ausgewählte und geprüfte Fahrzeuge finden den 
+                Nur sorgfältig ausgewählte und geprüfte Fahrzeuge finden den
                 Weg in unser Sortiment.
               </p>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
-
       {/* Contact Section */}
       <section style={{ paddingTop: '80px', paddingBottom: '100px' }}>
         <div className="container-width section-padding">
@@ -349,10 +317,7 @@ export default function UeberUns() {
             textAlign: 'center',
             color: 'white'
           }}>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+            <div
             >
               <h2 style={{
                 fontSize: '2.25rem',
@@ -368,10 +333,9 @@ export default function UeberUns() {
                 maxWidth: '600px',
                 margin: '0 auto 40px'
               }}>
-                Besuchen Sie uns in unserem Showroom oder vereinbaren Sie einen 
+                Besuchen Sie uns in unserem Showroom oder vereinbaren Sie einen
                 persönlichen Beratungstermin.
               </p>
-              
               <div style={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -392,15 +356,14 @@ export default function UeberUns() {
                   <span>Mo-Fr: 8:00-18:00</span>
                 </div>
               </div>
-              
               <div style={{
                 display: 'flex',
                 justifyContent: 'center',
                 gap: '16px',
                 flexWrap: 'wrap'
               }}>
-                <a 
-                  href="/kontakt" 
+                <a
+                  href="/kontakt"
                   className="btn-primary"
                   style={{
                     backgroundColor: '#8bc442',
@@ -409,8 +372,8 @@ export default function UeberUns() {
                 >
                   Beratung vereinbaren
                 </a>
-                <a 
-                  href="/fahrzeuge" 
+                <a
+                  href="/fahrzeuge"
                   className="btn-outline"
                   style={{
                     borderColor: 'white',
@@ -420,11 +383,10 @@ export default function UeberUns() {
                   Fahrzeuge ansehen
                 </a>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
-
       {/* Mobile Responsive */}
       <style jsx>{`
         @media (max-width: 768px) {

@@ -55,6 +55,7 @@ export default function AdminDashboard() {
   const [vehicles, setVehicles] = useState<VehicleListing[]>([]);
   const [scrapeStatus, setScrapeStatus] = useState<string>('');
   const [isScraping, setIsScraping] = useState(false);
+  const [isScrapingCars, setIsScrapingCars] = useState(false);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSyncModal, setShowSyncModal] = useState(false);
@@ -193,6 +194,24 @@ export default function AdminDashboard() {
       setScrapeStatus('Fehler beim Starten der Aktualisierung');
     } finally {
       setIsScraping(false);
+    }
+  };
+
+  const runScraperCars = async () => {
+    try {
+      setIsScrapingCars(true);
+      setScrapeStatus('Starte Auto-Aktualisierung…');
+      const res = await fetch('/api/scrape', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'start_sync_cars' })
+      });
+      const json = await res.json();
+      setScrapeStatus(json.message || 'Auto-Aktualisierung abgeschlossen');
+    } catch {
+      setScrapeStatus('Fehler beim Aktualisieren der Autos');
+    } finally {
+      setIsScrapingCars(false);
     }
   };
 
@@ -374,6 +393,14 @@ export default function AdminDashboard() {
                 >
                   <RefreshCw className="w-4 h-4" />
                   <span className="hidden sm:inline">Update Bikes</span>
+                </button>
+                <button 
+                  onClick={runScraperCars}
+                  disabled={isScrapingCars}
+                  className={`bg-orange-600 text-white px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1 sm:gap-2 hover:bg-orange-700 transition-colors text-sm ${isScrapingCars ? 'opacity-70 cursor-not-allowed' : ''}`}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span className="hidden sm:inline">Update Cars</span>
                 </button>
                 {scrapeStatus && (
                   <span className="text-xs text-gray-600">{scrapeStatus}</span>

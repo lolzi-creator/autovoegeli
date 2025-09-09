@@ -97,12 +97,12 @@ function extractMileage(rawMileage) {
   return (mileage >= 0 && mileage <= 999999) ? mileage : 0;
 }
 
-// Scrape all pages of the main listing to get bike URLs
-async function scrapeAllBikeUrls() {
-  console.log('🔍 Scraping all bike URLs from all pages...');
+// Scrape all pages of the main listing to get car URLs
+async function scrapeAllCarUrls() {
+  console.log('🔍 Scraping all car URLs from all pages...');
   
-  const baseUrl = 'https://www.autoscout24.ch/de/hci/v2/1124/search';
-  let allBikeUrls = [];
+  const baseUrl = 'https://www.autoscout24.ch/de/hci/v2/5571/search';
+  let allCarUrls = [];
   let page = 0;
   let hasMorePages = true;
 
@@ -113,18 +113,18 @@ async function scrapeAllBikeUrls() {
       
       const html = await fetchPage(pageUrl);
       
-      // Extract bike URLs from the page
-      // Look for patterns like: /de/hci/v2/1124/detail/12682378
-      const urlMatches = html.match(/\/de\/hci\/v2\/1124\/detail\/\d+/g);
+      // Extract car URLs from the page
+      // Look for patterns like: /de/hci/v2/5571/detail/12345678
+      const urlMatches = html.match(/\/de\/hci\/v2\/5571\/detail\/\d+/g);
       
       if (urlMatches && urlMatches.length > 0) {
         const pageUrls = urlMatches.map(url => `https://www.autoscout24.ch${url}`);
-        allBikeUrls = allBikeUrls.concat(pageUrls);
-        console.log(`✅ Found ${pageUrls.length} bikes on page ${page + 1}`);
+        allCarUrls = allCarUrls.concat(pageUrls);
+        console.log(`✅ Found ${pageUrls.length} cars on page ${page + 1}`);
         page++;
       } else {
         hasMorePages = false;
-        console.log(`🏁 No more bikes found, stopping at page ${page + 1}`);
+        console.log(`🏁 No more cars found, stopping at page ${page + 1}`);
       }
       
       // Safety limit to prevent infinite loops
@@ -143,22 +143,22 @@ async function scrapeAllBikeUrls() {
   }
   
   // Remove duplicates
-  const uniqueUrls = [...new Set(allBikeUrls)];
-  console.log(`🎯 Found ${uniqueUrls.length} unique bike URLs across ${page} pages`);
+  const uniqueUrls = [...new Set(allCarUrls)];
+  console.log(`🎯 Found ${uniqueUrls.length} unique car URLs across ${page} pages`);
   
   return uniqueUrls;
 }
 
-// Scrape detailed information from a single bike's detail page
-async function scrapeBikeDetail(detailUrl) {
+// Scrape detailed information from a single car's detail page
+async function scrapeCarDetail(detailUrl) {
   try {
     console.log(`🔎 Scraping detail: ${detailUrl}`);
     
     const html = await fetchPage(detailUrl);
     
-    // Extract bike ID from URL
+    // Extract car ID from URL
     const idMatch = detailUrl.match(/detail\/(\d+)/);
-    const bikeId = idMatch ? idMatch[1] : Date.now().toString();
+    const carId = idMatch ? idMatch[1] : Date.now().toString();
     
     // Extract title
     const titleMatch = html.match(/<h1[^>]*>([^<]+)<\/h1>/);
@@ -180,9 +180,33 @@ async function scrapeBikeDetail(detailUrl) {
       }
     }
     
-    // Extract basic vehicle data
-    const yearMatch = html.match(/Calendar icon(\d{2})\.(\d{4})/);
-    const year = yearMatch ? parseInt(yearMatch[2]) : extractYear('');
+    // Extract year from date - look for "06.2021" format
+    const yearPatterns = [
+      /Calendar icon(\d{2})\.(\d{4})/,    // "Calendar icon06.2021"
+      /(\d{2})\.(\d{4})/,                 // "06.2021"
+      /20(\d{2})/,                        // "2021"
+      /(\d{4})/                           // "2021"
+    ];
+    
+    let year = new Date().getFullYear();
+    for (const pattern of yearPatterns) {
+      const match = html.match(pattern);
+      if (match) {
+        if (match[2]) {
+          const foundYear = parseInt(match[2]);
+          if (foundYear >= 1990 && foundYear <= 2025) {
+            year = foundYear;
+            break;
+          }
+        } else if (match[1]) {
+          const foundYear = parseInt(match[1]);
+          if (foundYear >= 1990 && foundYear <= 2025) {
+            year = foundYear;
+            break;
+          }
+        }
+      }
+    }
     
     // Extract mileage - handle HTML entities like &#x27;
     const mileagePatterns = [
@@ -202,11 +226,11 @@ async function scrapeBikeDetail(detailUrl) {
     }
     
     // Extract transmission
-    const transmissionMatch = html.match(/Transmission icon([^<]+)/);
+    const transmissionMatch = html.match(/Transmission icon([^<\n]+)/);
     const transmission = transmissionMatch ? transmissionMatch[1].trim() : 'Schaltgetriebe manuell';
     
     // Extract fuel type
-    const fuelMatch = html.match(/Gas station icon([^<]+)/);
+    const fuelMatch = html.match(/Gas station icon([^<\n]+)/);
     const fuel = fuelMatch ? fuelMatch[1].trim() : 'Benzin';
     
     // Extract power - look for "93 PS (69 kW)" format
@@ -225,24 +249,25 @@ async function scrapeBikeDetail(detailUrl) {
       }
     }
     
-    // Extract body type
-    const bodyTypeMatch = html.match(/Motorcycle icon([^<]+)/);
-    const bodyType = bodyTypeMatch ? bodyTypeMatch[1].trim() : 'Motorrad';
+    // Extract body type - for cars it might be different
+    const bodyTypeMatch = html.match(/Car icon([^<\n]+)/) || html.match(/Vehicle icon([^<\n]+)/);
+    const bodyType = bodyTypeMatch ? bodyTypeMatch[1].trim() : 'Auto';
     
     // Extract description - robust extraction that only gets real vehicle descriptions
     function extractDescription(html) {
-      // Only look for known good description patterns
-      const knownGoodPatterns = [
-        /Sehr schöne und dezente FatBOB aus 1 Hand![^]*?muss man sehen und Hören!/,
-        /Sehr schöne[^!.]*[!.]/,
-        /Wunderschöne[^!.]*[!.]/,
-        /Gepflegte[^!.]*[!.]/,
-        /Tolle[^!.]*[!.]/,
-        /Verkaufe[^!.]*[!.]/,
-        /Biete[^!.]*[!.]/
+      // ONLY look for very specific, known good car description patterns
+      const strictCarPatterns = [
+        /Sehr schöne[^!.]{10,}[!.]/,     // Must be at least 10 chars after "Sehr schöne"
+        /Wunderschöne[^!.]{10,}[!.]/,    // Must be at least 10 chars after "Wunderschöne"
+        /Gepflegte[^!.]{10,}[!.]/,       // Must be at least 10 chars after "Gepflegte"
+        /Tolle[^!.]{15,}[!.]/,           // Must be at least 15 chars after "Tolle"
+        /Verkaufe[^!.]{10,}[!.]/,        // Must be at least 10 chars after "Verkaufe"
+        /Biete[^!.]{10,}[!.]/,           // Must be at least 10 chars after "Biete"
+        /Perfekte[^!.]{10,}[!.]/,        // Must be at least 10 chars after "Perfekte"
+        /Traumhafte[^!.]{10,}[!.]/       // Must be at least 10 chars after "Traumhafte"
       ];
       
-      for (const pattern of knownGoodPatterns) {
+      for (const pattern of strictCarPatterns) {
         const match = html.match(pattern);
         if (match) {
           let description = match[0]
@@ -252,27 +277,36 @@ async function scrapeBikeDetail(detailUrl) {
             .replace(/\s+/g, ' ')         // Normalize whitespace
             .trim();
           
-          // Validate - must be real vehicle description
+          // STRICT validation for cars - must be real vehicle description
           const invalidTerms = [
             'css-', 'color:var', 'DOCTYPE', 'html>', 'link rel', 'href=',
-            'Fahrzeugdaten', 'Calendar icon', 'Road icon', 'Gas station'
+            'Fahrzeugdaten', 'Calendar icon', 'Road icon', 'Gas station',
+            'chakra-', 'rgba(', 'px', 'var(--', 'shadow', 'outline',
+            'fontSizes', 'fontWeights', 'colors-', 'Alpha-'
           ];
           
-          const isValid = 
-            description.length >= 15 &&
-            description.length <= 500 &&
-            !invalidTerms.some(term => description.includes(term)) &&
-            /[a-zA-ZäöüÄÖÜ]/.test(description) &&
-            !description.includes('http') &&
-            description.split(' ').length >= 3;
+          const isValidCarDescription = 
+            description.length >= 20 &&                                    // At least 20 characters
+            description.length <= 300 &&                                   // Not too long
+            !invalidTerms.some(term => description.includes(term)) &&      // No technical terms
+            /[a-zA-ZäöüÄÖÜ]/.test(description) &&                         // Contains letters
+            !description.includes('http') &&                              // No URLs
+            !description.includes('www.') &&                              // No websites
+            !description.includes('(') &&                                 // No parentheses (CSS)
+            !description.includes(';') &&                                 // No semicolons (CSS)
+            !description.includes('#') &&                                 // No hash (CSS colors)
+            description.split(' ').length >= 5 &&                         // At least 5 words
+            !/^\d/.test(description);                                      // Doesn't start with number
           
-          if (isValid) {
+          if (isValidCarDescription) {
             return description;
           }
         }
       }
       
-      return null; // No valid description found
+      // For cars, if no custom description found, return null
+      // Most cars on AutoScout24 don't have custom descriptions
+      return null;
     }
     
     const description = extractDescription(html);
@@ -297,7 +331,7 @@ async function scrapeBikeDetail(detailUrl) {
     const mfk = mfkMatch ? mfkMatch[1] : null;
     
     // Extract guarantee info
-    const guaranteeMatch = html.match(/Ab Übernahme,\s*([^<]+)/);
+    const guaranteeMatch = html.match(/Ab Übernahme,\s*([^<\n]+)/);
     const guarantee = guaranteeMatch ? guaranteeMatch[1].trim() : '12 Monate';
     
     // Extract brand and model from title
@@ -309,7 +343,7 @@ async function scrapeBikeDetail(detailUrl) {
     const condition = year >= 2024 && mileage < 100 ? 'new' : 'used';
     
     return {
-      id: bikeId,
+      id: carId,
       title,
       brand,
       model,
@@ -336,30 +370,30 @@ async function scrapeBikeDetail(detailUrl) {
 }
 
 // Main scraping function
-async function scrapeAllBikes() {
-  console.log('🚀 Starting complete bike scraping...');
+async function scrapeAllCars() {
+  console.log('🚀 Starting complete car scraping...');
   
   try {
-    // Step 1: Get all bike URLs from all pages
-    const bikeUrls = await scrapeAllBikeUrls();
+    // Step 1: Get all car URLs from all pages
+    const carUrls = await scrapeAllCarUrls();
     
-    if (bikeUrls.length === 0) {
-      console.log('❌ No bike URLs found');
+    if (carUrls.length === 0) {
+      console.log('❌ No car URLs found');
       return [];
     }
     
-    // Step 2: Scrape each bike's detail page
+    // Step 2: Scrape each car's detail page
     const vehicles = [];
     
-    for (let i = 0; i < bikeUrls.length; i++) {
-      const url = bikeUrls[i];
-      console.log(`🔄 Processing bike ${i + 1}/${bikeUrls.length}`);
+    for (let i = 0; i < carUrls.length; i++) {
+      const url = carUrls[i];
+      console.log(`🔄 Processing car ${i + 1}/${carUrls.length}`);
       
-      const bikeDetail = await scrapeBikeDetail(url);
+      const carDetail = await scrapeCarDetail(url);
       
-      if (bikeDetail) {
+      if (carDetail) {
         // Convert to your desired format
-        const vehicle = formatVehicleData(bikeDetail);
+        const vehicle = formatVehicleData(carDetail);
         vehicles.push(vehicle);
         console.log(`✅ Processed: ${vehicle.title} - ${vehicle.price} CHF`);
       }
@@ -368,17 +402,17 @@ async function scrapeAllBikes() {
       await new Promise(resolve => setTimeout(resolve, 2000));
     }
     
-    console.log(`📊 Successfully scraped ${vehicles.length} bikes`);
+    console.log(`📊 Successfully scraped ${vehicles.length} cars`);
     return vehicles;
     
   } catch (error) {
-    console.error('❌ Error in scrapeAllBikes:', error.message);
+    console.error('❌ Error in scrapeAllCars:', error.message);
     return [];
   }
 }
 
 // Format vehicle data to match your desired structure
-function formatVehicleData(bikeDetail) {
+function formatVehicleData(carDetail) {
   // Map transmission types to German
   const getGermanTransmission = (transmission) => {
     const transmissionMap = {
@@ -400,9 +434,9 @@ function formatVehicleData(bikeDetail) {
       fr: "Essence"
     },
     brand: {
-      de: bikeDetail.brand,
-      en: bikeDetail.brand,
-      fr: bikeDetail.brand
+      de: carDetail.brand,
+      en: carDetail.brand,
+      fr: carDetail.brand
     },
     color: {
       de: "Metallic",
@@ -410,107 +444,107 @@ function formatVehicleData(bikeDetail) {
       fr: "Métallique"
     },
     bodyType: {
-      de: "Motorrad",
-      en: "Motorcycle",
-      fr: "Moto"
+      de: "Auto",
+      en: "Car",
+      fr: "Voiture"
     },
     features: {
-      de: bikeDetail.features || ["ABS", "LED", "Digital"],
-      en: bikeDetail.features || ["ABS", "LED", "Digital"],
-      fr: bikeDetail.features || ["ABS", "LED", "Numérique"]
+      de: carDetail.features || ["ABS", "Klimaanlage", "Radio"],
+      en: carDetail.features || ["ABS", "Air Conditioning", "Radio"],
+      fr: carDetail.features || ["ABS", "Climatisation", "Radio"]
     },
     warranty: {
-      de: bikeDetail.guarantee || "12 Monate",
-      en: bikeDetail.guarantee || "12 Monate",
-      fr: bikeDetail.guarantee || "12 Monate"
+      de: carDetail.guarantee || "12 Monate",
+      en: carDetail.guarantee || "12 Months",
+      fr: carDetail.guarantee || "12 Mois"
     },
     condition: {
-      de: bikeDetail.condition === 'new' ? "Neu" : "Gebraucht",
-      en: bikeDetail.condition === 'new' ? "New" : "Used",
-      fr: bikeDetail.condition === 'new' ? "Neuf" : "Occasion"
+      de: carDetail.condition === 'new' ? "Neu" : "Gebraucht",
+      en: carDetail.condition === 'new' ? "New" : "Used",
+      fr: carDetail.condition === 'new' ? "Neuf" : "Occasion"
     },
     description: {
-      de: bikeDetail.description || `Hochwertiges ${bikeDetail.brand} ${bikeDetail.model} Baujahr ${bikeDetail.year} von Auto Vögeli AG.`,
-      en: `High-quality ${bikeDetail.brand} ${bikeDetail.model} from ${bikeDetail.year} by Auto Vögeli AG.`,
-      fr: `Véhicule de qualité ${bikeDetail.brand} ${bikeDetail.model} de ${bikeDetail.year} d'Auto Vögeli AG.`
+      de: carDetail.description || `Hochwertiges ${carDetail.brand} ${carDetail.model} Baujahr ${carDetail.year} von Auto Vögeli AG.`,
+      en: `High-quality ${carDetail.brand} ${carDetail.model} from ${carDetail.year} by Auto Vögeli AG.`,
+      fr: `Véhicule de qualité ${carDetail.brand} ${carDetail.model} de ${carDetail.year} d'Auto Vögeli AG.`
     },
     transmission: {
-      de: getGermanTransmission(bikeDetail.transmission),
-      en: bikeDetail.transmission === 'manual' ? "Manual transmission" : 
-          bikeDetail.transmission === 'automatic' ? "Automatic transmission" :
-          bikeDetail.transmission === 'automatic-stepless' ? "Stepless automatic" : "Manual transmission",
-      fr: bikeDetail.transmission === 'manual' ? "Transmission manuelle" :
-          bikeDetail.transmission === 'automatic' ? "Transmission automatique" :
-          bikeDetail.transmission === 'automatic-stepless' ? "Automatique sans étages" : "Transmission manuelle"
+      de: getGermanTransmission(carDetail.transmission),
+      en: carDetail.transmission === 'manual' ? "Manual transmission" : 
+          carDetail.transmission === 'automatic' ? "Automatic transmission" :
+          carDetail.transmission === 'automatic-stepless' ? "Stepless automatic" : "Manual transmission",
+      fr: carDetail.transmission === 'manual' ? "Transmission manuelle" :
+          carDetail.transmission === 'automatic' ? "Transmission automatique" :
+          carDetail.transmission === 'automatic-stepless' ? "Automatique sans étages" : "Transmission manuelle"
     }
   };
 
-  // Generate ID
-  const cleanId = `${bikeDetail.brand?.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'unknown'}-${bikeDetail.model?.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'model'}-${bikeDetail.year}-${Math.floor(Math.random() * 100)}`;
+  // Generate unique ID using car ID from URL
+  const cleanId = `car-${carDetail.id}-${carDetail.brand?.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'unknown'}`;
 
   return {
     id: cleanId,
-    title: bikeDetail.title,
-    brand: bikeDetail.brand,
-    model: bikeDetail.model,
-    year: bikeDetail.year,
-    price: bikeDetail.price,
-    mileage: bikeDetail.mileage,
+    title: carDetail.title,
+    brand: carDetail.brand,
+    model: carDetail.model,
+    year: carDetail.year,
+    price: carDetail.price,
+    mileage: carDetail.mileage,
     fuel: "Benzin",
-    transmission: getGermanTransmission(bikeDetail.transmission),
-    power: bikeDetail.power,
-    body_type: "Motorrad",
+    transmission: getGermanTransmission(carDetail.transmission),
+    power: carDetail.power,
+    body_type: "Auto",
     color: "Metallic",
-    images: JSON.stringify(bikeDetail.images || []),
-    description: bikeDetail.description,
-    features: JSON.stringify(bikeDetail.features || []),
+    images: JSON.stringify(carDetail.images || []),
+    description: carDetail.description,
+    features: JSON.stringify(carDetail.features || []),
     location: "Grenchen",
     dealer: "Auto Vögeli AG",
-    url: bikeDetail.detailUrl,
-    condition: bikeDetail.condition,
-    category: 'bike',
+    url: carDetail.detailUrl,
+    condition: carDetail.condition,
+    category: 'car',
     first_registration: null,
     doors: null,
     seats: null,
     co2_emission: null,
     consumption: null,
-    warranty: bikeDetail.guarantee || "12 Monate",
+    warranty: carDetail.guarantee || "12 Monate",
     warranty_details: "Gewerbliche Garantie",
     warranty_months: 12,
-    mfk: bikeDetail.mfk,
+    mfk: carDetail.mfk,
     displacement: "0",
-    drive: "Kette",
+    drive: "Vorderradantrieb",
     vehicle_age: null,
     price_per_year: null,
     multilingual: JSON.stringify(multilingual)
   };
 }
 
-// Clear existing bikes and insert new ones to prevent duplicates
-async function replaceAllBikesInSupabase(vehicles) {
+// Clear existing cars and insert new ones to prevent duplicates
+async function replaceAllCarsInSupabase(vehicles) {
   if (vehicles.length === 0) {
     console.log('❌ No vehicles to insert');
     return;
   }
   
-  console.log(`🧹 Clearing existing bikes from Supabase...`);
+  console.log(`🧹 Clearing existing cars from Supabase...`);
   
   try {
-    // Step 1: Delete all existing bikes
+    // Step 1: Delete all existing cars
     const { error: deleteError } = await supabase
       .from('vehicles')
       .delete()
-      .eq('category', 'bike');
+      .eq('category', 'car');
     
     if (deleteError) {
-      console.error('❌ Error deleting existing bikes:', deleteError.message);
+      console.error('❌ Error deleting existing cars:', deleteError.message);
       return;
     }
     
-    console.log('✅ Cleared all existing bikes');
+    console.log('✅ Cleared all existing cars');
     
-    // Step 2: Insert all new bikes
-    console.log(`🔄 Inserting ${vehicles.length} fresh bikes to Supabase...`);
+    // Step 2: Insert all new cars
+    console.log(`🔄 Inserting ${vehicles.length} fresh cars to Supabase...`);
     
     const { data, error: insertError } = await supabase
       .from('vehicles')
@@ -520,22 +554,22 @@ async function replaceAllBikesInSupabase(vehicles) {
       console.error('❌ Supabase insert error:', insertError.message);
       console.error('Error details:', insertError);
     } else {
-      console.log(`✅ Successfully inserted ${vehicles.length} fresh bikes to Supabase`);
+      console.log(`✅ Successfully inserted ${vehicles.length} fresh cars to Supabase`);
     }
   } catch (error) {
-    console.error('❌ Replace bikes error:', error.message);
+    console.error('❌ Replace cars error:', error.message);
   }
 }
 
 // Main execution
 async function main() {
-  console.log('🌍 Starting complete bike scraper...');
+  console.log('🌍 Starting complete car scraper...');
   
-  const vehicles = await scrapeAllBikes();
+  const vehicles = await scrapeAllCars();
   
   if (vehicles.length > 0) {
-    await replaceAllBikesInSupabase(vehicles);
-    console.log('✅ Complete scraping finished successfully!');
+    await replaceAllCarsInSupabase(vehicles);
+    console.log('✅ Complete car scraping finished successfully!');
   } else {
     console.log('❌ No vehicles scraped');
   }
@@ -546,4 +580,4 @@ if (require.main === module) {
   main().catch(console.error);
 }
 
-module.exports = { scrapeAllBikes, main };
+module.exports = { scrapeAllCars, main };
