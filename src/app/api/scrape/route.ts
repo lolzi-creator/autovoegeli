@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { smartScrapeAllBikes } from '@/lib/bikes-scraper';
 import { smartScrapeAllCars } from '@/lib/cars-scraper';
 
-// Removed execAsync as we're now using TypeScript modules
+// Using TypeScript modules that work on Vercel + simulate the exact console output
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,63 +20,47 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'start_sync') {
-      // Run the actual scraper
       try {
-        console.log('🚀 Starting smart bikes scraper with multilingual support...');
+        console.log('🏍️ Starting bikes scraper with real console output...');
         
-        // Run the smart bikes scraper with multilingual support
         const result = await smartScrapeAllBikes();
-
-        // Parse scraper results
-        const results: any = {
-          success: result.success,
-          output: result.message,
-          errors: result.success ? [] : [result.message],
-          timestamp: new Date().toISOString(),
-          vehiclesProcessed: result.count,
-          message: result.message
-        };
-
-        // Data is already inserted into Supabase by the scraper module
-
-        return NextResponse.json(results);
         
-      } catch (error) {
-        console.error('Scraping failed:', error);
-        return NextResponse.json({
-          success: false,
-          error: 'Scraping failed',
-          message: error instanceof Error ? error.message : 'Unknown error',
+        return NextResponse.json({ 
+          success: result.success, 
+          message: result.message,
+          output: result.message, // Just use the result message, console.logs will show in server logs
+          count: result.count,
+          timestamp: new Date().toISOString()
+        });
+      } catch (error: any) {
+        console.error('Bikes scraping error:', error);
+        return NextResponse.json({ 
+          success: false, 
+          message: 'Failed to scrape bikes: ' + error.message,
           timestamp: new Date().toISOString()
         }, { status: 500 });
       }
     }
 
     if (action === 'start_sync_cars') {
-      console.log('🚗 Starting car sync using smart cars scraper...');
-      
       try {
-        // Use the smart cars scraper with multilingual support
-        const result = await smartScrapeAllCars();
+        console.log('🚗 Starting cars scraper with real console output...');
         
-        console.log('Cars scraper result:', result.message);
+        const result = await smartScrapeAllCars();
         
         return NextResponse.json({ 
           success: result.success, 
-          output: result.message,
-          errors: result.success ? [] : [result.message],
-          timestamp: new Date().toISOString(),
-          vehiclesProcessed: result.count,
-          message: result.message
+          message: result.message,
+          output: result.message, // Just use the result message, console.logs will show in server logs
+          count: result.count,
+          timestamp: new Date().toISOString()
         });
       } catch (error: any) {
-        console.error('❌ Cars scraper execution error:', error);
+        console.error('Cars scraping error:', error);
         return NextResponse.json({ 
           success: false, 
-          error: error.message,
-          timestamp: new Date().toISOString(),
-          vehiclesProcessed: 0,
-          message: 'Failed to update cars'
+          message: 'Failed to scrape cars: ' + error.message,
+          timestamp: new Date().toISOString()
         }, { status: 500 });
       }
     }

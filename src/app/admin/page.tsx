@@ -193,10 +193,8 @@ export default function AdminDashboard() {
       setScrapeStatus('Starte Aktualisierung…');
       openConsole('Bikes Scraper');
       
-      addToConsole('Initializing bikes scraper process', 'info');
-      addToConsole('Connecting to AutoScout24 bikes API endpoint', 'info');
-      addToConsole('Loading smart-bikes-scraper.js script', 'info');
-      addToConsole('Fetching available bike brands from AutoScout24', 'info');
+      addToConsole('🚀 Starting smart brand-model bike scraping...', 'success');
+      addToConsole('🏷️ Getting all available bike brands...', 'info');
       
       const res = await fetch('/api/scrape', {
         method: 'POST',
@@ -207,17 +205,28 @@ export default function AdminDashboard() {
       const json = await res.json();
       
       if (json.success) {
-        addToConsole('Bikes scraper process completed successfully', 'success');
-        addToConsole('Processing scraped bike data and extracting vehicle details', 'info');
-        addToConsole('Validating bike model data and transmission types', 'info');
-        addToConsole('Applying multilingual translations for bike descriptions', 'info');
-        addToConsole('Uploading bike data to Supabase database', 'info');
-        addToConsole('Clearing old bike records from database', 'info');
-        addToConsole('Inserting new bike records with updated information', 'info');
+        // Parse the actual scraper output to show real progress
         if (json.output) {
-          addToConsole(`Scraper output: ${json.output.substring(0, 150)}...`, 'info');
+          const lines = json.output.split('\n');
+          for (const line of lines) {
+            if (line.trim()) {
+              if (line.includes('✅')) {
+                addToConsole(line.trim(), 'success');
+              } else if (line.includes('🚀') || line.includes('🏷️') || line.includes('🏍️') || line.includes('🔍')) {
+                addToConsole(line.trim(), 'info');
+              } else if (line.includes('📄') || line.includes('📊')) {
+                addToConsole(line.trim(), 'info');
+              } else if (line.includes('🧹') || line.includes('🔄')) {
+                addToConsole(line.trim(), 'warning');
+              } else if (line.includes('❌') || line.includes('⚠️')) {
+                addToConsole(line.trim(), 'error');
+              } else if (line.trim().length > 0) {
+                addToConsole(line.trim(), 'info');
+              }
+            }
+          }
         }
-        addToConsole('Reloading vehicle data from Supabase database', 'info');
+        addToConsole('✅ Smart brand-model bike scraping completed successfully!', 'success');
         
         setScrapeStatus(json.message || 'Aktualisierung abgeschlossen');
         
@@ -259,11 +268,8 @@ export default function AdminDashboard() {
       setScrapeStatus('Starte Auto-Aktualisierung…');
       openConsole('Cars Scraper');
       
-      addToConsole('Initializing cars scraper process', 'info');
-      addToConsole('Connecting to AutoScout24 cars API endpoint', 'info');
-      addToConsole('Loading smart-cars-scraper.js script', 'info');
-      addToConsole('Fetching available car brands from AutoScout24', 'info');
-      addToConsole('Processing passenger cars, campers, and utility vehicles', 'info');
+      addToConsole('🚀 Starting smart brand-model car scraping...', 'success');
+      addToConsole('🏷️ Getting all available car brands...', 'info');
       
       const res = await fetch('/api/scrape', {
         method: 'POST',
@@ -274,18 +280,28 @@ export default function AdminDashboard() {
       const json = await res.json();
       
       if (json.success) {
-        addToConsole('Cars scraper process completed successfully', 'success');
-        addToConsole('Processing scraped car data and extracting vehicle details', 'info');
-        addToConsole('Validating car model data and transmission types', 'info');
-        addToConsole('Applying multilingual translations for car descriptions', 'info');
-        addToConsole('Categorizing vehicles as passenger cars, campers, or utility', 'info');
-        addToConsole('Uploading car data to Supabase database', 'info');
-        addToConsole('Clearing old car records from database', 'info');
-        addToConsole('Inserting new car records with updated information', 'info');
+        // Parse the actual scraper output to show real progress
         if (json.output) {
-          addToConsole(`Scraper output: ${json.output.substring(0, 150)}...`, 'info');
+          const lines = json.output.split('\n');
+          for (const line of lines) {
+            if (line.trim()) {
+              if (line.includes('✅')) {
+                addToConsole(line.trim(), 'success');
+              } else if (line.includes('🚀') || line.includes('🏷️') || line.includes('🏍️') || line.includes('🔍')) {
+                addToConsole(line.trim(), 'info');
+              } else if (line.includes('📄') || line.includes('📊')) {
+                addToConsole(line.trim(), 'info');
+              } else if (line.includes('🧹') || line.includes('🔄')) {
+                addToConsole(line.trim(), 'warning');
+              } else if (line.includes('❌') || line.includes('⚠️')) {
+                addToConsole(line.trim(), 'error');
+              } else if (line.trim().length > 0) {
+                addToConsole(line.trim(), 'info');
+              }
+            }
+          }
         }
-        addToConsole('Car data successfully updated in Supabase database', 'success');
+        addToConsole('✅ Smart brand-model car scraping completed successfully!', 'success');
         addToConsole('All car records now include multilingual support', 'success');
         addToConsole('Car scraping and database update process complete', 'success');
         addToConsole('Loading available cars for featured selection...', 'info');

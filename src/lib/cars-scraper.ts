@@ -122,87 +122,53 @@ function extractMileage(rawMileage: any): number {
   return (mileage >= 0 && mileage <= 999999) ? mileage : 0;
 }
 
-// Step 1: Get all available car brands from AutoScout24 (EXACT COPY)
-async function getAllCarBrands(): Promise<string[]> {
+// Step 1: Get all available car brands from AutoScout24 (FULLY DYNAMIC like working Node.js)
+async function getAllCarBrands(): Promise<any[]> {
   console.log('🏷️ Getting all available car brands...');
   
   try {
-    // Use the main cars search page
     const html = await fetchPage('https://www.autoscout24.ch/de/hci/v2/5571/search');
     
-    // Extract brands from the page - look for common patterns
-    let allBrands = new Set<string>();
+    // Extract brand options from the makeKey select dropdown (same method as working Node.js)
+    const brandSelectMatch = html.match(/<select[^>]*name=["']makeKey["'][^>]*>([\s\S]*?)<\/select>/);
     
-    // Use the exact brands available from AutoScout24 cars page
-    const availableCarBrands = [
-      'ASTON MARTIN',
-      'AUDI',
-      'CITROEN', 
-      'FORD',
-      'MERCEDES BENZ',
-      'PORSCHE',
-      'SKODA',
-      'XEV'
-    ];
+    if (!brandSelectMatch) {
+      console.log('❌ Could not find brand selector');
+      return [];
+    }
     
-    // Check which brands are actually available on the page
-    for (const brand of availableCarBrands) {
-      if (html.includes(brand)) {
-        allBrands.add(brand);
+    const brandOptions = brandSelectMatch[1].match(/<option[^>]*value=["']([^"']+)["'][^>]*>([^<]+)<\/option>/g);
+    
+    if (!brandOptions) {
+      console.log('❌ Could not find brand options');
+      return [];
+    }
+    
+    const brands = [];
+    for (const option of brandOptions) {
+      const match = option.match(/value=["']([^"']+)["'][^>]*>([^<]+)/);
+      if (match && match[1] && match[2] && match[1] !== '') {
+        brands.push({
+          key: match[1].toLowerCase(),
+          name: match[2].trim().toUpperCase()
+        });
       }
     }
     
-    // Method 2: Try to extract from dropdowns/selects  
-    const selectMatches = html.match(/<option[^>]*value[^>]*>([^<]+)<\/option>/g);
-    if (selectMatches) {
-      selectMatches.forEach(match => {
-        const contentMatch = match.match(/>([^<]+)</);
-        if (contentMatch && contentMatch[1]) {
-          const content = contentMatch[1].trim();
-          // Check if it looks like a car brand (starts with capital, reasonable length)
-          if (content.length > 2 && content.length < 25 && /^[A-Z]/.test(content)) {
-            // Filter out common non-brand words and prices
-            if (!content.includes('Alle') && !content.includes('icon') && 
-                !content.includes('Filter') && !content.includes('Search') &&
-                !content.includes('CHF') && !content.includes('Preis') &&
-                !content.includes('PS:') && !content.includes('Model') &&
-                !content.includes('Jahrgang') && !content.includes('Kilometerstand') &&
-                !content.includes('Benzin') && !content.includes('Diesel') &&
-                !content.includes('Elektro') && !content.includes('Marke') &&
-                !content.includes('Personenwagen') && !content.includes('Nutzfahrzeug') &&
-                !content.includes('Wohnmobil')) {
-              allBrands.add(content);
-            }
-          }
-        }
-      });
-    }
-    
-    const brands = Array.from(allBrands).sort();
-    console.log(`✅ Found ${brands.length} car brands:`, brands.join(', '));
-    
-    // If we still don't have many brands, use a fallback list
-    if (brands.length < 5) {
-      console.log('⚠️ Using fallback brand list...');
-      const fallbackBrands = ['Audi', 'BMW', 'Mercedes-Benz', 'Volkswagen', 'Ford'];
-      return fallbackBrands;
-    }
-    
+    console.log(`✅ Found ${brands.length} car brands:`, brands.map(b => b.name).join(', '));
     return brands;
     
   } catch (error: any) {
     console.error('❌ Error getting car brands:', error.message);
-    // Return fallback brands on error
-    return ['Audi', 'BMW', 'Mercedes-Benz', 'Volkswagen', 'Ford'];
+    return [];
   }
 }
 
 // Step 2: Get all models for a specific car brand (EXACT COPY)
-async function getModelsForCarBrand(brandName: string): Promise<any[]> {
+async function getModelsForCarBrand(brandKey: string, brandName: string): Promise<any[]> {
   console.log(`🏍️ Getting models for ${brandName}...`);
   
   try {
-    const brandKey = brandName.toLowerCase().replace(/[^a-z0-9]/g, '-');
     const categories = [
       `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandKey}`, // Passenger cars
       `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandKey}&vehicleCategories=camper`, // Campers
@@ -252,7 +218,7 @@ async function getModelsForCarBrand(brandName: string): Promise<any[]> {
 }
 
 // Step 3: Scrape vehicles for a specific brand-model combination (EXACT COPY)
-async function scrapeVehiclesForCarBrandModel(brandName: string, modelName: string, modelKey: string): Promise<any[]> {
+async function scrapeVehiclesForCarBrandModel(brandKey: string, brandName: string, modelName: string, modelKey: string): Promise<any[]> {
   console.log(`🔍 Scraping ${brandName} ${modelName}...`);
   
   const vehicles = [];
@@ -260,9 +226,9 @@ async function scrapeVehiclesForCarBrandModel(brandName: string, modelName: stri
   let hasMorePages = true;
   
   const categories = [
-    { name: 'passenger', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandName.toLowerCase()}&modelKey=${modelKey}` },
-    { name: 'camper', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandName.toLowerCase()}&modelKey=${modelKey}&vehicleCategories=camper` },
-    { name: 'utility', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandName.toLowerCase()}&modelKey=${modelKey}&vehicleCategories=utility` }
+    { name: 'passenger', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandKey}&modelKey=${modelKey}` },
+    { name: 'camper', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandKey}&modelKey=${modelKey}&vehicleCategories=camper` },
+    { name: 'utility', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandKey}&modelKey=${modelKey}&vehicleCategories=utility` }
   ];
   
   for (const category of categories) {
@@ -312,7 +278,7 @@ async function scrapeVehiclesForCarBrandModel(brandName: string, modelName: stri
 }
 
 // Step 4: Scrape vehicles for a brand without specific models (EXACT COPY)
-async function scrapeVehiclesForCarBrand(brandName: string): Promise<any[]> {
+async function scrapeVehiclesForCarBrand(brandKey: string, brandName: string): Promise<any[]> {
   console.log(`🔍 Scraping all ${brandName} vehicles...`);
   
   const vehicles = [];
@@ -320,9 +286,9 @@ async function scrapeVehiclesForCarBrand(brandName: string): Promise<any[]> {
   let hasMorePages = true;
   
   const categories = [
-    { name: 'passenger', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandName.toLowerCase()}` },
-    { name: 'camper', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandName.toLowerCase()}&vehicleCategories=camper` },
-    { name: 'utility', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandName.toLowerCase()}&vehicleCategories=utility` }
+    { name: 'passenger', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandKey}` },
+    { name: 'camper', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandKey}&vehicleCategories=camper` },
+    { name: 'utility', url: `https://www.autoscout24.ch/de/hci/v2/5571/search?makeKey=${brandKey}&vehicleCategories=utility` }
   ];
   
   for (const category of categories) {
@@ -766,21 +732,23 @@ export async function smartScrapeAllCars(): Promise<{ success: boolean; message:
     const allVehicles = [];
     
     // Step 2: For each brand, get models and scrape
-    for (const brand of brands) { // Process all available brands
-      console.log(`\n🏷️ Processing brand: ${brand}`);
+    for (const brandObj of brands) { // Process all available brands
+      const brandName = brandObj.name;
+      const brandKey = brandObj.key;
+      console.log(`\n🏷️ Processing brand: ${brandName}`);
       
-      const models = await getModelsForCarBrand(brand);
+      const models = await getModelsForCarBrand(brandKey, brandName);
       
       if (models.length === 0) {
-        console.log(`⚠️ No models found for ${brand}, but checking for vehicles without model filter...`);
-        const brandVehicles = await scrapeVehiclesForCarBrand(brand);
+        console.log(`⚠️ No models found for ${brandName}, but checking for vehicles without model filter...`);
+        const brandVehicles = await scrapeVehiclesForCarBrand(brandKey, brandName);
         allVehicles.push(...brandVehicles);
       } else {
-        console.log(`📊 Found ${models.length} model(s) for ${brand} - processing all models\n`);
+        console.log(`📊 Found ${models.length} model(s) for ${brandName} - processing all models\n`);
         
         for (const model of models) {
-          console.log(`🏍️ Processing ${brand} ${model.name}`);
-          const modelVehicles = await scrapeVehiclesForCarBrandModel(brand, model.name, model.key);
+          console.log(`🏍️ Processing ${brandName} ${model.name}`);
+          const modelVehicles = await scrapeVehiclesForCarBrandModel(brandKey, brandName, model.name, model.key);
           allVehicles.push(...modelVehicles);
         }
       }
