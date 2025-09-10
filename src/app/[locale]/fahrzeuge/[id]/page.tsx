@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { 
   ArrowLeft,
-  Heart, 
   Phone, 
   MessageCircle, 
   MapPin, 
@@ -46,7 +45,6 @@ export default function VehicleDetailPage() {
   const [vehicle, setVehicle] = useState<MultilingualVehicle | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -190,12 +188,6 @@ export default function VehicleDetailPage() {
             </button>
             
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => setIsLiked(!isLiked)}
-                className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
-              >
-                <Heart className={`w-5 h-5 ${isLiked ? 'fill-current text-red-400' : 'text-gray-600'}`} />
-              </button>
               <button
                 onClick={shareVehicle}
                 className="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"

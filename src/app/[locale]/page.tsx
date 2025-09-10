@@ -1,6 +1,6 @@
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import ServiceBenefits from '@/components/ServiceBenefits';
+import OfficialDealership from '@/components/OfficialDealership';
 import VisitCta from '@/components/VisitCta';
 import SmallMapCta from '@/components/SmallMapCta';
 import Footer from '@/components/Footer';
@@ -15,7 +15,7 @@ export default function Home() {
         <Hero />
         {/* Removed heavy components for performance */}
         {/* <FeaturedGridServer locale="de" /> */}
-        <ServiceBenefits />
+        <OfficialDealership />
         <VisitCta />
         <SmallMapCta />
         {/* <Testimonials /> */}

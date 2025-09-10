@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { ArrowRight, Heart, Fuel, Calendar, Gauge, MapPin, Phone, MessageCircle, Filter, Settings, X, Eye } from 'lucide-react';
+import { ArrowRight, Fuel, Calendar, Gauge, MapPin, Phone, MessageCircle, Filter, Settings, X, Eye } from 'lucide-react';
 // Removed framer-motion for performance
 // import { motion } from 'framer-motion';
 import { loadMultilingualVehicleData, formatPriceMultilingual, formatMileageMultilingual, getMultilingualText, getVehicleTitleMultilingual, type MultilingualVehicle } from '@/lib/multilingual-vehicle-data-loader';
@@ -64,7 +64,6 @@ const VehicleCard = ({
   t: (key: string) => string;
   locale: 'de' | 'fr' | 'en';
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   return (
@@ -88,19 +87,6 @@ const VehicleCard = ({
               </span>
             </div>
           )}
-          {/* Heart Icon */}
-          <button
-            onClick={(e) => {
-            
-              e.stopPropagation();
-              setIsLiked(!isLiked);
-            }}
-            className="absolute top-3 right-3 w-9 h-9 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors backdrop-blur-sm border border-white/20"
-          >
-            <Heart 
-              className={`h-5 w-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-white'}`} 
-            />
-          </button>
         </div>
 
         {/* Mobile Info */}
@@ -165,15 +151,6 @@ const VehicleCard = ({
             </span>
           </div>
 
-          {/* Like Button */}
-          <button
-            onClick={() => setIsLiked(!isLiked)}
-            className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg"
-          >
-            <Heart className={`w-5 h-5 transition-colors ${
-              isLiked ? 'fill-red-500 text-red-500' : 'text-gray-600'
-            }`} />
-          </button>
           
           {/* Vehicle Title Overlay */}
           <div className="absolute bottom-4 left-4 right-4">
@@ -300,6 +277,7 @@ const CustomVehicleShowcase = () => {
   const [vehicles, setVehicles] = useState<MultilingualVehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [modelFilter, setModelFilter] = useState('all');
   // Bikes/Cars toggle
   const [category, setCategory] = useState<'bike' | 'car'>(() => {
     if (typeof window !== 'undefined') {
@@ -329,6 +307,18 @@ const CustomVehicleShowcase = () => {
 
   // Load and store saved state on mount, but don't apply it yet
   const [savedState, setSavedState] = useState<any>(null);
+
+  // Reset filters when category changes (to avoid showing brand filters from other category)
+  useEffect(() => {
+    setFilter('all');
+    setModelFilter('all');
+    setCurrentPage(1);
+  }, [category]);
+
+  // Reset model filter when brand filter changes
+  useEffect(() => {
+    setModelFilter('all');
+  }, [filter]);
   
   useEffect(() => {
     if (typeof window !== 'undefined' && shouldRestoreState) {
@@ -479,6 +469,8 @@ const CustomVehicleShowcase = () => {
       if (filter === 'used' && vehicle.condition !== 'used') return false;
       if (filter !== 'new' && filter !== 'used' && vehicle.brand.toLowerCase() !== filter.toLowerCase()) return false;
     }
+    // Model filter
+    if (modelFilter !== 'all' && vehicle.model.toLowerCase() !== modelFilter.toLowerCase()) return false;
 
     // Advanced filters
     if (advancedFilters.maxKilometer && vehicle.mileage > parseInt(advancedFilters.maxKilometer)) return false;
@@ -508,6 +500,7 @@ const CustomVehicleShowcase = () => {
 
   const clearAllFilters = () => {
     setFilter('all');
+    setModelFilter('all');
     setAdvancedFilters({
       maxKilometer: '',
       minPrice: '',
@@ -521,11 +514,27 @@ const CustomVehicleShowcase = () => {
 
   const hasActiveAdvancedFilters = Object.values(advancedFilters).some(value => value !== '');
 
-  const brands = Array.from(new Set(vehicles.map(v => v.brand)));
+  // Get brands filtered by current category
+  const brands = Array.from(new Set(
+    vehicles
+      .filter(v => v.category === category)
+      .map(v => v.brand)
+  ));
+
+  // Get models filtered by current category and selected brand
+  const models = Array.from(new Set(
+    vehicles
+      .filter(v => v.category === category)
+      .filter(v => filter === 'all' || filter === 'new' || filter === 'used' || v.brand.toLowerCase() === filter.toLowerCase())
+      .map(v => v.model)
+  ));
 
   // Helper function to get count for each filter
   const getFilterCount = (filterType: string) => {
     return vehicles.filter(vehicle => {
+      // Only count vehicles in the current category
+      if (vehicle.category !== category) return false;
+      
       // Apply advanced filters first
       if (advancedFilters.maxKilometer && vehicle.mileage > parseInt(advancedFilters.maxKilometer)) return false;
       if (advancedFilters.minPrice && vehicle.price < parseInt(advancedFilters.minPrice)) return false;
@@ -540,6 +549,30 @@ const CustomVehicleShowcase = () => {
       if (filterType === 'new') return vehicle.condition === 'new';
       if (filterType === 'used') return vehicle.condition === 'used';
       return vehicle.brand.toLowerCase() === filterType.toLowerCase();
+    }).length;
+  };
+
+  // Helper function to get count for each model filter
+  const getModelCount = (modelName: string) => {
+    return vehicles.filter(vehicle => {
+      // Only count vehicles in the current category
+      if (vehicle.category !== category) return false;
+      
+      // Apply current brand filter
+      if (filter !== 'all' && filter !== 'new' && filter !== 'used') {
+        if (vehicle.brand.toLowerCase() !== filter.toLowerCase()) return false;
+      }
+      
+      // Apply advanced filters
+      if (advancedFilters.maxKilometer && vehicle.mileage > parseInt(advancedFilters.maxKilometer)) return false;
+      if (advancedFilters.minPrice && vehicle.price < parseInt(advancedFilters.minPrice)) return false;
+      if (advancedFilters.maxPrice && vehicle.price > parseInt(advancedFilters.maxPrice)) return false;
+      if (advancedFilters.minYear && vehicle.year < parseInt(advancedFilters.minYear)) return false;
+      if (advancedFilters.maxYear && vehicle.year > parseInt(advancedFilters.maxYear)) return false;
+      if (advancedFilters.fuelType && vehicle.fuel !== advancedFilters.fuelType) return false;
+      if (advancedFilters.transmission && vehicle.transmission !== advancedFilters.transmission) return false;
+
+      return vehicle.model.toLowerCase() === modelName.toLowerCase();
     }).length;
   };
 
@@ -624,6 +657,38 @@ const CustomVehicleShowcase = () => {
               ))}
             </div>
 
+            {/* Model Filters - Show when a specific brand is selected */}
+            {filter !== 'all' && filter !== 'new' && filter !== 'used' && models.length > 1 && (
+              <div className="flex flex-wrap gap-2 justify-center mb-4">
+                <div className="text-sm text-gray-600 font-medium mb-2 w-full text-center">
+                  {filter} Modelle:
+                </div>
+                <button
+                  onClick={() => setModelFilter('all')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    modelFilter === 'all'
+                      ? 'bg-green-500 text-white'
+                      : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                  }`}
+                >
+                  Alle Modelle ({models.reduce((sum, model) => sum + getModelCount(model), 0)})
+                </button>
+                {models.slice(0, 8).map(model => (
+                  <button
+                    key={model}
+                    onClick={() => setModelFilter(model)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      modelFilter === model
+                        ? 'bg-green-500 text-white'
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    {model} ({getModelCount(model)})
+                  </button>
+                ))}
+              </div>
+            )}
+
             {/* Advanced Filter Toggle */}
             <div className="flex justify-center gap-3">
               <button
@@ -643,7 +708,7 @@ const CustomVehicleShowcase = () => {
                 )}
               </button>
               
-              {(filter !== 'all' || hasActiveAdvancedFilters) && (
+              {(filter !== 'all' || modelFilter !== 'all' || hasActiveAdvancedFilters) && (
                 <button
                   onClick={clearAllFilters}
                   className="flex items-center gap-2 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors"

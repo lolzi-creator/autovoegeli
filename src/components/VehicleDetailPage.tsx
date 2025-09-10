@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   ArrowLeft,
-  Heart, 
   Phone, 
   MessageCircle, 
   MapPin, 
@@ -43,7 +42,6 @@ export default function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -135,12 +133,6 @@ export default function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
             </div>
             
             <div className="flex gap-3">
-              <button
-                onClick={() => setIsLiked(!isLiked)}
-                className="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"
-              >
-                <Heart className={`w-6 h-6 ${isLiked ? 'fill-current text-red-400' : ''}`} />
-              </button>
               <button
                 onClick={shareVehicle}
                 className="w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors"

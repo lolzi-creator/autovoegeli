@@ -7,8 +7,7 @@ import {
   MapPin,
   Eye,
   Phone,
-  MessageCircle,
-  Heart
+  MessageCircle
 } from 'lucide-react';
 
 // Featured vehicles data - will be selectable from admin panel later
@@ -98,12 +97,6 @@ const VehicleCard = ({ vehicle, index }: { vehicle: Vehicle, index: number }) =>
         </span>
       </div>
       
-      {/* Heart/Favorite Button */}
-      <div className="absolute top-4 right-4">
-        <button className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:bg-white transition-colors">
-          <Heart className="h-4 w-4 text-gray-600" />
-        </button>
-      </div>
 
       {/* Vehicle Title Overlay */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">

@@ -36,17 +36,30 @@ function extractYear(rawDate) {
   const cleanDate = rawDate.replace(/[^\d\.\/\-\s]/g, '').trim();
   
   const patterns = [
-    /(\d{4})/,           // Just year
-    /(\d{2})\.(\d{4})/,  // MM.YYYY
-    /(\d{1,2})\/(\d{4})/, // M/YYYY or MM/YYYY
-    /(\d{4})-(\d{2})-(\d{2})/ // YYYY-MM-DD
+    /(\d{2})\.(\d{4})/,  // MM.YYYY (most common format like "08.2013")
+    /(\d{1,2})\/(\d{4})/, // M/YYYY or MM/YYYY  
+    /(\d{4})-(\d{2})-(\d{2})/, // YYYY-MM-DD
+    /(\d{4})/           // Just year (last to avoid false matches)
   ];
   
   for (const pattern of patterns) {
     const match = cleanDate.match(pattern);
     if (match) {
-      const year = parseInt(match[match.length - 1]);
-      if (year >= 1900 && year <= currentYear + 1) {
+      // For patterns with 2 groups, take the year (second group)
+      // For patterns with 3 groups, take the year (first group for YYYY-MM-DD, second for MM.YYYY)
+      let year;
+      if (match.length === 3) {
+        // MM.YYYY or M/YYYY format
+        year = parseInt(match[2]);
+      } else if (match.length === 4) {
+        // YYYY-MM-DD format
+        year = parseInt(match[1]);
+      } else {
+        // Just year
+        year = parseInt(match[1]);
+      }
+      
+      if (year >= 1990 && year <= currentYear + 1) {
         return year;
       }
     }
@@ -180,57 +193,78 @@ async function scrapeCarDetail(detailUrl) {
       }
     }
     
-    // Extract year from date - look for "06.2021" format
-    const yearPatterns = [
-      /Calendar icon(\d{2})\.(\d{4})/,    // "Calendar icon06.2021"
-      /(\d{2})\.(\d{4})/,                 // "06.2021"
-      /20(\d{2})/,                        // "2021"
-      /(\d{4})/                           // "2021"
-    ];
-    
+    // Extract year - handle new vehicles vs used vehicles
+    const yearSpanMatch = html.match(/Calendar icon[^>]*>.*?<span class="chakra-text[^"]*">([^<]+)<\/span>/);
     let year = new Date().getFullYear();
-    for (const pattern of yearPatterns) {
-      const match = html.match(pattern);
-      if (match) {
-        if (match[2]) {
-          const foundYear = parseInt(match[2]);
-          if (foundYear >= 1990 && foundYear <= 2025) {
-            year = foundYear;
-            break;
-          }
-        } else if (match[1]) {
-          const foundYear = parseInt(match[1]);
-          if (foundYear >= 1990 && foundYear <= 2025) {
-            year = foundYear;
-            break;
+    if (yearSpanMatch) {
+      const yearText = yearSpanMatch[1].trim();
+      if (yearText === 'Neues Fahrzeug') {
+        // New vehicle - use current year
+        year = new Date().getFullYear();
+      } else {
+        // Try to extract year from the text
+        year = extractYear(yearText);
+      }
+    } else {
+      // Fallback to old patterns
+      const yearPatterns = [
+        /Calendar icon(\d{2})\.(\d{4})/,    // "Calendar icon06.2021"
+        /(\d{2})\.(\d{4})/,                 // "06.2021"
+        /20(\d{2})/,                        // "2021"
+        /(\d{4})/                           // "2021"
+      ];
+      
+      for (const pattern of yearPatterns) {
+        const match = html.match(pattern);
+        if (match) {
+          if (match[2]) {
+            const foundYear = parseInt(match[2]);
+            if (foundYear >= 1990 && foundYear <= 2025) {
+              year = foundYear;
+              break;
+            }
+          } else if (match[1]) {
+            const foundYear = parseInt(match[1]);
+            if (foundYear >= 1990 && foundYear <= 2025) {
+              year = foundYear;
+              break;
+            }
           }
         }
       }
     }
     
-    // Extract mileage - handle HTML entities like &#x27;
-    const mileagePatterns = [
-      /Road icon([0-9&#x';]+)\s*km/,      // "Road icon16&#x27;500 km"
-      /([0-9&#x';]+)\s*km/,               // "16&#x27;500 km"
-      /(\d{1,2}&#x27;\d{3})\s*km/,       // "16&#x27;500 km" specifically
-      /([\d''\s]+)\s*km/                  // Fallback
-    ];
-    
+    // Extract mileage - first try the span pattern, then fallback
+    const mileageSpanMatch = html.match(/Road icon[^>]*>.*?<span class="chakra-text[^"]*">([^<]+)<\/span>/);
     let mileage = 0;
-    for (const pattern of mileagePatterns) {
-      const match = html.match(pattern);
-      if (match && match[1]) {
-        mileage = extractMileage(match[1]);
-        if (mileage > 0) break;
+    if (mileageSpanMatch) {
+      mileage = extractMileage(mileageSpanMatch[1]);
+    }
+    
+    // Fallback patterns if span pattern doesn't work
+    if (mileage === 0) {
+      const mileagePatterns = [
+        /Road icon([0-9&#x';]+)\s*km/,      // "Road icon16&#x27;500 km"
+        /([0-9&#x';]+)\s*km/,               // "16&#x27;500 km"
+        /(\d{1,2}&#x27;\d{3})\s*km/,       // "16&#x27;500 km" specifically
+        /([\d''\s]+)\s*km/                  // Fallback
+      ];
+      
+      for (const pattern of mileagePatterns) {
+        const match = html.match(pattern);
+        if (match && match[1]) {
+          mileage = extractMileage(match[1]);
+          if (mileage > 0) break;
+        }
       }
     }
     
-    // Extract transmission
-    const transmissionMatch = html.match(/Transmission icon([^<\n]+)/);
+    // Extract transmission - look for the span after transmission icon
+    const transmissionMatch = html.match(/Transmission icon[^>]*>.*?<span class="chakra-text[^"]*">([^<]+)<\/span>/);
     const transmission = transmissionMatch ? transmissionMatch[1].trim() : 'Schaltgetriebe manuell';
     
-    // Extract fuel type
-    const fuelMatch = html.match(/Gas station icon([^<\n]+)/);
+    // Extract fuel type - look for the span after gas station icon
+    const fuelMatch = html.match(/Gas station icon[^>]*>.*?<span class="chakra-text[^"]*">([^<]+)<\/span>/);
     const fuel = fuelMatch ? fuelMatch[1].trim() : 'Benzin';
     
     // Extract power - look for "93 PS (69 kW)" format

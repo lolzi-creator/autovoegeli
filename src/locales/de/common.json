@@ -151,6 +151,11 @@
     "less": "Weniger"
   },
   "home": {
+    "official_dealership_title": "Offizieller Händler von",
+    "official_dealership_subtitle": "Entdecken Sie unsere Premium-Marken mit exklusiven Angeboten und fachkundiger Beratung.",
+    "vehicles_available": "Fahrzeuge verfügbar",
+    "explore_all_brands": "Entdecken Sie alle unsere Marken und Fahrzeuge",
+    "view_all_vehicles": "Alle Fahrzeuge ansehen",
     "benefits_title": "Warum Auto Vögeli?",
     "benefits_subtitle": "Mehr als Verkauf – wir begleiten Sie rund um Ihr Motorrad.",
     "benefit_checked": "Geprüfte Fahrzeuge",

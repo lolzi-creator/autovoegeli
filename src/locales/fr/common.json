@@ -151,6 +151,11 @@
     "less": "Moins"
   },
   "home": {
+    "official_dealership_title": "Concessionnaire officiel de",
+    "official_dealership_subtitle": "Découvrez nos marques premium avec des offres exclusives et des conseils d'experts.",
+    "vehicles_available": "véhicules disponibles",
+    "explore_all_brands": "Explorez toutes nos marques et véhicules",
+    "view_all_vehicles": "Voir tous les véhicules",
     "benefits_title": "Pourquoi Auto Vögeli ?",
     "benefits_subtitle": "Plus que la vente – nous vous accompagnons autour de votre moto.",
     "benefit_checked": "Véhicules vérifiés",

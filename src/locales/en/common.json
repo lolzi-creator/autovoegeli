@@ -149,6 +149,11 @@
     "less": "Less"
   },
   "home": {
+    "official_dealership_title": "Official Dealer of",
+    "official_dealership_subtitle": "Discover our premium brands with exclusive offers and expert consultation.",
+    "vehicles_available": "vehicles available",
+    "explore_all_brands": "Explore all our brands and vehicles",
+    "view_all_vehicles": "View all vehicles",
     "benefits_title": "Why Auto Vögeli?",
     "benefits_subtitle": "More than sales – we support you around your motorcycle.",
     "benefit_checked": "Inspected vehicles",

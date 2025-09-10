@@ -41,7 +41,9 @@ const Hero = () => {
   useEffect(() => {
     const loadFeaturedForHero = async () => {
       try {
-        const r = await fetch('/api/settings?key=homepage_featured_vehicle_ids');
+        // Add cache busting parameter to ensure fresh data
+        const cacheBuster = Date.now();
+        const r = await fetch(`/api/settings?key=homepage_featured_vehicle_ids&t=${cacheBuster}`);
         const j = await r.json();
         const ids: string[] = Array.isArray(j?.value) ? j.value : [];
         if (ids.length === 0) return; // keep default
