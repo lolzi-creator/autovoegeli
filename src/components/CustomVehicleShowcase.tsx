@@ -642,7 +642,7 @@ const CustomVehicleShowcase = () => {
               >
                 {t('vehicles.filter_used')} ({getFilterCount('used')})
               </button>
-              {brands.slice(0, 5).map(brand => (
+              {brands.map(brand => (
                 <button
                   key={brand}
                   onClick={() => setFilter(brand)}

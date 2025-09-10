@@ -335,10 +335,35 @@ async function scrapeBikeDetail(detailUrl) {
     const guaranteeMatch = html.match(/Ab Übernahme,\s*([^<]+)/);
     const guarantee = guaranteeMatch ? guaranteeMatch[1].trim() : '12 Monate';
     
-    // Extract brand and model from title
+    // Extract brand and model from title with smart model parsing
     const titleParts = title.split(' ');
     const brand = titleParts[0] || 'Unknown';
-    const model = titleParts.slice(1).join(' ') || 'Unknown';
+    
+    // Smart model extraction - only take the first few meaningful parts
+    const extractModel = (parts, brandName) => {
+      if (parts.length <= 1) return 'Unknown';
+      
+      const modelParts = parts.slice(1); // Remove brand
+      const smartModel = [];
+      
+      for (let part of modelParts) {
+        // Stop at common specification indicators
+        if (part.includes('kW') || part.includes('PS') || part.includes('ABS') || 
+            part.includes('LED') || part.includes('TFT') || part.includes('mit') ||
+            part.includes('Display') || part.includes('35kW') || part.includes('47kW')) {
+          break;
+        }
+        
+        smartModel.push(part);
+        
+        // Stop after 3-4 meaningful parts for most bikes
+        if (smartModel.length >= 3) break;
+      }
+      
+      return smartModel.length > 0 ? smartModel.join(' ') : modelParts[0] || 'Unknown';
+    };
+    
+    const model = extractModel(titleParts, brand);
     
     // Determine condition
     const condition = year >= 2024 && mileage < 100 ? 'new' : 'used';

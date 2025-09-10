@@ -34,6 +34,7 @@
     "condition": "État",
     "new": "Neuf",
     "used": "Occasion",
+    "location": "Emplacement",
     "filter_all": "Tous",
     "filter_new": "Neuf",
     "filter_used": "Occasion",

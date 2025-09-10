@@ -3,17 +3,12 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '@/hooks/useTranslation';
+import { tfoot } from 'framer-motion/client';
 
 const OfficialDealership = () => {
   const { t, locale } = useTranslation();
   
   const brands = [
-    {
-      name: 'ZONTES',
-      logo: '/zontes.jpeg',
-      vehicleCount: 22,
-      category: 'bike'
-    },
     {
       name: 'VOGE',
       logo: '/voge.png',
@@ -21,15 +16,21 @@ const OfficialDealership = () => {
       category: 'bike'
     },
     {
-      name: 'SWM',
-      logo: '/swm.jpeg',
-      vehicleCount: 6,
+      name: 'ZONTES',
+      logo: '/zontes.jpeg',
+      vehicleCount: 22,
       category: 'bike'
     },
     {
       name: 'KOVE',
       logo: '/kove.png',
       vehicleCount: 4,
+      category: 'bike'
+    },
+    {
+      name: 'SWM',
+      logo: '/swm.jpeg',
+      vehicleCount: 6,
       category: 'bike'
     },
     {

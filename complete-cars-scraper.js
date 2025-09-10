@@ -112,52 +112,63 @@ function extractMileage(rawMileage) {
 
 // Scrape all pages of the main listing to get car URLs
 async function scrapeAllCarUrls() {
-  console.log('🔍 Scraping all car URLs from all pages...');
+  console.log('🔍 Scraping all car URLs from all pages and categories...');
   
-  const baseUrl = 'https://www.autoscout24.ch/de/hci/v2/5571/search';
+  // Define all car categories to scrape
+  const categories = [
+    { name: 'Passenger Cars', url: 'https://www.autoscout24.ch/de/hci/v2/5571/search' },
+    { name: 'Campers/Motorhomes', url: 'https://www.autoscout24.ch/de/hci/v2/5571/search?vehicleCategories=camper' },
+    { name: 'Utility/Commercial', url: 'https://www.autoscout24.ch/de/hci/v2/5571/search?vehicleCategories=utility' }
+  ];
+  
   let allCarUrls = [];
-  let page = 0;
-  let hasMorePages = true;
 
-  while (hasMorePages) {
-    try {
-      const pageUrl = page === 0 ? baseUrl : `${baseUrl}?page=${page}`;
-      console.log(`📄 Scraping page ${page + 1}: ${pageUrl}`);
-      
-      const html = await fetchPage(pageUrl);
-      
-      // Extract car URLs from the page
-      // Look for patterns like: /de/hci/v2/5571/detail/12345678
-      const urlMatches = html.match(/\/de\/hci\/v2\/5571\/detail\/\d+/g);
-      
-      if (urlMatches && urlMatches.length > 0) {
-        const pageUrls = urlMatches.map(url => `https://www.autoscout24.ch${url}`);
-        allCarUrls = allCarUrls.concat(pageUrls);
-        console.log(`✅ Found ${pageUrls.length} cars on page ${page + 1}`);
-        page++;
-      } else {
+  // Scrape each category
+  for (const category of categories) {
+    console.log(`\n🚗 Scraping category: ${category.name}`);
+    let page = 0;
+    let hasMorePages = true;
+
+    while (hasMorePages) {
+      try {
+        const pageUrl = page === 0 ? category.url : `${category.url}${category.url.includes('?') ? '&' : '?'}page=${page}`;
+        console.log(`📄 Scraping ${category.name} page ${page + 1}: ${pageUrl}`);
+        
+        const html = await fetchPage(pageUrl);
+        
+        // Extract car URLs from the page
+        // Look for patterns like: /de/hci/v2/5571/detail/12345678
+        const urlMatches = html.match(/\/de\/hci\/v2\/5571\/detail\/\d+/g);
+        
+        if (urlMatches && urlMatches.length > 0) {
+          const pageUrls = urlMatches.map(url => `https://www.autoscout24.ch${url}`);
+          allCarUrls = allCarUrls.concat(pageUrls);
+          console.log(`✅ Found ${pageUrls.length} vehicles on ${category.name} page ${page + 1}`);
+          page++;
+        } else {
+          hasMorePages = false;
+          console.log(`🏁 No more vehicles found in ${category.name}, stopping at page ${page + 1}`);
+        }
+        
+        // Safety limit to prevent infinite loops
+        if (page > 10) {
+          console.log(`⚠️ Reached page limit for ${category.name}, stopping`);
+          hasMorePages = false;
+        }
+        
+        // Add delay between requests to be respectful
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+      } catch (error) {
+        console.error(`❌ Error scraping ${category.name} page ${page + 1}:`, error.message);
         hasMorePages = false;
-        console.log(`🏁 No more cars found, stopping at page ${page + 1}`);
       }
-      
-      // Safety limit to prevent infinite loops
-      if (page > 10) {
-        console.log('⚠️ Reached page limit, stopping');
-        hasMorePages = false;
-      }
-      
-      // Add delay between requests to be respectful
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-    } catch (error) {
-      console.error(`❌ Error scraping page ${page + 1}:`, error.message);
-      hasMorePages = false;
     }
   }
   
   // Remove duplicates
   const uniqueUrls = [...new Set(allCarUrls)];
-  console.log(`🎯 Found ${uniqueUrls.length} unique car URLs across ${page} pages`);
+  console.log(`\n🎯 Found ${uniqueUrls.length} unique car URLs across all categories`);
   
   return uniqueUrls;
 }
@@ -283,9 +294,31 @@ async function scrapeCarDetail(detailUrl) {
       }
     }
     
-    // Extract body type - for cars it might be different
-    const bodyTypeMatch = html.match(/Car icon([^<\n]+)/) || html.match(/Vehicle icon([^<\n]+)/);
-    const bodyType = bodyTypeMatch ? bodyTypeMatch[1].trim() : 'Auto';
+    // Extract body type - handle different vehicle types (cars, campers, utility)
+    const bodyTypePatterns = [
+      /Car icon([^<\n]+)/,           // Regular cars
+      /Vehicle icon([^<\n]+)/,       // General vehicle
+      /Truck icon([^<\n]+)/,         // Utility vehicles
+      /Camper icon([^<\n]+)/,        // Campers/Motorhomes
+      /<span class="chakra-text css-0">([^<]+)<\/span>/  // Fallback span pattern
+    ];
+    
+    let bodyType = 'Auto';
+    for (const pattern of bodyTypePatterns) {
+      const match = html.match(pattern);
+      if (match && match[1]) {
+        const extracted = match[1].trim();
+        // Map common vehicle types
+        if (extracted.includes('Van') || extracted.includes('Transporter')) {
+          bodyType = 'Nutzfahrzeug';
+        } else if (extracted.includes('Wohnmobil') || extracted.includes('Camper') || extracted.includes('California')) {
+          bodyType = 'Wohnmobil';
+        } else if (extracted.length > 0 && extracted !== 'undefined') {
+          bodyType = extracted;
+        }
+        break;
+      }
+    }
     
     // Extract description - robust extraction that only gets real vehicle descriptions
     function extractDescription(html) {

@@ -34,6 +34,7 @@
     "condition": "Zustand",
     "new": "Neu",
     "used": "Gebraucht",
+    "location": "Standort",
     "filter_all": "Alle",
     "filter_new": "Neu",
     "filter_used": "Gebraucht",

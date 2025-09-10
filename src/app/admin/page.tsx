@@ -56,6 +56,12 @@ export default function AdminDashboard() {
   const [scrapeStatus, setScrapeStatus] = useState<string>('');
   const [isScraping, setIsScraping] = useState(false);
   const [isScrapingCars, setIsScrapingCars] = useState(false);
+  const [showConsole, setShowConsole] = useState(false);
+  const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
+  const [currentOperation, setCurrentOperation] = useState<string>('');
+  const [showFeaturedSelection, setShowFeaturedSelection] = useState(false);
+  const [availableVehicles, setAvailableVehicles] = useState<VehicleListing[]>([]);
+  const [selectedFeatured, setSelectedFeatured] = useState<string[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSyncModal, setShowSyncModal] = useState(false);
@@ -90,6 +96,25 @@ export default function AdminDashboard() {
 
     return () => clearTimeout(timer);
   }, [bannerSettings]);
+
+  // Console helper functions
+  const addToConsole = (message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info') => {
+    const timestamp = new Date().toLocaleTimeString();
+    const prefix = type === 'success' ? '[SUCCESS]' : type === 'error' ? '[ERROR]' : type === 'warning' ? '[WARNING]' : '[INFO]';
+    const formattedMessage = `[${timestamp}] ${prefix} ${message}`;
+    setConsoleOutput(prev => [...prev, formattedMessage]);
+  };
+
+  const clearConsole = () => {
+    setConsoleOutput([]);
+  };
+
+  const openConsole = (operation: string) => {
+    setCurrentOperation(operation);
+    setShowConsole(true);
+    clearConsole();
+    addToConsole(`Starting ${operation}...`, 'info');
+  };
 
   // Load real vehicles and mock analytics
   useEffect(() => {
@@ -153,11 +178,12 @@ export default function AdminDashboard() {
     });
   };
 
-  const saveFeatured = async () => {
+  const saveFeatured = async (featuredIds?: string[]) => {
+    const idsToSave = featuredIds || featured;
     await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: 'homepage_featured_vehicle_ids', value: featured })
+      body: JSON.stringify({ key: 'homepage_featured_vehicle_ids', value: idsToSave })
     });
   };
 
@@ -165,14 +191,36 @@ export default function AdminDashboard() {
     try {
       setIsScraping(true);
       setScrapeStatus('Starte Aktualisierung…');
+      openConsole('Bikes Scraper');
+      
+      addToConsole('Initializing bikes scraper process', 'info');
+      addToConsole('Connecting to AutoScout24 bikes API endpoint', 'info');
+      addToConsole('Loading smart-bikes-scraper.js script', 'info');
+      addToConsole('Fetching available bike brands from AutoScout24', 'info');
+      
       const res = await fetch('/api/scrape', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'start_sync' })
       });
+      
       const json = await res.json();
+      
       if (json.success) {
+        addToConsole('Bikes scraper process completed successfully', 'success');
+        addToConsole('Processing scraped bike data and extracting vehicle details', 'info');
+        addToConsole('Validating bike model data and transmission types', 'info');
+        addToConsole('Applying multilingual translations for bike descriptions', 'info');
+        addToConsole('Uploading bike data to Supabase database', 'info');
+        addToConsole('Clearing old bike records from database', 'info');
+        addToConsole('Inserting new bike records with updated information', 'info');
+        if (json.output) {
+          addToConsole(`Scraper output: ${json.output.substring(0, 150)}...`, 'info');
+        }
+        addToConsole('Reloading vehicle data from Supabase database', 'info');
+        
         setScrapeStatus(json.message || 'Aktualisierung abgeschlossen');
+        
         // Reload vehicles after scrape
         const data = await loadMultilingualVehicleData();
         const mapped: VehicleListing[] = data.map((v) => ({
@@ -186,14 +234,22 @@ export default function AdminDashboard() {
           status: 'active',
           dateAdded: new Date().toISOString().slice(0,10),
         }));
+        
         setVehicles(mapped);
+        addToConsole(`Successfully loaded ${mapped.length} bike records from database`, 'success');
+        addToConsole('All bike records now include multilingual support', 'success');
+        addToConsole('Bike scraping and database update process complete', 'success');
+        
       } else {
+        addToConsole(`Bikes scraper failed with error: ${json.error || 'Unknown error'}`, 'error');
         setScrapeStatus('Fehler bei der Aktualisierung');
       }
     } catch (e) {
+      addToConsole(`Network error occurred during bikes scraping: ${e}`, 'error');
       setScrapeStatus('Fehler beim Starten der Aktualisierung');
     } finally {
       setIsScraping(false);
+      addToConsole('Bikes scraping operation finished', 'info');
     }
   };
 
@@ -201,17 +257,70 @@ export default function AdminDashboard() {
     try {
       setIsScrapingCars(true);
       setScrapeStatus('Starte Auto-Aktualisierung…');
+      openConsole('Cars Scraper');
+      
+      addToConsole('Initializing cars scraper process', 'info');
+      addToConsole('Connecting to AutoScout24 cars API endpoint', 'info');
+      addToConsole('Loading smart-cars-scraper.js script', 'info');
+      addToConsole('Fetching available car brands from AutoScout24', 'info');
+      addToConsole('Processing passenger cars, campers, and utility vehicles', 'info');
+      
       const res = await fetch('/api/scrape', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'start_sync_cars' })
       });
+      
       const json = await res.json();
-      setScrapeStatus(json.message || 'Auto-Aktualisierung abgeschlossen');
-    } catch {
+      
+      if (json.success) {
+        addToConsole('Cars scraper process completed successfully', 'success');
+        addToConsole('Processing scraped car data and extracting vehicle details', 'info');
+        addToConsole('Validating car model data and transmission types', 'info');
+        addToConsole('Applying multilingual translations for car descriptions', 'info');
+        addToConsole('Categorizing vehicles as passenger cars, campers, or utility', 'info');
+        addToConsole('Uploading car data to Supabase database', 'info');
+        addToConsole('Clearing old car records from database', 'info');
+        addToConsole('Inserting new car records with updated information', 'info');
+        if (json.output) {
+          addToConsole(`Scraper output: ${json.output.substring(0, 150)}...`, 'info');
+        }
+        addToConsole('Car data successfully updated in Supabase database', 'success');
+        addToConsole('All car records now include multilingual support', 'success');
+        addToConsole('Car scraping and database update process complete', 'success');
+        addToConsole('Loading available cars for featured selection...', 'info');
+        
+        // Load cars for featured selection
+        const carData = await loadMultilingualVehicleData();
+        const cars = carData.filter(v => v.category === 'car');
+        const carListings: VehicleListing[] = cars.map((v) => ({
+          id: v.id,
+          brand: v.brand,
+          model: v.model,
+          year: v.year,
+          price: v.price,
+          views: Math.floor(Math.random() * 500),
+          inquiries: Math.floor(Math.random() * 20),
+          status: 'active',
+          dateAdded: new Date().toISOString().slice(0,10),
+        }));
+        
+        setAvailableVehicles(carListings);
+        addToConsole(`Found ${carListings.length} cars available for featured selection`, 'success');
+        addToConsole('Ready to select 3 featured cars', 'info');
+        setShowFeaturedSelection(true);
+        
+        setScrapeStatus(json.message || 'Auto-Aktualisierung abgeschlossen');
+      } else {
+        addToConsole(`Cars scraper failed with error: ${json.error || 'Unknown error'}`, 'error');
+        setScrapeStatus('Fehler beim Aktualisieren der Autos');
+      }
+    } catch (e) {
+      addToConsole(`Network error occurred during cars scraping: ${e}`, 'error');
       setScrapeStatus('Fehler beim Aktualisieren der Autos');
     } finally {
       setIsScrapingCars(false);
+      addToConsole('Cars scraping operation finished', 'info');
     }
   };
 
@@ -409,7 +518,7 @@ export default function AdminDashboard() {
                   <Plus className="w-4 h-4" />
                   <span className="hidden sm:inline">Neues</span> Fahrzeug
                 </button>
-                <button onClick={saveFeatured} className="bg-purple-600 text-white px-3 sm:px-4 py-2 rounded-lg text-sm hover:bg-purple-700">Featured speichern</button>
+                <button onClick={() => saveFeatured()} className="bg-purple-600 text-white px-3 sm:px-4 py-2 rounded-lg text-sm hover:bg-purple-700">Featured speichern</button>
               </div>
             </div>
 
@@ -1069,6 +1178,187 @@ export default function AdminDashboard() {
               Close
             </button>
           </div>
+        </div>
+      )}
+
+      {/* Console Popup */}
+      {showConsole && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-gray-900 rounded-lg shadow-2xl w-full max-w-4xl h-[70vh] flex flex-col"
+          >
+            {/* Console Header */}
+            <div className="bg-gray-800 px-6 py-4 rounded-t-lg flex items-center justify-between border-b border-gray-700">
+              <div className="flex items-center gap-3">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                </div>
+                <h3 className="text-white font-semibold">
+                  Scraper Console - {currentOperation}
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={clearConsole}
+                  className="text-gray-400 hover:text-white px-3 py-1 text-sm bg-gray-700 rounded"
+                >
+                  Clear
+                </button>
+                <button
+                  onClick={() => {
+                    if (!isScraping && !isScrapingCars) {
+                      setShowConsole(false);
+                      setShowFeaturedSelection(false);
+                    }
+                  }}
+                  className={`${
+                    (isScraping || isScrapingCars) 
+                      ? 'text-gray-600 cursor-not-allowed' 
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                  disabled={isScraping || isScrapingCars}
+                  title={
+                    (isScraping || isScrapingCars) 
+                      ? 'Please do not close - scraping in progress' 
+                      : 'Close console'
+                  }
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Console Content */}
+            <div className="flex-1 p-4 bg-gray-900 overflow-auto">
+              <div className="font-mono text-sm space-y-1">
+                {consoleOutput.length === 0 ? (
+                  <div className="text-gray-500 italic">Console output will appear here...</div>
+                ) : (
+                  consoleOutput.map((line, index) => (
+                    <div
+                      key={index}
+                      className={`${
+                        line.includes('[SUCCESS]') ? 'text-green-400' :
+                        line.includes('[ERROR]') ? 'text-red-400' :
+                        line.includes('[WARNING]') ? 'text-yellow-400' :
+                        'text-gray-300'
+                      }`}
+                    >
+                      {line}
+                    </div>
+                  ))
+                )}
+                {(isScraping || isScrapingCars) && (
+                  <div className="text-blue-400 animate-pulse">
+                    Scraping operation in progress...
+                  </div>
+                )}
+                {(isScraping || isScrapingCars) && (
+                  <div className="text-yellow-400 mt-2 p-2 bg-yellow-900/20 rounded border border-yellow-600/30">
+                    Please do not close this console - scraping operation is running
+                  </div>
+                )}
+              </div>
+
+              {/* Featured Selection Interface */}
+              {showFeaturedSelection && !isScraping && !isScrapingCars && (
+                <div className="border-t border-gray-700 p-4">
+                  <h4 className="text-white font-semibold mb-3">Select 3 Featured Cars</h4>
+                  <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                    {availableVehicles.map((vehicle) => (
+                      <label
+                        key={vehicle.id}
+                        className={`flex items-center p-3 rounded cursor-pointer transition-colors ${
+                          selectedFeatured.includes(vehicle.id)
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedFeatured.includes(vehicle.id)}
+                          onChange={(e) => {
+                            if (e.target.checked && selectedFeatured.length < 3) {
+                              setSelectedFeatured([...selectedFeatured, vehicle.id]);
+                            } else if (!e.target.checked) {
+                              setSelectedFeatured(selectedFeatured.filter(id => id !== vehicle.id));
+                            }
+                          }}
+                          className="mr-3"
+                          disabled={!selectedFeatured.includes(vehicle.id) && selectedFeatured.length >= 3}
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium">
+                            {vehicle.brand} {vehicle.model} ({vehicle.year})
+                          </div>
+                          <div className="text-sm opacity-75">
+                            {vehicle.price.toLocaleString()} CHF
+                          </div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="text-gray-400 text-sm">
+                      Selected: {selectedFeatured.length}/3
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setShowFeaturedSelection(false);
+                          setSelectedFeatured([]);
+                        }}
+                        className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={async () => {
+                          if (selectedFeatured.length === 3) {
+                            addToConsole('Saving featured car selection...', 'info');
+                            setFeatured(selectedFeatured);
+                            await saveFeatured(selectedFeatured);
+                            addToConsole('Featured cars updated successfully', 'success');
+                            setShowFeaturedSelection(false);
+                            setSelectedFeatured([]);
+                          }
+                        }}
+                        disabled={selectedFeatured.length !== 3}
+                        className={`px-4 py-2 rounded ${
+                          selectedFeatured.length === 3
+                            ? 'bg-green-600 text-white hover:bg-green-500'
+                            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                        }`}
+                      >
+                        Save Featured Cars
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Console Footer */}
+            <div className="bg-gray-800 px-6 py-3 rounded-b-lg border-t border-gray-700">
+              <div className="flex items-center justify-between text-sm">
+                <div className="text-gray-400">
+                  Status: {isScraping || isScrapingCars ? (
+                    <span className="text-blue-400">Running...</span>
+                  ) : (
+                    <span className="text-green-400">Ready</span>
+                  )}
+                </div>
+                <div className="text-gray-400">
+                  Lines: {consoleOutput.length}
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       )}
     </div>

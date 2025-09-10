@@ -44,10 +44,10 @@ export async function POST(request: NextRequest) {
     if (action === 'start_sync') {
       // Run the actual scraper
       try {
-        console.log('🚀 Starting multilingual scraper...');
+        console.log('🚀 Starting smart bikes scraper with multilingual support...');
         
-        // Run the improved multilingual scraper
-        const { stdout, stderr } = await execAsync('node improve-scraper-multilingual-fixed.js', {
+        // Run the smart bikes scraper with multilingual support
+        const { stdout, stderr } = await execAsync('node smart-bikes-scraper.js', {
           cwd: process.cwd(),
           timeout: 600000 // up to 10 minutes
         });
@@ -170,11 +170,11 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'start_sync_cars') {
-      console.log('🚗 Starting car sync using complete cars scraper...');
+      console.log('🚗 Starting car sync using smart cars scraper...');
       
       try {
-        // Use the complete cars scraper
-        const result = await execAsync('node complete-cars-scraper.js', { 
+        // Use the smart cars scraper with multilingual support
+        const result = await execAsync('node smart-cars-scraper.js', { 
           cwd: process.cwd(),
           timeout: 300000, // 5 minutes timeout for cars
           env: { ...process.env }
@@ -191,7 +191,7 @@ export async function POST(request: NextRequest) {
           errors: result.stderr ? [result.stderr] : [],
           timestamp: new Date().toISOString(),
           vehiclesProcessed: 0,
-          message: 'Successfully updated cars using complete scraper'
+          message: 'Successfully updated cars using smart scraper with multilingual support'
         });
       } catch (error: any) {
         console.error('❌ Cars scraper execution error:', error);

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { X, ArrowRight, Star, Clock, Gift, Zap, Tag, Sparkles } from 'lucide-react';
+import { ArrowRight, Star, Clock, Gift, Zap, Tag, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { CURRENT_BANNER } from '@/lib/banner-config';
@@ -174,16 +174,6 @@ const ActionBox: React.FC<ActionBoxProps> = ({ className = '', isMobile = false 
               </div>
             </div>
             
-            {/* Dismiss button */}
-            {bannerConfig.dismissible && (
-              <button
-                onClick={handleDismiss}
-                className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200 text-gray-400 hover:text-gray-600"
-                aria-label="Schließen"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
           </div>
 
           {/* Content */}
