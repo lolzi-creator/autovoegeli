@@ -6,20 +6,38 @@ import { supabaseService } from './supabase';
 async function fetchPage(url: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
     try {
+      console.log(`🌐 Fetching: ${url}`);
+      
       const response = await fetch(url, { 
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'de-CH,de;q=0.9,en;q=0.8',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'DNT': '1',
+          'Connection': 'keep-alive',
+          'Upgrade-Insecure-Requests': '1'
         }
       });
+      
+      console.log(`📊 Response status: ${response.status} for ${url}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.text();
+      console.log(`📄 Received ${data.length} characters from ${url}`);
+      
+      // Check if we got an error page or unexpected content
+      if (data.includes('Access Denied') || data.includes('Blocked') || data.includes('captcha')) {
+        throw new Error('Request blocked by AutoScout24');
+      }
+      
       resolve(data);
     } catch (error: any) {
-      reject(new Error('Request timeout or network error'));
+      console.error(`❌ Error fetching ${url}:`, error.message);
+      reject(new Error(`Request failed for ${url}: ${error.message}`));
     }
   });
 }
