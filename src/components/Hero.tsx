@@ -20,13 +20,51 @@ const Hero = () => {
   const [currentBikeIndex, setCurrentBikeIndex] = useState(0);
   const { t, locale } = useTranslation();
 
-  // Load real vehicle data
+  // Load default vehicle data from Supabase
   useEffect(() => {
     const loadVehicles = async () => {
       try {
-        const data = await loadRealVehicleData();
-        // Take first 3 vehicles for hero showcase
-        setVehicles(data.slice(0, 3));
+        const data = await loadMultilingualVehicleData();
+        // Take first 3 bikes for hero showcase
+        const bikes = data.filter(v => v.category === 'bike').slice(0, 3);
+        // Convert to ScrapedVehicle format for compatibility
+        const mapped: ScrapedVehicle[] = bikes.map((v: MultilingualVehicle) => ({
+          id: v.id,
+          title: v.title,
+          brand: v.brand,
+          model: v.model,
+          year: v.year,
+          price: v.price,
+          mileage: v.mileage,
+          fuel: v.fuel,
+          transmission: v.transmission,
+          power: v.power,
+          bodyType: v.bodyType,
+          color: v.color,
+          images: v.images,
+          description: v.description,
+          features: v.features,
+          location: v.location,
+          dealer: v.dealer,
+          url: v.url,
+          condition: v.condition,
+          firstRegistration: v.firstRegistration,
+          doors: v.doors,
+          seats: v.seats,
+          co2Emission: v.co2Emission,
+          consumption: v.consumption,
+          fahrzeugbeschreibung: '',
+          equipment: v.features,
+          warranty: v.warranty,
+          warrantyDetails: v.warrantyDetails,
+          warrantyMonths: v.warrantyMonths,
+          mfk: v.mfk,
+          displacement: v.displacement as any,
+          drive: v.drive,
+          vehicleAge: v.vehicleAge,
+          pricePerYear: v.pricePerYear,
+        }));
+        setVehicles(mapped);
         setLoading(false);
       } catch (error) {
         console.error('Error loading vehicles for hero:', error);

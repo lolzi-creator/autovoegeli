@@ -20,16 +20,18 @@ body {
   background-color: #ffffff;
   color: #0f172a;
   line-height: 1.6;
-  /* Improve performance */
+  /* Improve performance - only hide horizontal overflow */
   overflow-x: hidden;
-  will-change: scroll-position;
+  overflow-y: auto;
 }
 
-/* Hide scrollbars utility */
+/* Hide scrollbars utility - only for horizontal scrolling containers */
 .scrollbar-hide {
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none;
   scrollbar-width: none;
+  /* Ensure only horizontal scroll is affected */
+  overflow-y: visible;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -277,11 +279,3 @@ html, body {
   }
 }
 
-/* Hide scrollbars for image thumbnail strips */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
