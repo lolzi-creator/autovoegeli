@@ -56,9 +56,8 @@ export default function AdminDashboard() {
   const [scrapeStatus, setScrapeStatus] = useState<string>('');
   const [isScraping, setIsScraping] = useState(false);
   const [isScrapingCars, setIsScrapingCars] = useState(false);
-  const [showConsole, setShowConsole] = useState(false);
-  const [consoleOutput, setConsoleOutput] = useState<string[]>([]);
   const [currentOperation, setCurrentOperation] = useState<string>('');
+  const [operationStatus, setOperationStatus] = useState<string>('');
   const [showFeaturedSelection, setShowFeaturedSelection] = useState(false);
   const [availableVehicles, setAvailableVehicles] = useState<VehicleListing[]>([]);
   const [selectedFeatured, setSelectedFeatured] = useState<string[]>([]);
@@ -68,6 +67,11 @@ export default function AdminDashboard() {
   const [lastSyncTime] = useState<string | null>(null);
   const [featured, setFeatured] = useState<string[]>([]);
   const maxFeatured = 5;
+  
+  // Progress bar states
+  const [progressPercent, setProgressPercent] = useState(0);
+  const [estimatedTimeLeft, setEstimatedTimeLeft] = useState(0);
+  const [progressInterval, setProgressInterval] = useState<NodeJS.Timeout | null>(null);
   
   // Banner/Action Box Settings State
   const [bannerSettings, setBannerSettings] = useState({
@@ -98,22 +102,53 @@ export default function AdminDashboard() {
   }, [bannerSettings]);
 
   // Console helper functions
-  const addToConsole = (message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info') => {
-    const timestamp = new Date().toLocaleTimeString();
-    const prefix = type === 'success' ? '[SUCCESS]' : type === 'error' ? '[ERROR]' : type === 'warning' ? '[WARNING]' : '[INFO]';
-    const formattedMessage = `[${timestamp}] ${prefix} ${message}`;
-    setConsoleOutput(prev => [...prev, formattedMessage]);
+  const updateStatus = (message: string) => {
+    setOperationStatus(message);
   };
 
-  const clearConsole = () => {
-    setConsoleOutput([]);
+  const startProgress = (estimatedMinutes: number) => {
+    setProgressPercent(0);
+    setEstimatedTimeLeft(estimatedMinutes * 60); // Convert to seconds
+    
+    if (progressInterval) {
+      clearInterval(progressInterval);
+    }
+    
+    const interval = setInterval(() => {
+      setProgressPercent(prev => {
+        const newPercent = Math.min(prev + (100 / (estimatedMinutes * 60)), 95); // Cap at 95% until actual completion
+        return newPercent;
+      });
+      
+      setEstimatedTimeLeft(prev => Math.max(prev - 1, 0));
+    }, 1000);
+    
+    setProgressInterval(interval);
   };
 
-  const openConsole = (operation: string) => {
+  const completeProgress = () => {
+    if (progressInterval) {
+      clearInterval(progressInterval);
+      setProgressInterval(null);
+    }
+    setProgressPercent(100);
+    setEstimatedTimeLeft(0);
+    
+    // Reset after 2 seconds
+    setTimeout(() => {
+      setProgressPercent(0);
+    }, 2000);
+  };
+
+  const formatTimeLeft = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const startOperation = (operation: string) => {
     setCurrentOperation(operation);
-    setShowConsole(true);
-    clearConsole();
-    addToConsole(`Starting ${operation}...`, 'info');
+    setOperationStatus('Starting...');
   };
 
   // Load real vehicles and mock analytics
@@ -191,42 +226,27 @@ export default function AdminDashboard() {
     try {
       setIsScraping(true);
       setScrapeStatus('Starte Aktualisierung…');
-      openConsole('Bikes Scraper');
+      startOperation('Bikes Scraper');
+      startProgress(4.5); // Start 4.5-minute progress bar for bikes
       
-      addToConsole('🚀 Starting smart brand-model bike scraping...', 'success');
-      addToConsole('🏷️ Getting all available bike brands...', 'info');
+      updateStatus('🚀 Starting smart brand-model bike scraping...');
       
-      const res = await fetch('/api/scrape', {
+      const res = await fetch('https://autovoegeli-scraper.onrender.com/scrape/bikes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'start_sync' })
+        headers: { 'Content-Type': 'application/json' }
       });
       
       const json = await res.json();
       
       if (json.success) {
-        // Parse the actual scraper output to show real progress
-        if (json.output) {
-          const lines = json.output.split('\n');
-          for (const line of lines) {
-            if (line.trim()) {
-              if (line.includes('✅')) {
-                addToConsole(line.trim(), 'success');
-              } else if (line.includes('🚀') || line.includes('🏷️') || line.includes('🏍️') || line.includes('🔍')) {
-                addToConsole(line.trim(), 'info');
-              } else if (line.includes('📄') || line.includes('📊')) {
-                addToConsole(line.trim(), 'info');
-              } else if (line.includes('🧹') || line.includes('🔄')) {
-                addToConsole(line.trim(), 'warning');
-              } else if (line.includes('❌') || line.includes('⚠️')) {
-                addToConsole(line.trim(), 'error');
-              } else if (line.trim().length > 0) {
-                addToConsole(line.trim(), 'info');
-              }
-            }
-          }
-        }
-        addToConsole('✅ Smart brand-model bike scraping completed successfully!', 'success');
+        // Simple status updates for progress
+        updateStatus('⏳ Waking up server...');
+        setTimeout(() => updateStatus('🏷️ Getting bike brands...'), 2000);
+        setTimeout(() => updateStatus('🔍 Scraping bikes...'), 10000);
+        setTimeout(() => updateStatus('🔄 Updating database...'), 120000);
+        
+        completeProgress(); // Complete the progress bar
+        updateStatus('✅ Bikes scraping completed successfully!');
         
         setScrapeStatus(json.message || 'Aktualisierung abgeschlossen');
         
@@ -245,20 +265,20 @@ export default function AdminDashboard() {
         }));
         
         setVehicles(mapped);
-        addToConsole(`Successfully loaded ${mapped.length} bike records from database`, 'success');
-        addToConsole('All bike records now include multilingual support', 'success');
-        addToConsole('Bike scraping and database update process complete', 'success');
+        updateStatus(`Successfully loaded ${mapped.length} bike records from database`);
+        updateStatus('All bike records now include multilingual support');
+        updateStatus('Bike scraping and database update process complete');
         
       } else {
-        addToConsole(`Bikes scraper failed with error: ${json.error || 'Unknown error'}`, 'error');
+        updateStatus(`Bikes scraper failed with error: ${json.error || 'Unknown error'}`);
         setScrapeStatus('Fehler bei der Aktualisierung');
       }
     } catch (e) {
-      addToConsole(`Network error occurred during bikes scraping: ${e}`, 'error');
+      updateStatus(`Network error occurred during bikes scraping: ${e}`);
       setScrapeStatus('Fehler beim Starten der Aktualisierung');
     } finally {
       setIsScraping(false);
-      addToConsole('Bikes scraping operation finished', 'info');
+      updateStatus('Bikes scraping operation finished');
     }
   };
 
@@ -266,15 +286,16 @@ export default function AdminDashboard() {
     try {
       setIsScrapingCars(true);
       setScrapeStatus('Starte Auto-Aktualisierung…');
-      openConsole('Cars Scraper');
+      startOperation('Cars Scraper');
+      startProgress(1.42); // Start 1min 25sec progress bar for cars
       
-      addToConsole('🚀 Starting smart brand-model car scraping...', 'success');
-      addToConsole('🏷️ Getting all available car brands...', 'info');
+      updateStatus('🚀 Starting smart brand-model car scraping...');
+      updateStatus('⏳ Waking up Render server (may take 30-60 seconds)...');
+      updateStatus('🏷️ Getting all available car brands...');
       
-      const res = await fetch('/api/scrape', {
+      const res = await fetch('https://autovoegeli-scraper.onrender.com/scrape/cars', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'start_sync_cars' })
+        headers: { 'Content-Type': 'application/json' }
       });
       
       const json = await res.json();
@@ -286,25 +307,25 @@ export default function AdminDashboard() {
           for (const line of lines) {
             if (line.trim()) {
               if (line.includes('✅')) {
-                addToConsole(line.trim(), 'success');
+                updateStatus(line.trim());
               } else if (line.includes('🚀') || line.includes('🏷️') || line.includes('🏍️') || line.includes('🔍')) {
-                addToConsole(line.trim(), 'info');
+                updateStatus(line.trim());
               } else if (line.includes('📄') || line.includes('📊')) {
-                addToConsole(line.trim(), 'info');
+                updateStatus(line.trim());
               } else if (line.includes('🧹') || line.includes('🔄')) {
-                addToConsole(line.trim(), 'warning');
+                updateStatus(line.trim());
               } else if (line.includes('❌') || line.includes('⚠️')) {
-                addToConsole(line.trim(), 'error');
+                updateStatus(line.trim());
               } else if (line.trim().length > 0) {
-                addToConsole(line.trim(), 'info');
+                updateStatus(line.trim());
               }
             }
           }
         }
-        addToConsole('✅ Smart brand-model car scraping completed successfully!', 'success');
-        addToConsole('All car records now include multilingual support', 'success');
-        addToConsole('Car scraping and database update process complete', 'success');
-        addToConsole('Loading available cars for featured selection...', 'info');
+        updateStatus('✅ Smart brand-model car scraping completed successfully!');
+        updateStatus('All car records now include multilingual support');
+        updateStatus('Car scraping and database update process complete');
+        updateStatus('Loading available cars for featured selection...');
         
         // Load cars for featured selection
         const carData = await loadMultilingualVehicleData();
@@ -322,21 +343,22 @@ export default function AdminDashboard() {
         }));
         
         setAvailableVehicles(carListings);
-        addToConsole(`Found ${carListings.length} cars available for featured selection`, 'success');
-        addToConsole('Ready to select 3 featured cars', 'info');
+        updateStatus(`Found ${carListings.length} cars available for featured selection`);
+        updateStatus('Ready to select 3 featured cars');
         setShowFeaturedSelection(true);
+        completeProgress(); // Complete the progress bar
         
         setScrapeStatus(json.message || 'Auto-Aktualisierung abgeschlossen');
       } else {
-        addToConsole(`Cars scraper failed with error: ${json.error || 'Unknown error'}`, 'error');
+        updateStatus(`Cars scraper failed with error: ${json.error || 'Unknown error'}`);
         setScrapeStatus('Fehler beim Aktualisieren der Autos');
       }
     } catch (e) {
-      addToConsole(`Network error occurred during cars scraping: ${e}`, 'error');
+      updateStatus(`Network error occurred during cars scraping: ${e}`);
       setScrapeStatus('Fehler beim Aktualisieren der Autos');
     } finally {
       setIsScrapingCars(false);
-      addToConsole('Cars scraping operation finished', 'info');
+      updateStatus('Cars scraping operation finished');
     }
   };
 
@@ -510,6 +532,8 @@ export default function AdminDashboard() {
                 )}
                 <p className="text-xs text-gray-600 mt-1">Ausgewählt: {featured.length}/{maxFeatured} für Startseite</p>
               </div>
+              
+              
               <div className="flex items-center gap-2 sm:gap-3">
                 <button 
                   onClick={runScraper}
@@ -1197,8 +1221,52 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Console Popup */}
-      {showConsole && (
+      {/* Progress Modal */}
+      {(isScraping || isScrapingCars) && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 p-6"
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900">{currentOperation}</h3>
+              <div className="text-sm text-gray-500">
+                {estimatedTimeLeft > 0 ? `${formatTimeLeft(estimatedTimeLeft)} remaining` : 'Completing...'}
+              </div>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="mb-4">
+              <div className="flex justify-between text-sm text-gray-600 mb-2">
+                <span>Progress</span>
+                <span>{Math.round(progressPercent)}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3">
+                <div 
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${progressPercent}%` }}
+                ></div>
+              </div>
+            </div>
+            
+            {/* Status Message */}
+            <div className="bg-gray-50 rounded-lg p-3 mb-4">
+              <div className="text-sm text-gray-700">{operationStatus}</div>
+            </div>
+            
+            {/* Warning Message */}
+            <div className="text-xs text-gray-500 text-center">
+              ⚠️ Please do not close this window during the operation
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Console removed - using clean progress modal instead */}
+      {false && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -1220,7 +1288,7 @@ export default function AdminDashboard() {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={clearConsole}
+                  onClick={() => {}}
                   className="text-gray-400 hover:text-white px-3 py-1 text-sm bg-gray-700 rounded"
                 >
                   Clear
@@ -1228,7 +1296,6 @@ export default function AdminDashboard() {
                 <button
                   onClick={() => {
                     if (!isScraping && !isScrapingCars) {
-                      setShowConsole(false);
                       setShowFeaturedSelection(false);
                     }
                   }}
@@ -1252,10 +1319,10 @@ export default function AdminDashboard() {
             {/* Console Content */}
             <div className="flex-1 p-4 bg-gray-900 overflow-auto">
               <div className="font-mono text-sm space-y-1">
-                {consoleOutput.length === 0 ? (
+                {[].length === 0 ? (
                   <div className="text-gray-500 italic">Console output will appear here...</div>
                 ) : (
-                  consoleOutput.map((line, index) => (
+                  [].map((line, index) => (
                     <div
                       key={index}
                       className={`${
@@ -1336,10 +1403,10 @@ export default function AdminDashboard() {
                       <button
                         onClick={async () => {
                           if (selectedFeatured.length === 3) {
-                            addToConsole('Saving featured car selection...', 'info');
+                            updateStatus('Saving featured car selection...');
                             setFeatured(selectedFeatured);
                             await saveFeatured(selectedFeatured);
-                            addToConsole('Featured cars updated successfully', 'success');
+                            updateStatus('Featured cars updated successfully');
                             setShowFeaturedSelection(false);
                             setSelectedFeatured([]);
                           }
@@ -1370,7 +1437,7 @@ export default function AdminDashboard() {
                   )}
                 </div>
                 <div className="text-gray-400">
-                  Lines: {consoleOutput.length}
+                  Lines: {[].length}
                 </div>
               </div>
             </div>

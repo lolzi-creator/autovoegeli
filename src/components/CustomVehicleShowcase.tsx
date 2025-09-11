@@ -93,7 +93,7 @@ const VehicleCard = ({
         <div className="p-5">
           <div className="mb-4">
             <h3 className="text-gray-900 font-bold text-xl mb-2 line-clamp-2 leading-tight">
-              {getVehicleTitleMultilingual(vehicle, locale)}t
+              {getVehicleTitleMultilingual(vehicle, locale)}
             </h3>
             <p className="text-gray-600 text-base">
               {vehicle.year} • {formatMileageMultilingual(vehicle.mileage, locale)} • {getMultilingualText(vehicle, 'fuel', locale)}
