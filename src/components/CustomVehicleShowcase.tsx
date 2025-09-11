@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { ArrowRight, Fuel, Calendar, Gauge, MapPin, Phone, MessageCircle, Filter, Settings, X, Eye } from 'lucide-react';
 // Removed framer-motion for performance
 // import { motion } from 'framer-motion';
-import { loadMultilingualVehicleData, formatPriceMultilingual, formatMileageMultilingual, getMultilingualText, getVehicleTitleMultilingual, type MultilingualVehicle } from '@/lib/multilingual-vehicle-data-loader';
+import { loadMultilingualVehicleData, formatPriceMultilingual, formatMileageMultilingual, getMultilingualText, type MultilingualVehicle } from '@/lib/multilingual-vehicle-data-loader';
 import { useTranslation } from '@/hooks/useTranslation';
 
 // WhatsApp utility function
@@ -93,7 +93,7 @@ const VehicleCard = ({
         <div className="p-5">
           <div className="mb-4">
             <h3 className="text-gray-900 font-bold text-xl mb-2 line-clamp-2 leading-tight">
-              {getVehicleTitleMultilingual(vehicle, locale)}
+              {vehicle.title}
             </h3>
             <p className="text-gray-600 text-base">
               {vehicle.year} • {formatMileageMultilingual(vehicle.mileage, locale)} • {getMultilingualText(vehicle, 'fuel', locale)}
@@ -155,7 +155,7 @@ const VehicleCard = ({
           {/* Vehicle Title Overlay */}
           <div className="absolute bottom-4 left-4 right-4">
             <h3 className="text-white font-bold text-xl mb-1 drop-shadow-lg">
-              {getVehicleTitleMultilingual(vehicle, locale)}
+              {vehicle.title}
             </h3>
             <p className="text-white/90 text-sm drop-shadow">
               {vehicle.year} • {vehicle.power}
@@ -301,6 +301,22 @@ const CustomVehicleShowcase = () => {
   });
   const [pendingScrollPosition, setPendingScrollPosition] = useState<number | null>(null);
 
+  // Scroll to filters section for pagination
+  const scrollToFilters = () => {
+    const filtersElement = document.getElementById('vehicle-filters');
+    if (filtersElement) {
+      filtersElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    } else {
+      // Fallback to top if element not found
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   // State restoration flag
   const [shouldRestoreState, setShouldRestoreState] = useState(true);
@@ -610,7 +626,7 @@ const CustomVehicleShowcase = () => {
           </p>
 
           {/* Filter Buttons */}
-          <div className="flex flex-col gap-6">
+          <div id="vehicle-filters" className="flex flex-col gap-6">
             <div className="flex justify-center gap-3 flex-wrap">
               <button
                 onClick={() => setFilter('all')}
@@ -869,7 +885,10 @@ const CustomVehicleShowcase = () => {
             {/* Mobile Pagination */}
             <div className="flex md:hidden justify-between items-center">
               <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                onClick={() => {
+                  setCurrentPage(prev => Math.max(prev - 1, 1));
+                  scrollToFilters();
+                }}
                 disabled={currentPage === 1}
                 className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
               >
@@ -884,7 +903,10 @@ const CustomVehicleShowcase = () => {
               </div>
               
               <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                onClick={() => {
+                  setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                  scrollToFilters();
+                }}
                 disabled={currentPage === totalPages}
                 className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
               >
@@ -896,7 +918,10 @@ const CustomVehicleShowcase = () => {
             {/* Desktop Pagination */}
             <div className="hidden md:flex justify-center items-center gap-2">
               <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                onClick={() => {
+                  setCurrentPage(prev => Math.max(prev - 1, 1));
+                  scrollToFilters();
+                }}
                 disabled={currentPage === 1}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
@@ -910,7 +935,10 @@ const CustomVehicleShowcase = () => {
                 Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                   <button
                     key={page}
-                    onClick={() => setCurrentPage(page)}
+                    onClick={() => {
+                      setCurrentPage(page);
+                      scrollToFilters();
+                    }}
                     className={`px-4 py-2 rounded-lg transition-colors min-w-[40px] ${
                       currentPage === page
                         ? 'bg-green-500 text-white'
@@ -925,7 +953,10 @@ const CustomVehicleShowcase = () => {
                 <>
                   {/* First page */}
                   <button
-                    onClick={() => setCurrentPage(1)}
+                    onClick={() => {
+                      setCurrentPage(1);
+                      scrollToFilters();
+                    }}
                     className={`px-4 py-2 rounded-lg transition-colors min-w-[40px] ${
                       currentPage === 1
                         ? 'bg-green-500 text-white'
@@ -945,7 +976,10 @@ const CustomVehicleShowcase = () => {
                       return (
                         <button
                           key={page}
-                          onClick={() => setCurrentPage(page)}
+                          onClick={() => {
+                            setCurrentPage(page);
+                            scrollToFilters();
+                          }}
                           className={`px-4 py-2 rounded-lg transition-colors min-w-[40px] ${
                             currentPage === page
                               ? 'bg-green-500 text-white'
@@ -965,7 +999,10 @@ const CustomVehicleShowcase = () => {
                   {/* Last page */}
                   {totalPages > 1 && (
                     <button
-                      onClick={() => setCurrentPage(totalPages)}
+                      onClick={() => {
+                        setCurrentPage(totalPages);
+                        scrollToFilters();
+                      }}
                       className={`px-4 py-2 rounded-lg transition-colors min-w-[40px] ${
                         currentPage === totalPages
                           ? 'bg-green-500 text-white'
@@ -979,7 +1016,10 @@ const CustomVehicleShowcase = () => {
               )}
               
               <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                onClick={() => {
+                  setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                  scrollToFilters();
+                }}
                 disabled={currentPage === totalPages}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >

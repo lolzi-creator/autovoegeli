@@ -23,7 +23,7 @@ import {
   X
 } from 'lucide-react';
 import { type MultilingualVehicle } from '@/lib/multilingual-vehicle-data-loader';
-import { formatPriceMultilingual, formatMileageMultilingual, loadMultilingualVehicleData, getMultilingualText, getVehicleTitleMultilingual, getVehicleDescriptionMultilingual, getVehicleFeaturesMultilingual } from '@/lib/multilingual-vehicle-data-loader';
+import { formatPriceMultilingual, formatMileageMultilingual, loadMultilingualVehicleData, getMultilingualText, getVehicleDescriptionMultilingual, getVehicleFeaturesMultilingual } from '@/lib/multilingual-vehicle-data-loader';
 import VehicleDetailTabs from '@/components/VehicleDetailTabs';
 import { useTranslation } from '@/hooks/useTranslation';
 

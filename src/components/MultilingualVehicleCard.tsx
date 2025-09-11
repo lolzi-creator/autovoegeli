@@ -60,7 +60,7 @@ export default function MultilingualVehicleCard() {
         {vehicles.map((vehicle) => (
           <div key={vehicle.id} className="bg-white rounded-lg shadow-lg p-6 border">
             <h3 className="text-xl font-bold mb-2">
-              {getVehicleTitleMultilingual(vehicle, locale as 'de' | 'fr' | 'en')}
+              {vehicle.title}
             </h3>
             
             <div className="space-y-2 mb-4">
