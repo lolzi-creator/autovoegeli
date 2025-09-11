@@ -1319,23 +1319,7 @@ export default function AdminDashboard() {
             {/* Console Content */}
             <div className="flex-1 p-4 bg-gray-900 overflow-auto">
               <div className="font-mono text-sm space-y-1">
-                {[].length === 0 ? (
-                  <div className="text-gray-500 italic">Console output will appear here...</div>
-                ) : (
-                  [].map((line, index) => (
-                    <div
-                      key={index}
-                      className={`${
-                        line.includes('[SUCCESS]') ? 'text-green-400' :
-                        line.includes('[ERROR]') ? 'text-red-400' :
-                        line.includes('[WARNING]') ? 'text-yellow-400' :
-                        'text-gray-300'
-                      }`}
-                    >
-                      {line}
-                    </div>
-                  ))
-                )}
+                <div className="text-gray-500 italic">Console has been replaced with the beautiful progress modal</div>
                 {(isScraping || isScrapingCars) && (
                   <div className="text-blue-400 animate-pulse">
                     Scraping operation in progress...
