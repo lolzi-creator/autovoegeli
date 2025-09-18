@@ -8,7 +8,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ['images.unsplash.com', 'images.autoscout24.ch', 'upload.wikimedia.org'],
+    domains: ['images.unsplash.com', 'images.autoscout24.ch', 'upload.wikimedia.org', 'lmrxsurriyfhrzntljhk.supabase.co'],
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,

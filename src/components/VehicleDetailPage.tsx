@@ -25,6 +25,7 @@ import { type ScrapedVehicle } from '@/lib/autoscout-scraper';
 import { formatPrice, formatMileage } from '@/lib/vehicle-data-loader';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ContactOptions from './ContactOptions';
 
 // WhatsApp utility function
 const createWhatsAppLink = (vehicleTitle: string, vehiclePrice: string) => {
@@ -438,34 +439,31 @@ export default function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
                     </div>
                     <div className="flex items-center gap-4">
                       <Mail className="w-6 h-6 text-gray-400" />
-                      <span className="text-lg">info@autovoegeli.ch</span>
+                      <span className="text-lg">mail@autovoegeli.ch</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <button
-                    onClick={contactDealer}
-                    className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-xl font-medium transition-colors"
-                  >
-                    <Phone className="w-5 h-5" />
-                    Jetzt anrufen
-                  </button>
+                <div className="flex justify-center">
+                  <ContactOptions variant="default" />
+                </div>
+                
+                {/* Additional WhatsApp with vehicle info */}
+                <div className="text-center">
                   <a
                     href={createWhatsAppLink(vehicle.title, formatPrice(vehicle.price))}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-xl font-medium transition-colors"
+                    className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium transition-colors"
                   >
                     <MessageCircle className="w-5 h-5" />
-                    WhatsApp senden
+                    WhatsApp mit Fahrzeug-Info senden
                   </a>
                 </div>
 
                 <div className="text-center text-gray-500">
                   <p className="text-lg font-medium mb-2">Öffnungszeiten:</p>
-                  <p>Mo-Fr: 08:00-18:00 Uhr</p>
-                  <p>Sa: 08:00-16:00 Uhr</p>
+                  <p>Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</p>
                 </div>
               </div>
             )}

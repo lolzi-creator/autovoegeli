@@ -36,7 +36,7 @@ const VisitCta = () => {
               >
                 <MessageCircle className="w-5 h-5" /> {t('home.visit_contact')}
               </a>
-              <a href="https://maps.google.com" target="_blank" className="inline-flex items-center gap-2 border-2 border-gray-300 hover:border-green-600 text-gray-700 hover:text-green-700 font-semibold px-5 py-3 rounded-xl">
+              <a href="https://maps.google.com/maps?q=Solothurnstrasse+129,+2540+Grenchen" target="_blank" className="inline-flex items-center gap-2 border-2 border-gray-300 hover:border-green-600 text-gray-700 hover:text-green-700 font-semibold px-5 py-3 rounded-xl">
                 <MapPin className="w-5 h-5" /> {t('home.visit_route')}
               </a>
             </div>

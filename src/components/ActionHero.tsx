@@ -266,11 +266,11 @@ const ActionHero = () => {
           >
             <p className="text-gray-600">
               <Calendar className="inline h-4 w-4 mr-1" />
-              Öffnungszeiten: Mo-Fr 08:00-18:00, Sa 08:00-16:00
+              Öffnungszeiten: Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30
             </p>
             <p className="text-gray-600">
               <Phone className="inline h-4 w-4 mr-1" />
-              +41 32 652 11 52 | Solothurnstrasse 129, 2540 Grenchen
+              032 652 11 66 | Solothurnstrasse 129, 2540 Grenchen
             </p>
           </motion.div>
         </div>

@@ -11,9 +11,9 @@ export default function SmallMapCta() {
         <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm grid md:grid-cols-3">
           <div className="p-6 md:p-8 bg-gray-50">
             <h3 className="text-xl font-bold text-gray-900 mb-2">{t('map.find_us_title', { default: 'So finden Sie uns' })}</h3>
-            <p className="text-gray-600 mb-4">Werkstrasse 12, 2540 Grenchen</p>
+            <p className="text-gray-600 mb-4">Solothurnstrasse 129, 2540 Grenchen</p>
             <a
-              href="https://maps.google.com"
+              href="https://maps.google.com/maps?q=Solothurnstrasse+129,+2540+Grenchen"
               target="_blank"
               className="inline-flex items-center gap-2 text-green-700 font-semibold hover:underline"
             >

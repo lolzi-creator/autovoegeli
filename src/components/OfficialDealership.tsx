@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -7,6 +7,12 @@ import { tfoot } from 'framer-motion/client';
 
 const OfficialDealership = () => {
   const { t, locale } = useTranslation();
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   const brands = [
     {
@@ -40,6 +46,26 @@ const OfficialDealership = () => {
       category: 'car' // XEV makes electric cars
     }
   ];
+
+  if (!mounted) {
+    return (
+      <section className="relative py-14 md:py-20 bg-gradient-to-b from-white via-green-50/50 to-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-96 mx-auto mb-8"></div>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {[...Array(5)].map((_, i) => (
+                  <div key={i} className="h-32 bg-gray-200 rounded-xl"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative py-14 md:py-20 bg-gradient-to-b from-white via-green-50/50 to-white overflow-hidden">
@@ -77,6 +103,7 @@ const OfficialDealership = () => {
                     fill
                     className="object-contain"
                     sizes="112px"
+                    priority={brand.name === 'XEV'}
                   />
                 </div>
               </div>
@@ -117,6 +144,7 @@ const OfficialDealership = () => {
                       fill
                       className="object-contain"
                       sizes="64px"
+                      priority={brand.name === 'XEV'}
                     />
                   </div>
                 </div>

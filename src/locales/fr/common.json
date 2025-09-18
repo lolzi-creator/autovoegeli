@@ -1,17 +1,18 @@
 {
   "navigation": {
     "vehicles": "Véhicules",
+    "rent": "Louer",
     "financing": "Financement",
     "about": "À propos",
     "contact": "Contact"
   },
   "hero": {
-    "title": "Votre voiture de rêve",
+    "title": "Votre véhicule de rêve",
     "subtitle": "vous attend",
-    "description": "Découvrez nos véhicules premium sélectionnés avec garantie de qualité, conseil transparent et service de première classe.",
+    "description": "Découvrez nos véhicules sélectionnés avec garantie de qualité, conseil transparent et service de première classe.",
     "cta_vehicles": "Découvrir les véhicules",
     "cta_consultation": "Prendre rendez-vous",
-    "badge": "Concessionnaire Premium Suisse"
+    "badge": "Auto + Motos Suisse"
   },
   "vehicles": {
     "title": "Nos véhicules",
@@ -153,7 +154,7 @@
   },
   "home": {
     "official_dealership_title": "Concessionnaire officiel de",
-    "official_dealership_subtitle": "Découvrez nos marques premium avec des offres exclusives et des conseils d'experts.",
+    "official_dealership_subtitle": "Découvrez nos derniers modèles avec des offres exclusives et des conseils d'experts.",
     "vehicles_available": "véhicules disponibles",
     "explore_all_brands": "Explorez toutes nos marques et véhicules",
     "view_all_vehicles": "Voir tous les véhicules",
@@ -185,26 +186,16 @@
     "open_in_maps": "Ouvrir l’itinéraire dans Google Maps"
   },
   "footer": {
-    "description": "Votre partenaire de confiance pour des véhicules premium en Suisse. Depuis plus de 15 ans, nous misons sur la qualité et le service.",
+    "description": "Votre partenaire pour des véhicules en Suisse.",
     "hours": "Lun–Ven 8:00-18:00, Sam 9:00-16:00",
     "legal_imprint": "Mentions légales",
     "legal_privacy": "Protection des données",
     "legal_terms": "CGV",
-    "title_services": "Services",
-    "title_company": "Entreprise",
-    "title_support": "Support",
-    "sale": "Vente de véhicules",
-    "financing": "Financement",
-    "leasing": "Leasing",
-    "service_maintenance": "Service & entretien",
+    "title_main": "Navigation",
+    "vehicles": "Véhicules",
+    "rent": "Location",
     "about": "À propos",
-    "career": "Carrière",
-    "press": "Presse",
-    "locations": "Sites",
     "contact": "Contact",
-    "faq": "FAQ",
-    "warranty": "Garantie",
-    "testdrive": "Essai",
     "copyright": "Tous droits réservés."
   },
   "banner": {
@@ -241,7 +232,7 @@
     "for_term": "Sur {term} mois",
     "request_financing": "Demander un financement",
     "why_title": "Pourquoi le financement Auto Vögeli ?",
-    "why_description": "Profitez de nos conditions équitables et de notre service personnel",
+    "why_description": "Nous travaillons avec les banques les plus fiables comme Cembra et nous nous occupons de toute la procédure",
     "quick_approval": "Réponse rapide",
     "quick_approval_desc": "Réponse de financement dans les 24 heures. Simple et sans longues attentes.",
     "low_rates": "Taux avantageux",
@@ -296,6 +287,7 @@
     "form_financing": "Financement",
     "form_trade_in": "Échange de véhicule",
     "form_maintenance": "Entretien & Service",
+    "form_rent_car": "Louer un véhicule",
     "form_placeholder": "Dites-nous comment nous pouvons vous aider...",
     "send_message": "Envoyer le message",
     "success_message": "Merci pour votre message ! Nous vous recontacterons bientôt."

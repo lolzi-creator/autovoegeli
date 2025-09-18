@@ -68,6 +68,73 @@ export default function AdminDashboard() {
   const [featured, setFeatured] = useState<string[]>([]);
   const maxFeatured = 5;
   
+  // Rental Management State
+  const [rentalCategories, setRentalCategories] = useState<{
+    id: string;
+    name: string;
+    description: string;
+    color: string;
+  }[]>([]);
+  const [rentalCars, setRentalCars] = useState<{
+    id: string;
+    name: string;
+    brand: string;
+    model: string;
+    category_id: string;
+    price_per_day: number;
+    image_url: string | null;
+    features: string[];
+    transmission: string;
+    fuel_type: string;
+    seats: number;
+    doors: number;
+    airbags: number;
+    abs: boolean;
+    air_conditioning: boolean;
+    bluetooth: boolean;
+    navigation: boolean;
+    max_weight: number | null;
+    cargo_volume: string | null;
+    engine_size: string;
+    rental_categories: {
+      id: string;
+      name: string;
+      description: string;
+      color: string;
+    };
+  }[]>([]);
+  const [showAddCategory, setShowAddCategory] = useState(false);
+  const [showAddCar, setShowAddCar] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<{id: string; name: string; description: string; color: string} | null>(null);
+  const [editingCar, setEditingCar] = useState<{
+    id: string;
+    name: string;
+    brand: string;
+    model: string;
+    category_id: string;
+    price_per_day: number;
+    image_url: string | null;
+    features: string[];
+    transmission: string;
+    fuel_type: string;
+    seats: number;
+    doors: number;
+    airbags: number;
+    abs: boolean;
+    air_conditioning: boolean;
+    bluetooth: boolean;
+    navigation: boolean;
+    max_weight: number | null;
+    cargo_volume: string | null;
+    engine_size: string;
+    rental_categories: {
+      id: string;
+      name: string;
+      description: string;
+      color: string;
+    };
+  } | null>(null);
+  
   // Progress bar states
   const [progressPercent, setProgressPercent] = useState(0);
   const [estimatedTimeLeft, setEstimatedTimeLeft] = useState(0);
@@ -203,6 +270,31 @@ export default function AdminDashboard() {
       .then(r => r.json())
       .then(res => setFeatured(Array.isArray(res?.value) ? res.value : []))
       .catch(() => {});
+  }, []);
+
+  // Load rental data
+  useEffect(() => {
+    const loadRentalData = async () => {
+      try {
+        // Load categories
+        const categoriesRes = await fetch('/api/rental/categories');
+        const categoriesData = await categoriesRes.json();
+        if (categoriesData.categories) {
+          setRentalCategories(categoriesData.categories);
+        }
+
+        // Load cars
+        const carsRes = await fetch('/api/rental/cars');
+        const carsData = await carsRes.json();
+        if (carsData.cars) {
+          setRentalCars(carsData.cars);
+        }
+      } catch (error) {
+        console.error('Error loading rental data:', error);
+      }
+    };
+
+    loadRentalData();
   }, []);
 
   const toggleFeatured = (id: string) => {
@@ -365,6 +457,7 @@ export default function AdminDashboard() {
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'vehicles', label: 'Fahrzeuge', icon: Car },
+    { id: 'rental', label: 'Mietwagen', icon: Car },
     { id: 'banner', label: 'Banner/Aktion', icon: Tag },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp },
     { id: 'seo', label: 'SEO', icon: Search },
@@ -827,6 +920,165 @@ export default function AdminDashboard() {
                         <TrendingUp className="w-4 h-4 text-blue-600" />
                       </td>
                     </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Rental Management Tab */}
+        {activeTab === 'rental' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-900">Mietwagen verwalten</h2>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowAddCategory(true)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Kategorie hinzufügen
+                </button>
+                <button
+                  onClick={() => setShowAddCar(true)}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  Fahrzeug hinzufügen
+                </button>
+              </div>
+            </div>
+
+            {/* Categories Section */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Kategorien</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {rentalCategories.map((category) => (
+                  <div key={category.id} className="border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div 
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: category.color }}
+                      />
+                      <div className="flex gap-1">
+                        <button
+                          onClick={() => setEditingCategory(category)}
+                          className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (confirm(`Are you sure you want to delete the category "${category.name}"? This will also delete all cars in this category.`)) {
+                              try {
+                                const response = await fetch(`/api/rental/categories?id=${category.id}`, { 
+                                  method: 'DELETE' 
+                                });
+                                if (response.ok) {
+                                  setRentalCategories(prev => prev.filter(c => c.id !== category.id));
+                                  setRentalCars(prev => prev.filter(c => c.category_id !== category.id));
+                                } else {
+                                  const error = await response.json();
+                                  alert(`Error deleting category: ${error.error}`);
+                                }
+                              } catch (error) {
+                                console.error('Error deleting category:', error);
+                                alert('Failed to delete category');
+                              }
+                            }
+                          }}
+                          className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <h4 className="font-semibold text-gray-900">{category.name}</h4>
+                    <p className="text-sm text-gray-600">{category.description}</p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      {rentalCars.filter(car => car.category_id === category.id).length} Fahrzeuge
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Cars Section */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Mietfahrzeuge</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left py-3 px-4 font-semibold text-gray-900">Fahrzeug</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-900">Kategorie</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-900">Preis/Tag</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-900">Sitzplätze</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-900">Getriebe</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-900">Aktionen</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rentalCars.map((car) => {
+                      return (
+                        <tr key={car.id} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="py-3 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+                                {car.image_url ? (
+                                  <img 
+                                    src={car.image_url} 
+                                    alt={car.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <Car className="w-6 h-6 text-gray-500" />
+                                )}
+                              </div>
+                              <div>
+                                <div className="font-semibold text-gray-900">{car.name}</div>
+                                <div className="text-sm text-gray-600">{car.brand} {car.model}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3 px-4">
+                            <span 
+                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-white"
+                              style={{ backgroundColor: car.rental_categories?.color || '#6b7280' }}
+                            >
+                              {car.rental_categories?.name || 'Unbekannt'}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 font-semibold text-green-600">CHF {car.price_per_day}</td>
+                          <td className="py-3 px-4">{car.seats}</td>
+                          <td className="py-3 px-4">{car.transmission}</td>
+                          <td className="py-3 px-4">
+                            <div className="flex gap-1">
+                              <button
+                                onClick={() => setEditingCar(car)}
+                                className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    await fetch(`/api/rental/cars?id=${car.id}`, { method: 'DELETE' });
+                                    setRentalCars(prev => prev.filter(c => c.id !== car.id));
+                                  } catch (error) {
+                                    console.error('Error deleting car:', error);
+                                  }
+                                }}
+                                className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -1426,6 +1678,461 @@ export default function AdminDashboard() {
               </div>
             </div>
           </motion.div>
+        </div>
+      )}
+
+      {/* Add Category Modal */}
+      {showAddCategory && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              {editingCategory ? 'Kategorie bearbeiten' : 'Neue Kategorie hinzufügen'}
+            </h3>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              const name = formData.get('name') as string;
+              const description = formData.get('description') as string;
+              const color = formData.get('color') as string;
+              
+              try {
+                if (editingCategory) {
+                  const response = await fetch('/api/rental/categories', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: editingCategory.id, name, description, color })
+                  });
+                  const data = await response.json();
+                  if (data.category) {
+                    setRentalCategories(prev => prev.map(c => 
+                      c.id === editingCategory.id ? data.category : c
+                    ));
+                  }
+                  setEditingCategory(null);
+                } else {
+                  const response = await fetch('/api/rental/categories', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description, color })
+                  });
+                  const data = await response.json();
+                  if (data.category) {
+                    setRentalCategories(prev => [...prev, data.category]);
+                  }
+                }
+                setShowAddCategory(false);
+              } catch (error) {
+                console.error('Error saving category:', error);
+              }
+            }}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    defaultValue={editingCategory?.name || ''}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Beschreibung</label>
+                  <input
+                    type="text"
+                    name="description"
+                    defaultValue={editingCategory?.description || ''}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Farbe</label>
+                  <input
+                    type="color"
+                    name="color"
+                    defaultValue={editingCategory?.color || '#3b82f6'}
+                    className="w-full h-10 border border-gray-300 rounded-lg"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddCategory(false);
+                    setEditingCategory(null);
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  {editingCategory ? 'Speichern' : 'Hinzufügen'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Car Modal */}
+      {showAddCar && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              {editingCar ? 'Fahrzeug bearbeiten' : 'Neues Fahrzeug hinzufügen'}
+            </h3>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              const carData = {
+                name: formData.get('name') as string,
+                brand: formData.get('brand') as string,
+                model: formData.get('model') as string,
+                category_id: formData.get('categoryId') as string,
+                price_per_day: parseInt(formData.get('pricePerDay') as string),
+                image_url: formData.get('image') as string || null,
+                features: (formData.get('features') as string).split(',').map(f => f.trim()).filter(f => f),
+                transmission: formData.get('transmission') as string,
+                fuel_type: formData.get('fuel') as string,
+                seats: parseInt(formData.get('seats') as string),
+                doors: parseInt(formData.get('doors') as string),
+                airbags: parseInt(formData.get('airbags') as string),
+                abs: formData.get('abs') === 'on',
+                air_conditioning: formData.get('airConditioning') === 'on',
+                bluetooth: formData.get('bluetooth') === 'on',
+                navigation: formData.get('navigation') === 'on',
+                max_weight: formData.get('maxWeight') ? parseInt(formData.get('maxWeight') as string) : null,
+                cargo_volume: formData.get('cargoVolume') as string || null,
+                engine_size: formData.get('engineSize') as string
+              };
+              
+              try {
+                if (editingCar) {
+                  const response = await fetch('/api/rental/cars', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: editingCar.id, ...carData })
+                  });
+                  const data = await response.json();
+                  if (data.car) {
+                    setRentalCars(prev => prev.map(c => c.id === editingCar.id ? data.car : c));
+                  }
+                  setEditingCar(null);
+                } else {
+                  const response = await fetch('/api/rental/cars', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(carData)
+                  });
+                  const data = await response.json();
+                  if (data.car) {
+                    setRentalCars(prev => [...prev, data.car]);
+                  }
+                }
+                setShowAddCar(false);
+              } catch (error) {
+                console.error('Error saving car:', error);
+              }
+            }}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    defaultValue={editingCar?.name || ''}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Marke</label>
+                  <input
+                    type="text"
+                    name="brand"
+                    defaultValue={editingCar?.brand || ''}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Modell</label>
+                  <input
+                    type="text"
+                    name="model"
+                    defaultValue={editingCar?.model || ''}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Kategorie</label>
+                  <select
+                    name="categoryId"
+                    defaultValue={editingCar?.category_id || ''}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Kategorie wählen</option>
+                    {rentalCategories.map(category => (
+                      <option key={category.id} value={category.id}>{category.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Preis pro Tag (CHF)</label>
+                  <input
+                    type="number"
+                    name="pricePerDay"
+                    defaultValue={editingCar?.price_per_day || ''}
+                    required
+                    min="1"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Sitzplätze</label>
+                  <input
+                    type="number"
+                    name="seats"
+                    defaultValue={editingCar?.seats || ''}
+                    required
+                    min="1"
+                    max="9"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Türen</label>
+                  <input
+                    type="number"
+                    name="doors"
+                    defaultValue={editingCar?.doors || ''}
+                    required
+                    min="2"
+                    max="5"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Airbags</label>
+                  <input
+                    type="number"
+                    name="airbags"
+                    defaultValue={editingCar?.airbags || ''}
+                    required
+                    min="1"
+                    max="12"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Getriebe</label>
+                  <select
+                    name="transmission"
+                    defaultValue={editingCar?.transmission || ''}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Getriebe wählen</option>
+                    <option value="Manuell">Manuell</option>
+                    <option value="Automatik">Automatik</option>
+                    <option value="Semi-Automatik">Semi-Automatik</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Kraftstoff</label>
+                  <select
+                    name="fuel"
+                    defaultValue={editingCar?.fuel_type || ''}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Kraftstoff wählen</option>
+                    <option value="Benzin">Benzin</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="Elektro">Elektro</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Motor (z.B. 1.0L)</label>
+                  <input
+                    type="text"
+                    name="engineSize"
+                    defaultValue={editingCar?.engine_size || ''}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Max. Gewicht (kg) - nur für Vans</label>
+                  <input
+                    type="number"
+                    name="maxWeight"
+                    defaultValue={editingCar?.max_weight || ''}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Laderaum - nur für Vans</label>
+                  <input
+                    type="text"
+                    name="cargoVolume"
+                    defaultValue={editingCar?.cargo_volume || ''}
+                    placeholder="z.B. 8.3 m³"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Features (kommagetrennt)</label>
+                  <input
+                    type="text"
+                    name="features"
+                    defaultValue={editingCar?.features?.join(', ') || ''}
+                    placeholder="z.B. Klimaanlage, Bluetooth, USB"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Fahrzeugbild</label>
+                  <div className="space-y-3">
+                    {editingCar?.image_url && (
+                      <div className="relative">
+                        <img 
+                          src={editingCar.image_url} 
+                          alt="Current car image"
+                          className="w-32 h-24 object-cover rounded-lg border border-gray-300"
+                        />
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (confirm('Are you sure you want to delete this image?')) {
+                              try {
+                                const fileName = editingCar.image_url?.split('/').pop();
+                                if (fileName) {
+                                  await fetch(`/api/rental/upload?fileName=${fileName}`, { method: 'DELETE' });
+                                  setEditingCar(prev => prev ? { ...prev, image_url: null } : null);
+                                }
+                              } catch (error) {
+                                console.error('Error deleting image:', error);
+                              }
+                            }
+                          }}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          try {
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            formData.append('carId', editingCar?.id || 'new');
+                            
+                            const response = await fetch('/api/rental/upload', {
+                              method: 'POST',
+                              body: formData
+                            });
+                            
+                            const data = await response.json();
+                            if (data.imageUrl) {
+                              if (editingCar) {
+                                setEditingCar(prev => prev ? { ...prev, image_url: data.imageUrl } : null);
+                              }
+                              // For new cars, we'll store the image URL in a hidden field
+                              const hiddenInput = document.querySelector('input[name="image"]') as HTMLInputElement;
+                              if (hiddenInput) {
+                                hiddenInput.value = data.imageUrl;
+                              }
+                            }
+                          } catch (error) {
+                            console.error('Error uploading image:', error);
+                            alert('Failed to upload image');
+                          }
+                        }
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <input type="hidden" name="image" value={editingCar?.image_url || ''} />
+                    <p className="text-xs text-gray-500">Max. 5MB, JPEG, PNG oder WebP</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Checkboxes */}
+              <div className="mt-4">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Ausstattung</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="abs"
+                      defaultChecked={editingCar?.abs || false}
+                      className="mr-2"
+                    />
+                    ABS
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="airConditioning"
+                      defaultChecked={editingCar?.air_conditioning || false}
+                      className="mr-2"
+                    />
+                    Klimaanlage
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="bluetooth"
+                      defaultChecked={editingCar?.bluetooth || false}
+                      className="mr-2"
+                    />
+                    Bluetooth
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="navigation"
+                      defaultChecked={editingCar?.navigation || false}
+                      className="mr-2"
+                    />
+                    Navigation
+                  </label>
+                </div>
+              </div>
+              
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddCar(false);
+                    setEditingCar(null);
+                  }}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                >
+                  {editingCar ? 'Speichern' : 'Hinzufügen'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

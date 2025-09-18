@@ -429,6 +429,7 @@ export default function Kontakt() {
                     <option value="finanzierung">{t('kontakt.form_financing')}</option>
                     <option value="eintausch">{t('kontakt.form_trade_in')}</option>
                     <option value="wartung">{t('kontakt.form_maintenance')}</option>
+                    <option value="auto-mieten">{t('kontakt.form_rent_car')}</option>
                   </select>
                 </div>
 

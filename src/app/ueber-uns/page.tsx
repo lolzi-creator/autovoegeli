@@ -353,7 +353,7 @@ export default function UeberUns() {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <Clock style={{ width: '20px', height: '20px', color: '#8bc442' }} />
-                  <span>Mo-Fr: 8:00-18:00</span>
+                  <span>Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</span>
                 </div>
               </div>
               <div style={{

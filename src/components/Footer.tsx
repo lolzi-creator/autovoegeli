@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Phone, Mail, Clock, ChevronDown, ChevronUp } from 'lucide-react';
+import { Phone, Mail, Clock, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
+import ContactOptions from './ContactOptions';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -31,31 +32,13 @@ const Footer = () => {
   };
 
   const footerSections = {
-    services: {
-      title: t('footer.title_services'),
+    main: {
+      title: t('footer.title_main'),
       links: [
-        { name: t('footer.sale'), href: '/fahrzeuge' },
-        { name: t('footer.financing'), href: '/finanzierung' },
-        { name: t('footer.leasing'), href: '/leasing' },
-        { name: t('footer.service_maintenance'), href: '/service' },
-      ]
-    },
-    company: {
-      title: t('footer.title_company'),
-      links: [
+        { name: t('footer.vehicles'), href: '/fahrzeuge' },
+        { name: t('footer.rent'), href: '/mieten' },
         { name: t('footer.about'), href: '/ueber-uns' },
-        { name: t('footer.career'), href: '/karriere' },
-        { name: t('footer.press'), href: '/presse' },
-        { name: t('footer.locations'), href: '/standorte' },
-      ]
-    },
-    support: {
-      title: t('footer.title_support'),
-      links: [
         { name: t('footer.contact'), href: '/kontakt' },
-        { name: t('footer.faq'), href: '/faq' },
-        { name: t('footer.warranty'), href: '/garantie' },
-        { name: t('footer.testdrive'), href: '/probefahrt' },
       ]
     }
   };
@@ -86,13 +69,19 @@ const Footer = () => {
                   <Phone className="h-5 w-5 text-green-400" />
                   <span className="text-lg font-semibold">032 652 11 66</span>
                 </div>
+                
+                {/* Contact Options */}
+                <div className="flex justify-center">
+                  <ContactOptions variant="default" />
+                </div>
+                
                 <div className="flex items-center justify-center space-x-3">
-                  <Mail className="h-5 w-5 text-green-400" />
-                  <span className="text-gray-300">info@autovoegeli.ch</span>
+                  <MapPin className="h-5 w-5 text-green-400" />
+                  <span className="text-gray-300 text-sm">Solothurnstrasse 129, 2540 Grenchen</span>
                 </div>
                 <div className="flex items-center justify-center space-x-3">
                   <Clock className="h-5 w-5 text-green-400" />
-                  <span className="text-gray-300 text-sm">Mo-Fr 8:00-18:00</span>
+                  <span className="text-gray-300 text-sm">Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</span>
                 </div>
               </div>
             </div>
@@ -153,10 +142,10 @@ const Footer = () => {
           <div className="py-16">
             
             {/* Main Content */}
-            <div className="grid lg:grid-cols-4 gap-8 mb-12">
+            <div className="grid lg:grid-cols-2 gap-8 mb-12">
               
               {/* Company Info */}
-              <div className="lg:col-span-1 space-y-6">
+              <div className="space-y-6">
                 <Link href="/" className="inline-block">
                   <Image
                     src="/logo.png"
@@ -175,37 +164,39 @@ const Footer = () => {
                     <Phone className="h-5 w-5 text-green-400" />
                     <span className="font-semibold">032 652 11 66</span>
                   </div>
+                  
+                  {/* Contact Options */}
+                  <ContactOptions variant="default" />
+                  
                   <div className="flex items-center space-x-3">
-                    <Mail className="h-5 w-5 text-green-400" />
-                    <span className="text-gray-300">info@autovoegeli.ch</span>
+                    <MapPin className="h-5 w-5 text-green-400" />
+                    <span className="text-gray-300">Solothurnstrasse 129, 2540 Grenchen</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Clock className="h-5 w-5 text-green-400" />
-                    <span className="text-gray-300">{t('footer.hours')}</span>
+                    <span className="text-gray-300">Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</span>
                   </div>
                 </div>
               </div>
 
-              {/* Links Sections */}
-              {Object.entries(footerSections).map(([key, section]) => (
-                <div key={key}>
-                  <h3 className="text-lg font-semibold text-white mb-6">
-                    {section.title}
-                  </h3>
-                  <ul className="space-y-4">
-                    {section.links.map((link) => (
-                      <li key={link.name}>
-                        <Link
-                          href={link.href}
-                          className="text-gray-300 hover:text-green-400 transition-colors duration-200"
-                        >
-                          {link.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              {/* Links Section */}
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-6">
+                  {footerSections.main.title}
+                </h3>
+                <ul className="space-y-4">
+                  {footerSections.main.links.map((link) => (
+                    <li key={link.name}>
+                      <Link
+                        href={link.href}
+                        className="text-gray-300 hover:text-green-400 transition-colors duration-200"
+                      >
+                        {link.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
             {/* Bottom Section */}

@@ -466,7 +466,7 @@ export default function VehicleDetailPage() {
                 </div>
                 <div className="flex items-center gap-2 text-sm">
                   <Mail className="w-4 h-4 text-gray-400" />
-                  <span>info@autovoegeli.ch</span>
+                  <span>mail@autovoegeli.ch</span>
                 </div>
               </div>
               <button className="w-full mt-4 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors">

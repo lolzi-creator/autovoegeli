@@ -22,13 +22,13 @@ export default function StructuredData({ type, data, breadcrumbs }: StructuredDa
         "logo": "https://autovoegeli.ch/logo.png",
         "image": "https://autovoegeli.ch/homepage.jpg",
         "telephone": "+41 XX XXX XX XX", // Replace with actual phone
-        "email": "info@autovoegeli.ch", // Replace with actual email
+        "email": "mail@autovoegeli.ch", // Replace with actual email
         "address": {
           "@type": "PostalAddress",
           "addressCountry": "CH",
-          "addressLocality": "Schweiz", // Replace with actual city
-          "postalCode": "XXXX", // Replace with actual postal code
-          "streetAddress": "Musterstrasse XX" // Replace with actual address
+          "addressLocality": "Grenchen", // Replace with actual city
+          "postalCode": "2540", // Replace with actual postal code
+          "streetAddress": "Solothurnstrasse 129"
         },
         "geo": {
           "@type": "GeoCoordinates",
@@ -36,8 +36,8 @@ export default function StructuredData({ type, data, breadcrumbs }: StructuredDa
           "longitude": "8.5417"
         },
         "openingHours": [
-          "Mo-Fr 08:00-18:00",
-          "Sa 08:00-16:00"
+          "Mo-Fr 07:30-12:00",
+          "Mo-Fr 13:30-17:30"
         ],
         "priceRange": "€€€",
         "paymentAccepted": ["Cash", "Credit Card", "Bank Transfer"],

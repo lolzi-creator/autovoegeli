@@ -290,6 +290,8 @@ const CustomVehicleShowcase = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const vehiclesPerPage = 6;
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showSortingOptions, setShowSortingOptions] = useState(false);
+  const [sortBy, setSortBy] = useState('added_desc'); // Default sort by added date descending
   const [advancedFilters, setAdvancedFilters] = useState({
     maxKilometer: '',
     minPrice: '',
@@ -498,6 +500,36 @@ const CustomVehicleShowcase = () => {
     if (advancedFilters.transmission && vehicle.transmission !== advancedFilters.transmission) return false;
 
     return true;
+  }).sort((a, b) => {
+    // Apply sorting based on sortBy state
+    switch (sortBy) {
+      case 'price_high':
+        return b.price - a.price;
+      case 'price_low':
+        return a.price - b.price;
+      case 'mileage_high':
+        return b.mileage - a.mileage;
+      case 'mileage_low':
+        return a.mileage - b.mileage;
+      case 'year_new':
+        return b.year - a.year;
+      case 'year_old':
+        return a.year - b.year;
+      case 'brand_za':
+        return b.brand.localeCompare(a.brand);
+      case 'brand_az':
+        return a.brand.localeCompare(b.brand);
+      case 'power_high':
+        return parseInt(b.power || '0') - parseInt(a.power || '0');
+      case 'power_low':
+        return parseInt(a.power || '0') - parseInt(b.power || '0');
+      case 'added_desc':
+        return new Date(b.firstRegistration || 0).getTime() - new Date(a.firstRegistration || 0).getTime();
+      case 'added_asc':
+        return new Date(a.firstRegistration || 0).getTime() - new Date(b.firstRegistration || 0).getTime();
+      default:
+        return 0;
+    }
   });
 
   // Pagination logic
@@ -517,6 +549,8 @@ const CustomVehicleShowcase = () => {
   const clearAllFilters = () => {
     setFilter('all');
     setModelFilter('all');
+    setSortBy('added_desc');
+    setShowSortingOptions(false);
     setAdvancedFilters({
       maxKilometer: '',
       minPrice: '',
@@ -531,7 +565,7 @@ const CustomVehicleShowcase = () => {
   const hasActiveAdvancedFilters = Object.values(advancedFilters).some(value => value !== '');
 
   // Get brands filtered by current category
-  const brands = Array.from(new Set(
+  const allBrands = Array.from(new Set(
     vehicles
       .filter(v => v.category === category)
       .map(v => v.brand)
@@ -591,6 +625,31 @@ const CustomVehicleShowcase = () => {
       return vehicle.model.toLowerCase() === modelName.toLowerCase();
     }).length;
   };
+
+  // Define homepage brands order (first 5 brands shown on homepage)
+  const homepageBrands = ['VOGE', 'Zontes', 'KOVE', 'SWM', 'XEV'];
+  
+  // Sort brands: homepage brands first (in order), then others by vehicle count
+  const brands = allBrands.sort((a, b) => {
+    const aIndex = homepageBrands.indexOf(a);
+    const bIndex = homepageBrands.indexOf(b);
+    
+    // If both are homepage brands, sort by homepage order
+    if (aIndex !== -1 && bIndex !== -1) {
+      return aIndex - bIndex;
+    }
+    
+    // If only a is homepage brand, a comes first
+    if (aIndex !== -1) return -1;
+    
+    // If only b is homepage brand, b comes first
+    if (bIndex !== -1) return 1;
+    
+    // If neither are homepage brands, sort by vehicle count (most first)
+    const aCount = getFilterCount(a);
+    const bCount = getFilterCount(b);
+    return bCount - aCount;
+  });
 
   return (
     <section style={{
@@ -705,6 +764,169 @@ const CustomVehicleShowcase = () => {
               </div>
             )}
 
+            {/* Sorting Toggle */}
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => setShowSortingOptions(!showSortingOptions)}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                  showSortingOptions || sortBy !== 'added_desc'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                }`}
+              >
+                <Settings className="w-4 h-4" />
+                Sortierung
+                {sortBy !== 'added_desc' && (
+                  <span className="bg-white/20 px-2 py-1 rounded-full text-xs">
+                    Aktiv
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* Sorting Options Panel */}
+            {showSortingOptions && (
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg">
+                <div className="flex items-center justify-center gap-2 mb-6">
+                  <Settings className="w-5 h-5 text-blue-500" />
+                  <h3 className="text-lg font-semibold text-gray-900">Sortierung</h3>
+                </div>
+                <div className="flex flex-wrap justify-center gap-2 max-w-5xl mx-auto">
+                  {/* Price Sorting */}
+                  <button
+                    onClick={() => setSortBy('price_high')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'price_high' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    Preis: hoch
+                  </button>
+                  <button
+                    onClick={() => setSortBy('price_low')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'price_low' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    Preis: niedrig
+                  </button>
+
+                  {/* Mileage Sorting */}
+                  <button
+                    onClick={() => setSortBy('mileage_high')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'mileage_high' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    Kilometerstand: hoch
+                  </button>
+                  <button
+                    onClick={() => setSortBy('mileage_low')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'mileage_low' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    Kilometerstand: niedrig
+                  </button>
+
+                  {/* Year Sorting */}
+                  <button
+                    onClick={() => setSortBy('year_new')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'year_new' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    Jahrgang: neu
+                  </button>
+                  <button
+                    onClick={() => setSortBy('year_old')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'year_old' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    Jahrgang: alt
+                  </button>
+
+                  {/* Brand Sorting */}
+                  <button
+                    onClick={() => setSortBy('brand_za')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'brand_za' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    Marke, Model Z-A
+                  </button>
+                  <button
+                    onClick={() => setSortBy('brand_az')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'brand_az' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    Marke, Model A-Z
+                  </button>
+
+                  {/* Power Sorting */}
+                  <button
+                    onClick={() => setSortBy('power_high')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'power_high' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    PS: hoch
+                  </button>
+                  <button
+                    onClick={() => setSortBy('power_low')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'power_low' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    PS: niedrig
+                  </button>
+
+                  {/* Added Date Sorting */}
+                  <button
+                    onClick={() => setSortBy('added_desc')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'added_desc' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    Hinzugefügt am: absteigend
+                  </button>
+                  <button
+                    onClick={() => setSortBy('added_asc')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      sortBy === 'added_asc' 
+                        ? 'bg-green-500 text-white' 
+                        : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    Hinzugefügt am: aufsteigend
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Advanced Filter Toggle */}
             <div className="flex justify-center gap-3">
               <button
@@ -724,7 +946,7 @@ const CustomVehicleShowcase = () => {
                 )}
               </button>
               
-              {(filter !== 'all' || modelFilter !== 'all' || hasActiveAdvancedFilters) && (
+              {(filter !== 'all' || modelFilter !== 'all' || hasActiveAdvancedFilters || sortBy !== 'added_desc' || showSortingOptions) && (
                 <button
                   onClick={clearAllFilters}
                   className="flex items-center gap-2 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors"

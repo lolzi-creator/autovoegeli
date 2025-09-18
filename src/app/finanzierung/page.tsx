@@ -99,8 +99,8 @@ export default function Finanzierung() {
                     margin: 0,
                     paddingLeft: '20px'
                   }}>
-                    <li>Zinssätze ab 3.9% effektiv</li>
-                    <li>Laufzeiten von 12 bis 84 Monaten</li>
+                    <li>Zinssätze ab ca. 3.9% effektiv</li>
+                    <li>Laufzeiten von ca. 12 bis 84 Monaten</li>
                     <li>Keine versteckten Gebühren</li>
                     <li>Vorzeitige Rückzahlung möglich</li>
                   </ul>
@@ -417,7 +417,7 @@ export default function Finanzierung() {
                   color: '#64748b',
                   lineHeight: '1.6'
                 }}>
-                  Profitieren Sie von attraktiven Zinssätzen ab 3.9% effektiv.
+                  Profitieren Sie von attraktiven Zinssätzen ab ca. 3.9% effektiv.
                   Faire Konditionen ohne versteckte Kosten.
                 </p>
               </div>
@@ -456,139 +456,6 @@ export default function Finanzierung() {
                 }}>
                   Wählen Sie Ihre Wunschlaufzeit zwischen 12 und 84 Monaten.
                   Angepasst an Ihr Budget.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-        {/* Process Section */}
-        <section style={{ paddingTop: '80px', paddingBottom: '80px' }}>
-          <div className="container-width section-padding">
-            <div
-              style={{ textAlign: 'center', marginBottom: '60px' }}
-            >
-              <h2 style={{
-                fontSize: '2.25rem',
-                fontWeight: '700',
-                color: '#0f172a',
-                marginBottom: '16px'
-              }}>
-                So einfach geht&apos;s
-              </h2>
-              <p style={{
-                fontSize: '1.1rem',
-                color: '#64748b',
-                maxWidth: '600px',
-                margin: '0 auto'
-              }}>
-                In nur 3 Schritten zu Ihrer Finanzierung
-              </p>
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '40px'
-            }}>
-              <div
-                style={{ textAlign: 'center' }}
-              >
-                <div style={{
-                  backgroundColor: '#8bc442',
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 24px',
-                  fontSize: '2rem',
-                  fontWeight: '700',
-                  color: 'white'
-                }}>
-                  1
-                </div>
-                <h3 style={{
-                  fontSize: '1.25rem',
-                  fontWeight: '700',
-                  color: '#0f172a',
-                  marginBottom: '16px'
-                }}>
-                  Fahrzeug wählen
-                </h3>
-                <p style={{
-                  color: '#64748b',
-                  lineHeight: '1.6'
-                }}>
-                  Finden Sie Ihr Wunschfahrzeug in unserem Sortiment oder
-                  lassen Sie sich von uns beraten.
-                </p>
-              </div>
-              <div
-                style={{ textAlign: 'center' }}
-              >
-                <div style={{
-                  backgroundColor: '#8bc442',
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 24px',
-                  fontSize: '2rem',
-                  fontWeight: '700',
-                  color: 'white'
-                }}>
-                  2
-                </div>
-                <h3 style={{
-                  fontSize: '1.25rem',
-                  fontWeight: '700',
-                  color: '#0f172a',
-                  marginBottom: '16px'
-                }}>
-                  Finanzierung beantragen
-                </h3>
-                <p style={{
-                  color: '#64748b',
-                  lineHeight: '1.6'
-                }}>
-                  Füllen Sie unseren einfachen Antrag aus.
-                  Wir prüfen Ihre Angaben diskret und schnell.
-                </p>
-              </div>
-              <div
-                style={{ textAlign: 'center' }}
-              >
-                <div style={{
-                  backgroundColor: '#8bc442',
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 24px',
-                  fontSize: '2rem',
-                  fontWeight: '700',
-                  color: 'white'
-                }}>
-                  3
-                </div>
-                <h3 style={{
-                  fontSize: '1.25rem',
-                  fontWeight: '700',
-                  color: '#0f172a',
-                  marginBottom: '16px'
-                }}>
-                  Fahrzeug übernehmen
-                </h3>
-                <p style={{
-                  color: '#64748b',
-                  lineHeight: '1.6'
-                }}>
-                  Nach der Zusage können Sie Ihr neues Fahrzeug
-                  sofort übernehmen und losfahren.
                 </p>
               </div>
             </div>

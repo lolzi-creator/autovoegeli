@@ -169,7 +169,7 @@ export class AutoScoutIntegration {
         seller: {
           name: 'Auto Vögeli',
           phone: '+41 XX XXX XX XX',
-          email: 'info@autovoegeli.ch'
+          email: 'mail@autovoegeli.ch'
         }
       },
       // Add more mock vehicles as needed

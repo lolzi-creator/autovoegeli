@@ -1,17 +1,18 @@
 {
   "navigation": {
     "vehicles": "Vehicles",
+    "rent": "Rent",
     "financing": "Financing",
     "about": "About Us",
     "contact": "Contact"
   },
   "hero": {
-    "title": "Your Dream Car",
+    "title": "Your Dream Vehicle",
     "subtitle": "is waiting for you",
-    "description": "Discover our handpicked premium vehicles with quality guarantee, transparent advice and first-class service.",
+    "description": "Discover our handpicked vehicles with quality guarantee, transparent advice and first-class service.",
     "cta_vehicles": "Discover vehicles",
     "cta_consultation": "Schedule consultation",
-    "badge": "Swiss Premium Dealership"
+    "badge": "Swiss Auto + Bikes"
   },
   "vehicles": {
     "title": "Our Vehicles",
@@ -151,7 +152,7 @@
   },
   "home": {
     "official_dealership_title": "Official Dealer of",
-    "official_dealership_subtitle": "Discover our premium brands with exclusive offers and expert consultation.",
+    "official_dealership_subtitle": "Discover our newest models with exclusive offers and expert consultation.",
     "vehicles_available": "vehicles available",
     "explore_all_brands": "Explore all our brands and vehicles",
     "view_all_vehicles": "View all vehicles",
@@ -183,26 +184,16 @@
     "open_in_maps": "Open route in Google Maps"
   },
   "footer": {
-    "description": "Your trusted partner for premium vehicles in Switzerland. For over 15 years we’ve stood for quality and service.",
+    "description": "Your partner for vehicles in Switzerland.",
     "hours": "Mon–Fri 8:00–18:00, Sat 9:00–16:00",
     "legal_imprint": "Imprint",
     "legal_privacy": "Privacy",
     "legal_terms": "Terms",
-    "title_services": "Services",
-    "title_company": "Company",
-    "title_support": "Support",
-    "sale": "Vehicle sales",
-    "financing": "Financing",
-    "leasing": "Leasing",
-    "service_maintenance": "Service & maintenance",
+    "title_main": "Navigation",
+    "vehicles": "Vehicles",
+    "rent": "Rent",
     "about": "About us",
-    "career": "Careers",
-    "press": "Press",
-    "locations": "Locations",
     "contact": "Contact",
-    "faq": "FAQ",
-    "warranty": "Warranty",
-    "testdrive": "Test drive",
     "copyright": "All rights reserved."
   },
   "banner": {
@@ -239,7 +230,7 @@
     "for_term": "For {term} months",
     "request_financing": "Request financing",
     "why_title": "Why Auto Vögeli financing?",
-    "why_description": "Benefit from our fair conditions and personal service",
+    "why_description": "We work with the most trustworthy banks like Cembra and we complete the whole setup",
     "quick_approval": "Quick approval",
     "quick_approval_desc": "Financing approval within 24 hours. Simple and without long waiting times.",
     "low_rates": "Low rates",
@@ -294,6 +285,7 @@
     "form_financing": "Financing",
     "form_trade_in": "Vehicle trade-in",
     "form_maintenance": "Maintenance & Service",
+    "form_rent_car": "Rent a vehicle",
     "form_placeholder": "Tell us how we can help you...",
     "send_message": "Send message",
     "success_message": "Thank you for your message! We will get back to you soon."

@@ -1,17 +1,18 @@
 {
   "navigation": {
     "vehicles": "Fahrzeuge",
+    "rent": "Mieten",
     "financing": "Finanzierung",
     "about": "Über uns",
     "contact": "Kontakt"
   },
   "hero": {
-    "title": "Ihr Traum-Auto",
+    "title": "Ihr Traum-Fahrzeug",
     "subtitle": "wartet auf Sie",
-    "description": "Entdecken Sie unsere handverlesenen Premium-Fahrzeuge mit Qualitätsgarantie, transparenter Beratung und erstklassigem Service.",
+    "description": "Entdecken Sie unsere handverlesenen Fahrzeuge mit Qualitätsgarantie, transparenter Beratung und erstklassigem Service.",
     "cta_vehicles": "Fahrzeuge entdecken",
     "cta_consultation": "Beratung vereinbaren",
-    "badge": "Schweizer Premium-Autohaus"
+    "badge": "Schweizerische Auto + Bikes"
   },
   "vehicles": {
     "title": "Unsere Fahrzeuge",
@@ -126,7 +127,7 @@
     "cta_title": "Bereit für Ihr nächstes Fahrzeug?",
     "cta_subtitle": "Besuchen Sie uns in unserem Showroom oder vereinbaren Sie einen persönlichen Beratungstermin.",
     "address": "Solothurnstrasse 129, 2540 Grenchen",
-    "hours": "Mo-Fr: 8:00-18:00",
+    "hours": "Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30",
     "cta_contact": "Beratung vereinbaren",
     "cta_vehicles": "Fahrzeuge ansehen"
   },
@@ -153,7 +154,7 @@
   },
   "home": {
     "official_dealership_title": "Offizieller Händler von",
-    "official_dealership_subtitle": "Entdecken Sie unsere Premium-Marken mit exklusiven Angeboten und fachkundiger Beratung.",
+    "official_dealership_subtitle": "Entdecken Sie unsere neuesten Modelle mit exklusiven Angeboten und fachkundiger Beratung.",
     "vehicles_available": "Fahrzeuge verfügbar",
     "explore_all_brands": "Entdecken Sie alle unsere Marken und Fahrzeuge",
     "view_all_vehicles": "Alle Fahrzeuge ansehen",
@@ -185,26 +186,16 @@
     "open_in_maps": "Route in Google Maps öffnen"
   },
   "footer": {
-    "description": "Ihr vertrauensvoller Partner für Premium-Fahrzeuge in der Schweiz. Seit über 15 Jahren stehen wir für Qualität und Service.",
-    "hours": "Mo-Fr 8:00-18:00, Sa 9:00-16:00",
+    "description": "Ihr Partner für Fahrzeuge in der Schweiz.",
+    "hours": "Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30",
     "legal_imprint": "Impressum",
     "legal_privacy": "Datenschutz",
     "legal_terms": "AGB",
-    "title_services": "Services",
-    "title_company": "Unternehmen",
-    "title_support": "Support",
-    "sale": "Fahrzeugverkauf",
-    "financing": "Finanzierung",
-    "leasing": "Leasing",
-    "service_maintenance": "Service & Wartung",
+    "title_main": "Navigation",
+    "vehicles": "Fahrzeuge",
+    "rent": "Mieten",
     "about": "Über uns",
-    "career": "Karriere",
-    "press": "Presse",
-    "locations": "Standorte",
     "contact": "Kontakt",
-    "faq": "FAQ",
-    "warranty": "Garantie",
-    "testdrive": "Probefahrt",
     "copyright": "Alle Rechte vorbehalten."
   },
   "banner": {
@@ -223,8 +214,8 @@
     "calculator_description": "Berechnen Sie schnell und einfach Ihre monatliche Rate. Passen Sie die Parameter an Ihre Bedürfnisse an.",
     "fair_conditions": "Faire Konditionen",
     "conditions_list": [
-      "Zinssätze ab 3.9% effektiv",
-      "Laufzeiten von 12 bis 84 Monaten",
+      "Zinssätze ab ca. 3.9% effektiv",
+      "Laufzeiten von ca. 12 bis 84 Monaten",
       "Keine versteckten Gebühren",
       "Vorzeitige Rückzahlung möglich"
     ],
@@ -241,11 +232,11 @@
     "for_term": "Bei {term} Monaten Laufzeit",
     "request_financing": "Finanzierung anfragen",
     "why_title": "Warum Auto Vögeli Finanzierung?",
-    "why_description": "Profitieren Sie von unseren fairen Konditionen und dem persönlichen Service",
+    "why_description": "Wir arbeiten mit den vertrauenswürdigsten Banken wie Cembra zusammen und übernehmen die komplette Abwicklung",
     "quick_approval": "Schnelle Zusage",
     "quick_approval_desc": "Finanzierungszusage innerhalb von 24 Stunden. Unkompliziert und ohne lange Wartezeiten.",
     "low_rates": "Günstige Zinsen",
-    "low_rates_desc": "Profitieren Sie von attraktiven Zinssätzen ab 3.9% effektiv. Faire Konditionen ohne versteckte Kosten.",
+    "low_rates_desc": "Profitieren Sie von attraktiven Zinssätzen ab ca. 3.9% effektiv. Faire Konditionen ohne versteckte Kosten.",
     "flexible_rates": "Flexible Raten",
     "flexible_rates_desc": "Wählen Sie Ihre Wunschlaufzeit zwischen 12 und 84 Monaten. Angepasst an Ihr Budget.",
     "how_it_works": "So einfach geht's",
@@ -296,6 +287,7 @@
     "form_financing": "Finanzierung",
     "form_trade_in": "Fahrzeug-Eintausch",
     "form_maintenance": "Wartung & Service",
+    "form_rent_car": "Fahrzeug mieten",
     "form_placeholder": "Teilen Sie uns mit, wie wir Ihnen helfen können...",
     "send_message": "Nachricht senden",
     "success_message": "Vielen Dank für Ihre Nachricht! Wir melden uns bald bei Ihnen."
