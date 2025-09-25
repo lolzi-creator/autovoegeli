@@ -202,8 +202,24 @@ const VehicleCard = ({ vehicle, index }: { vehicle: Vehicle, index: number }) =>
 
 // WhatsApp utility function
 const createWhatsAppLink = (vehicle: Vehicle) => {
-  const phoneNumber = "+41792664262"; // Remove spaces and special chars for URL
-  const message = `Hallo! Ich interessiere mich für das Fahrzeug ${vehicle.brand} ${vehicle.model} (${vehicle.year}) für ${vehicle.price}. Können Sie mir weitere Informationen dazu geben? Vielen Dank!`;
+  const phoneNumber = "+41792664262";
+  const message = `🚗 *INTERESSE AN FAHRZEUG - Auto Vögeli*
+
+📋 *Fahrzeug:*
+${vehicle.brand} ${vehicle.model} (${vehicle.year})
+🏷️ Preis: ${vehicle.price}
+🛣️ Kilometerstand: ${vehicle.mileage}
+⛽ Kraftstoff: ${vehicle.fuel}
+⚙️ Getriebe: ${vehicle.transmission}
+
+📍 *Standort:*
+${vehicle.location}
+
+💬 *Nachricht:*
+Hallo! Ich interessiere mich für dieses Fahrzeug. Können Sie mir weitere Informationen dazu geben? Vielen Dank!
+
+---
+Gesendet über autovoegeli.ch`;
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 };

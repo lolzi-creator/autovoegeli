@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import AdminAuth from '@/components/AdminAuth';
 // import AutoScoutSyncModal from '@/components/AutoScoutSyncModal';
 import { 
   BarChart3, 
@@ -50,7 +51,7 @@ interface AnalyticsData {
   topVehicles: Array<{ vehicle: string; views: number }>;
 }
 
-export default function AdminDashboard() {
+function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [vehicles, setVehicles] = useState<VehicleListing[]>([]);
   const [scrapeStatus, setScrapeStatus] = useState<string>('');
@@ -2136,5 +2137,13 @@ export default function AdminDashboard() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <AdminAuth>
+      <AdminDashboard />
+    </AdminAuth>
   );
 }

@@ -28,9 +28,70 @@ import VehicleDetailTabs from '@/components/VehicleDetailTabs';
 import { useTranslation } from '@/hooks/useTranslation';
 
 // WhatsApp utility function
-const createWhatsAppLink = (vehicle: MultilingualVehicle, t: any, locale: 'de' | 'fr' | 'en') => {
+const createWhatsAppLink = (vehicle: MultilingualVehicle, locale: 'de' | 'fr' | 'en') => {
   const phoneNumber = "+41792664262";
-  const message = t('vehicle_detail.whatsapp_message', { title: vehicle.title, price: formatPriceMultilingual(vehicle.price, locale) });
+  
+  const messages = {
+    de: `🚗 *INTERESSE AN FAHRZEUG - Auto Vögeli*
+
+📋 *Fahrzeug:*
+${vehicle.title}
+🏷️ Preis: ${formatPriceMultilingual(vehicle.price, locale)}
+📅 Baujahr: ${vehicle.year}
+🛣️ Kilometerstand: ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : 'Nicht angegeben'}
+⛽ Kraftstoff: ${vehicle.fuel || 'Nicht angegeben'}
+⚙️ Getriebe: ${vehicle.transmission || 'Nicht angegeben'}
+👥 Sitze: ${vehicle.seats || 'Nicht angegeben'}
+
+📍 *Standort:*
+${vehicle.location}
+
+💬 *Nachricht:*
+Hallo! Ich interessiere mich für dieses Fahrzeug. Können Sie mir weitere Informationen dazu geben? Vielen Dank!
+
+---
+Gesendet über autovoegeli.ch`,
+    fr: `🚗 *INTÉRÊT POUR VÉHICULE - Auto Vögeli*
+
+📋 *Véhicule:*
+${vehicle.title}
+🏷️ Prix: ${formatPriceMultilingual(vehicle.price, locale)}
+📅 Année: ${vehicle.year}
+🛣️ Kilométrage: ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : 'Non spécifié'}
+⛽ Carburant: ${vehicle.fuel || 'Non spécifié'}
+⚙️ Transmission: ${vehicle.transmission || 'Non spécifié'}
+👥 Places: ${vehicle.seats || 'Non spécifié'}
+
+📍 *Emplacement:*
+${vehicle.location}
+
+💬 *Message:*
+Bonjour! Je suis intéressé par ce véhicule. Pouvez-vous me donner plus d'informations? Merci beaucoup!
+
+---
+Envoyé via autovoegeli.ch`,
+    en: `🚗 *VEHICLE INTEREST - Auto Vögeli*
+
+📋 *Vehicle:*
+${vehicle.title}
+🏷️ Price: ${formatPriceMultilingual(vehicle.price, locale)}
+📅 Year: ${vehicle.year}
+🛣️ Mileage: ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : 'Not specified'}
+⛽ Fuel: ${vehicle.fuel || 'Not specified'}
+⚙️ Transmission: ${vehicle.transmission || 'Not specified'}
+👥 Seats: ${vehicle.seats || 'Not specified'}
+
+📍 *Location:*
+${vehicle.location}
+
+💬 *Message:*
+Hello! I'm interested in this vehicle. Could you provide me with more information? Thank you!
+
+---
+Sent via autovoegeli.ch`
+  };
+  
+  const message = messages[locale];
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 };
@@ -415,7 +476,7 @@ export default function VehicleDetailPage() {
                   {t('contact.call_now')}
                 </button>
                 <a
-                  href={createWhatsAppLink(vehicle, t, locale as 'de' | 'fr' | 'en')}
+                  href={createWhatsAppLink(vehicle, locale as 'de' | 'fr' | 'en')}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-xl font-medium transition-colors"

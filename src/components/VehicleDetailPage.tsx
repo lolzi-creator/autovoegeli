@@ -28,9 +28,27 @@ import Footer from '@/components/Footer';
 import ContactOptions from './ContactOptions';
 
 // WhatsApp utility function
-const createWhatsAppLink = (vehicleTitle: string, vehiclePrice: string) => {
+const createWhatsAppLink = (vehicle: ScrapedVehicle) => {
   const phoneNumber = "+41792664262";
-  const message = `Hallo! Ich interessiere mich für das Fahrzeug ${vehicleTitle} für ${vehiclePrice}. Können Sie mir weitere Informationen dazu geben? Vielen Dank!`;
+  const message = `🚗 *INTERESSE AN FAHRZEUG - Auto Vögeli*
+
+📋 *Fahrzeug:*
+${vehicle.title}
+🏷️ Preis: ${formatPrice(vehicle.price)}
+📅 Baujahr: ${vehicle.year}
+🛣️ Kilometerstand: ${vehicle.mileage ? `${vehicle.mileage.toLocaleString()} km` : 'Nicht angegeben'}
+⛽ Kraftstoff: ${vehicle.fuel || 'Nicht angegeben'}
+⚙️ Getriebe: ${vehicle.transmission || 'Nicht angegeben'}
+👥 Sitze: ${vehicle.seats || 'Nicht angegeben'}
+
+📍 *Standort:*
+${vehicle.location}
+
+💬 *Nachricht:*
+Hallo! Ich interessiere mich für dieses Fahrzeug. Können Sie mir weitere Informationen dazu geben? Vielen Dank!
+
+---
+Gesendet über autovoegeli.ch`;
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 };
@@ -257,7 +275,7 @@ export default function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
                   Jetzt anrufen
                 </button>
                 <a
-                  href={createWhatsAppLink(vehicle.title, formatPrice(vehicle.price))}
+                  href={createWhatsAppLink(vehicle)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-xl font-medium transition-colors"
@@ -451,7 +469,7 @@ export default function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
                 {/* Additional WhatsApp with vehicle info */}
                 <div className="text-center">
                   <a
-                    href={createWhatsAppLink(vehicle.title, formatPrice(vehicle.price))}
+                    href={createWhatsAppLink(vehicle)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-xl font-medium transition-colors"

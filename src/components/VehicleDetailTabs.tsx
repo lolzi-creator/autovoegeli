@@ -21,7 +21,7 @@ interface VehicleDetailTabsProps {
   vehicle: MultilingualVehicle;
   activeTab: string;
   contactDealer: () => void;
-  createWhatsAppLink: (vehicle: MultilingualVehicle, t: any, locale: 'de' | 'fr' | 'en') => string;
+  createWhatsAppLink: (vehicle: MultilingualVehicle, locale: 'de' | 'fr' | 'en') => string;
   locale: 'de' | 'fr' | 'en';
 }
 
