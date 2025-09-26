@@ -195,7 +195,7 @@ ${formData.message || 'Keine zusätzliche Nachricht'}
 Gesendet über autovoegeli.ch/mieten`;
 
       // WhatsApp number (replace with your actual WhatsApp business number)
-      const whatsappNumber = "41792664262"; // Your phone number in international format
+      const whatsappNumber = "41786360619"; // Your phone number in international format
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
       
       // Open WhatsApp

@@ -6,7 +6,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 // WhatsApp utility function
 const createWhatsAppLink = () => {
-  const phoneNumber = "+41792664262"; // Remove spaces and special chars for URL
+  const phoneNumber = "+41786360619"; // Remove spaces and special chars for URL
   const message = `Hallo! Ich interessiere mich für Ihre Fahrzeuge und möchte gerne eine Probefahrt vereinbaren oder weitere Informationen erhalten. Vielen Dank!`;
   const encodedMessage = encodeURIComponent(message);
   return `https://wa.me/${phoneNumber}?text=${encodedMessage}`;

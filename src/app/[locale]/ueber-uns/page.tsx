@@ -1,6 +1,7 @@
 'use client';
 
-import { Award, Users, Shield, Clock, MapPin, Phone } from 'lucide-react';
+import { useState } from 'react';
+import { Award, Users, Shield, Clock, MapPin, Phone, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -8,6 +9,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 export default function UeberUns() {
   const { t, locale } = useTranslation();
+  const [isExpanded, setIsExpanded] = useState(false);
   return (
     <>
       <Header />
@@ -78,18 +80,60 @@ export default function UeberUns() {
               }}>
                 {t('about.story_p1')}
               </p>
-              <p style={{
-                fontSize: '1.1rem',
-                color: '#475569',
-                marginBottom: '32px',
-                lineHeight: '1.7'
-              }}>
-                {t('about.story_p2')}
-              </p>
+              
+              {isExpanded && (
+                <motion.p
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  style={{
+                    fontSize: '1.1rem',
+                    color: '#475569',
+                    marginBottom: '24px',
+                    lineHeight: '1.7',
+                    overflow: 'hidden'
+                  }}
+                >
+                  {t('about.story_p2')}
+                </motion.p>
+              )}
+              
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'none',
+                  border: 'none',
+                  color: '#8bc442',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  marginBottom: '32px',
+                  padding: '8px 0',
+                  transition: 'color 0.2s ease'
+                }}
+                onMouseEnter={(e) => (e.target as HTMLElement).style.color = '#6b9c3a'}
+                onMouseLeave={(e) => (e.target as HTMLElement).style.color = '#8bc442'}
+              >
+                {isExpanded ? (
+                  <>
+                    <span>{t('about.read_less')}</span>
+                    <ChevronUp size={16} />
+                  </>
+                ) : (
+                  <>
+                    <span>{t('about.read_more')}</span>
+                    <ChevronDown size={16} />
+                  </>
+                )}
+              </button>
               
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                 gap: '24px'
               }}>
                 <div style={{
@@ -127,7 +171,7 @@ export default function UeberUns() {
                     color: '#8bc442',
                     marginBottom: '8px'
                   }}>
-                    15+
+                    25+
                   </div>
                   <div style={{
                     fontSize: '14px',
@@ -205,7 +249,7 @@ export default function UeberUns() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
             gap: '32px'
           }}>
             <motion.div
@@ -325,6 +369,46 @@ export default function UeberUns() {
                 lineHeight: '1.6'
               }}>
                 {t('about.value_quality_text')}
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              style={{
+                backgroundColor: 'white',
+                padding: '32px',
+                borderRadius: '16px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                textAlign: 'center'
+              }}
+            >
+              <div style={{
+                backgroundColor: '#8bc442',
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 24px'
+              }}>
+                <Users style={{ width: '32px', height: '32px', color: 'white' }} />
+              </div>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: '700',
+                color: '#0f172a',
+                marginBottom: '16px'
+              }}>
+                {t('about.value_loyalty_title')}
+              </h3>
+              <p style={{
+                color: '#64748b',
+                lineHeight: '1.6'
+              }}>
+                {t('about.value_loyalty_text')}
               </p>
             </motion.div>
           </div>

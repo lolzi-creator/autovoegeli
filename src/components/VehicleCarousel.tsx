@@ -202,7 +202,7 @@ const VehicleCard = ({ vehicle, index }: { vehicle: Vehicle, index: number }) =>
 
 // WhatsApp utility function
 const createWhatsAppLink = (vehicle: Vehicle) => {
-  const phoneNumber = "+41792664262";
+  const phoneNumber = "+41786360619";
   const message = `🚗 *INTERESSE AN FAHRZEUG - Auto Vögeli*
 
 📋 *Fahrzeug:*

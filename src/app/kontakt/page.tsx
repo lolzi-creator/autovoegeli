@@ -213,7 +213,7 @@ export default function Kontakt() {
                 </div>
                 <div style={{ marginBottom: '8px' }}>
                   <strong>Samstag:</strong><br />
-                  08:00 - 16:00 Uhr
+                  09:00 - 12:00 Uhr
                 </div>
                 <div>
                   <strong>Sonntag:</strong><br />

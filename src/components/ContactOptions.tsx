@@ -28,7 +28,7 @@ const ContactOptions = ({ variant = 'default', className = '' }: ContactOptionsP
         <span className="font-medium">E-Mail</span>
       </a>
       <a 
-        href="https://wa.me/41792664262" 
+        href="https://wa.me/41786360619" 
         target="_blank" 
         rel="noopener noreferrer"
         className={`${baseClasses} ${variants[variant]}`}

@@ -34,7 +34,7 @@ export default function UeberUns() {
               margin: '0 auto',
               lineHeight: '1.6'
             }}>
-              Seit über 15 Jahren Ihr vertrauensvoller Partner für Premium-Fahrzeuge
+              Seit über 25 Jahren Ihr vertrauensvoller Partner für professionell geprüfte Premium-Fahrzeuge
               in der Region Grenchen und darüber hinaus.
             </p>
           </div>
@@ -120,7 +120,7 @@ export default function UeberUns() {
                     color: '#8bc442',
                     marginBottom: '8px'
                   }}>
-                    15+
+                    25+
                   </div>
                   <div style={{
                     fontSize: '14px',

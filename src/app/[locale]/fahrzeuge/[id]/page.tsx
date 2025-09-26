@@ -29,7 +29,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 // WhatsApp utility function
 const createWhatsAppLink = (vehicle: MultilingualVehicle, locale: 'de' | 'fr' | 'en') => {
-  const phoneNumber = "+41792664262";
+  const phoneNumber = "+41786360619";
   
   const messages = {
     de: `🚗 *INTERESSE AN FAHRZEUG - Auto Vögeli*

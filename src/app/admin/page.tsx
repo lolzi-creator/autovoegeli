@@ -307,12 +307,39 @@ function AdminDashboard() {
   };
 
   const saveFeatured = async (featuredIds?: string[]) => {
-    const idsToSave = featuredIds || featured;
-    await fetch('/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key: 'homepage_featured_vehicle_ids', value: idsToSave })
-    });
+    try {
+      const idsToSave = featuredIds || featured;
+      console.log('Saving featured vehicles:', idsToSave);
+      
+      if (!idsToSave || idsToSave.length === 0) {
+        updateStatus('❌ No featured vehicles selected to save');
+        return;
+      }
+      
+      updateStatus('💾 Saving featured vehicles...');
+      
+      const response = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'homepage_featured_vehicle_ids', value: idsToSave })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      console.log('Save result:', result);
+      
+      if (result.success) {
+        updateStatus(`✅ Featured vehicles saved successfully! (${idsToSave.length} vehicles)`);
+      } else {
+        updateStatus(`❌ Failed to save: ${result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error saving featured vehicles:', error);
+      updateStatus(`❌ Error saving featured vehicles: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   };
 
   const runScraper = async () => {
@@ -652,7 +679,17 @@ function AdminDashboard() {
                   <Plus className="w-4 h-4" />
                   <span className="hidden sm:inline">Neues</span> Fahrzeug
                 </button>
-                <button onClick={() => saveFeatured()} className="bg-purple-600 text-white px-3 sm:px-4 py-2 rounded-lg text-sm hover:bg-purple-700">Featured speichern</button>
+                <button 
+                  onClick={() => saveFeatured()} 
+                  disabled={featured.length === 0}
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-sm transition-colors ${
+                    featured.length === 0 
+                      ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
+                      : 'bg-purple-600 text-white hover:bg-purple-700'
+                  }`}
+                >
+                  Featured speichern ({featured.length})
+                </button>
               </div>
             </div>
 
@@ -672,12 +709,28 @@ function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {vehicles.map((vehicle, index) => (
+                    {vehicles
+                      .sort((a, b) => {
+                        // Featured vehicles first
+                        const aFeatured = featured.includes(a.id);
+                        const bFeatured = featured.includes(b.id);
+                        if (aFeatured && !bFeatured) return -1;
+                        if (!aFeatured && bFeatured) return 1;
+                        return 0;
+                      })
+                      .map((vehicle, index) => (
                       <tr key={vehicle.id || `${vehicle.brand}-${vehicle.model}-${index}`}
                           className="hover:bg-gray-50">
                         <td className="py-4 px-6">
                           <div>
-                            <p className="font-medium text-gray-900">{vehicle.brand} {vehicle.model}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-gray-900">{vehicle.brand} {vehicle.model}</p>
+                              {featured.includes(vehicle.id) && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                  ⭐ Featured
+                                </span>
+                              )}
+                            </div>
                             <p className="text-gray-500 text-sm">{vehicle.year}</p>
                           </div>
                         </td>
@@ -723,14 +776,30 @@ function AdminDashboard() {
 
               {/* Mobile Card View */}
               <div className="lg:hidden divide-y divide-gray-200">
-                {vehicles.map((vehicle, index) => (
+                {vehicles
+                  .sort((a, b) => {
+                    // Featured vehicles first
+                    const aFeatured = featured.includes(a.id);
+                    const bFeatured = featured.includes(b.id);
+                    if (aFeatured && !bFeatured) return -1;
+                    if (!aFeatured && bFeatured) return 1;
+                    return 0;
+                  })
+                  .map((vehicle, index) => (
                   <div key={vehicle.id || `${vehicle.brand}-${vehicle.model}-${index}`}
                        className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium text-gray-900 truncate">
-                          {vehicle.brand} {vehicle.model}
-                        </h3>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="font-medium text-gray-900 truncate">
+                            {vehicle.brand} {vehicle.model}
+                          </h3>
+                          {featured.includes(vehicle.id) && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 flex-shrink-0">
+                              ⭐ Featured
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-500">{vehicle.year}</p>
                       </div>
                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ml-2 ${

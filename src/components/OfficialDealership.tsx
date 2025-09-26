@@ -103,7 +103,6 @@ const OfficialDealership = () => {
                     fill
                     className="object-contain"
                     sizes="112px"
-                    priority={brand.name === 'XEV'}
                   />
                 </div>
               </div>
@@ -144,7 +143,6 @@ const OfficialDealership = () => {
                       fill
                       className="object-contain"
                       sizes="64px"
-                      priority={brand.name === 'XEV'}
                     />
                   </div>
                 </div>

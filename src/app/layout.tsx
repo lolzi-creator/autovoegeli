@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   authors: [{ name: "Auto Vögeli" }],
   creator: "Auto Vögeli",
   publisher: "Auto Vögeli",
+  icons: {
+    icon: '/logo_tab.png',
+    shortcut: '/logo_tab.png',
+    apple: '/logo_tab.png',
+  },
   robots: {
     index: true,
     follow: true,

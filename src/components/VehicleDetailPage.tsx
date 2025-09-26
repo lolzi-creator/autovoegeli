@@ -29,7 +29,7 @@ import ContactOptions from './ContactOptions';
 
 // WhatsApp utility function
 const createWhatsAppLink = (vehicle: ScrapedVehicle) => {
-  const phoneNumber = "+41792664262";
+  const phoneNumber = "+41786360619";
   const message = `🚗 *INTERESSE AN FAHRZEUG - Auto Vögeli*
 
 📋 *Fahrzeug:*

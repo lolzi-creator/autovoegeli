@@ -6,11 +6,16 @@ import Image from 'next/image';
 import { Phone, Mail, Clock, MapPin, ChevronDown, ChevronUp } from 'lucide-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import ContactOptions from './ContactOptions';
+import LegalModal from './LegalModal';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const [isMobile, setIsMobile] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const [legalModal, setLegalModal] = useState<{ isOpen: boolean; type: 'privacy' | 'terms' | 'imprint' | null }>({
+    isOpen: false,
+    type: null
+  });
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -29,6 +34,14 @@ const Footer = () => {
         ? prev.filter(s => s !== section)
         : [...prev, section]
     );
+  };
+
+  const openLegalModal = (type: 'privacy' | 'terms' | 'imprint') => {
+    setLegalModal({ isOpen: true, type });
+  };
+
+  const closeLegalModal = () => {
+    setLegalModal({ isOpen: false, type: null });
   };
 
   const footerSections = {
@@ -59,7 +72,7 @@ const Footer = () => {
                   alt="Auto Vögeli"
                   width={120}
                   height={40}
-                  className="object-contain brightness-0 invert"
+                  className="object-contain"
                 />
               </Link>
               
@@ -81,7 +94,10 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center justify-center space-x-3">
                   <Clock className="h-5 w-5 text-green-400" />
-                  <span className="text-gray-300 text-sm">Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</span>
+                  <div className="text-gray-300 text-sm text-center">
+                    <div>Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</div>
+                    <div>Sa. / 09:00 - 12:00</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -122,15 +138,24 @@ const Footer = () => {
             {/* Bottom Links - Mobile */}
             <div className="pt-6 border-t border-gray-700 text-center space-y-4">
               <div className="flex flex-wrap justify-center gap-6 text-sm">
-                <Link href="/impressum" className="text-gray-400 hover:text-green-400 transition-colors">
+                <button 
+                  onClick={() => openLegalModal('imprint')}
+                  className="text-gray-400 hover:text-green-400 transition-colors"
+                >
                   {t('footer.legal_imprint')}
-                </Link>
-                <Link href="/datenschutz" className="text-gray-400 hover:text-green-400 transition-colors">
+                </button>
+                <button 
+                  onClick={() => openLegalModal('privacy')}
+                  className="text-gray-400 hover:text-green-400 transition-colors"
+                >
                   {t('footer.legal_privacy')}
-                </Link>
-                <Link href="/agb" className="text-gray-400 hover:text-green-400 transition-colors">
+                </button>
+                <button 
+                  onClick={() => openLegalModal('terms')}
+                  className="text-gray-400 hover:text-green-400 transition-colors"
+                >
                   {t('footer.legal_terms')}
-                </Link>
+                </button>
               </div>
               <div className="text-sm text-gray-500">
                 © {currentYear} Auto Vögeli. {t('footer.copyright')}
@@ -152,7 +177,7 @@ const Footer = () => {
                     alt="Auto Vögeli"
                     width={140}
                     height={47}
-                    className="object-contain brightness-0 invert"
+                    className="object-contain"
                   />
                 </Link>
                 
@@ -174,7 +199,10 @@ const Footer = () => {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Clock className="h-5 w-5 text-green-400" />
-                    <span className="text-gray-300">Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</span>
+                    <div className="text-gray-300">
+                      <div>Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</div>
+                      <div>Sa. / 09:00 - 12:00</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -207,30 +235,39 @@ const Footer = () => {
                 </div>
                 
                 <div className="flex space-x-8">
-                  <Link
-                    href="/impressum"
+                  <button
+                    onClick={() => openLegalModal('imprint')}
                     className="text-gray-400 hover:text-green-400 transition-colors duration-200"
                   >
                     {t('footer.legal_imprint')}
-                  </Link>
-                  <Link
-                    href="/datenschutz"
+                  </button>
+                  <button
+                    onClick={() => openLegalModal('privacy')}
                     className="text-gray-400 hover:text-green-400 transition-colors duration-200"
                   >
                     {t('footer.legal_privacy')}
-                  </Link>
-                  <Link
-                    href="/agb"
+                  </button>
+                  <button
+                    onClick={() => openLegalModal('terms')}
                     className="text-gray-400 hover:text-green-400 transition-colors duration-200"
                   >
                     {t('footer.legal_terms')}
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         )}
       </div>
+
+      {/* Legal Modal */}
+      {legalModal.isOpen && legalModal.type && (
+        <LegalModal
+          isOpen={legalModal.isOpen}
+          onClose={closeLegalModal}
+          type={legalModal.type}
+        />
+      )}
     </footer>
   );
 };
