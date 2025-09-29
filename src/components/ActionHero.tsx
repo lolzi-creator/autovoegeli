@@ -25,6 +25,9 @@ interface AdminBannerSettings {
   ctaText: string;
   ctaLink: string;
   iconType: string;
+  type: string;
+  startDate: string;
+  endDate: string;
 }
 
 // Icon mapping
@@ -44,7 +47,10 @@ const ActionHero = () => {
     message: "Bis zu 15% Rabatt auf alle Motorräder - Nur noch bis Ende März!",
     ctaText: "Jetzt sparen",
     ctaLink: "/fahrzeuge",
-    iconType: "gift"
+    iconType: "gift",
+    type: "promotion",
+    startDate: "",
+    endDate: ""
   });
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -53,17 +59,45 @@ const ActionHero = () => {
     seconds: 0
   });
 
-  // Load admin banner settings
+  // Load admin banner settings from database
   useEffect(() => {
-    const savedSettings = localStorage.getItem('bannerSettings');
-    if (savedSettings) {
+    const loadBannerSettings = async () => {
       try {
-        const adminSettings: AdminBannerSettings = JSON.parse(savedSettings);
-        setBannerSettings(adminSettings);
+        const response = await fetch('/api/settings?key=banner_settings');
+        const result = await response.json();
+        
+        if (result.value) {
+          setBannerSettings(result.value);
+          // Also save to localStorage for immediate use
+          localStorage.setItem('bannerSettings', JSON.stringify(result.value));
+        } else {
+          // Fallback to localStorage
+          const savedSettings = localStorage.getItem('bannerSettings');
+          if (savedSettings) {
+            try {
+              const adminSettings: AdminBannerSettings = JSON.parse(savedSettings);
+              setBannerSettings(adminSettings);
+            } catch (error) {
+              console.error('Error parsing banner settings:', error);
+            }
+          }
+        }
       } catch (error) {
-        console.error('Error parsing banner settings:', error);
+        console.error('Error loading banner settings:', error);
+        // Fallback to localStorage
+        const savedSettings = localStorage.getItem('bannerSettings');
+        if (savedSettings) {
+          try {
+            const adminSettings: AdminBannerSettings = JSON.parse(savedSettings);
+            setBannerSettings(adminSettings);
+          } catch (error) {
+            console.error('Error parsing banner settings:', error);
+          }
+        }
       }
-    }
+    };
+
+    loadBannerSettings();
   }, []);
 
   useEffect(() => {
@@ -76,10 +110,12 @@ const ActionHero = () => {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  // Countdown timer (example: until end of March)
+  // Countdown timer using banner settings
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const difference = +new Date('2024-03-31') - +new Date();
+      // Use endDate from banner settings, fallback to March 31, 2024
+      const endDate = bannerSettings.endDate || '2024-03-31';
+      const difference = +new Date(endDate) - +new Date();
       
       if (difference > 0) {
         setTimeLeft({
@@ -88,6 +124,14 @@ const ActionHero = () => {
           minutes: Math.floor((difference / 1000 / 60) % 60),
           seconds: Math.floor((difference / 1000) % 60)
         });
+      } else {
+        // If expired, show all zeros
+        setTimeLeft({
+          days: 0,
+          hours: 0,
+          minutes: 0,
+          seconds: 0
+        });
       }
     };
 
@@ -95,7 +139,7 @@ const ActionHero = () => {
     const timer = setInterval(calculateTimeLeft, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [bannerSettings.endDate]);
 
   const handleShare = async () => {
     if (navigator.share) {

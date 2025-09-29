@@ -148,26 +148,76 @@ function AdminDashboard() {
     message: "Bis zu 15% Rabatt auf alle Motorräder - Nur noch bis Ende März!",
     ctaText: "Jetzt sparen",
     ctaLink: "/aktion",
-    iconType: "gift"
+    iconType: "gift",
+    type: "promotion",
+    startDate: "",
+    endDate: ""
   });
 
-  // Load banner settings from localStorage
+  // Load banner settings from database
   useEffect(() => {
-    const savedSettings = localStorage.getItem('bannerSettings');
-    if (savedSettings) {
-      setBannerSettings(JSON.parse(savedSettings));
-    }
+    const loadBannerSettings = async () => {
+      try {
+        const response = await fetch('/api/settings?key=banner_settings');
+        const result = await response.json();
+        
+        if (result.value) {
+          setBannerSettings(result.value);
+          // Also save to localStorage for immediate use
+          localStorage.setItem('bannerSettings', JSON.stringify(result.value));
+        } else {
+          // Fallback to localStorage if no database settings
+          const savedSettings = localStorage.getItem('bannerSettings');
+          if (savedSettings) {
+            setBannerSettings(JSON.parse(savedSettings));
+          }
+        }
+      } catch (error) {
+        console.error('Error loading banner settings:', error);
+        // Fallback to localStorage
+        const savedSettings = localStorage.getItem('bannerSettings');
+        if (savedSettings) {
+          setBannerSettings(JSON.parse(savedSettings));
+        }
+      }
+    };
+
+    loadBannerSettings();
   }, []);
 
-  // Auto-save banner settings whenever they change
-  useEffect(() => {
-    // Skip auto-save on initial load
-    const timer = setTimeout(() => {
-      localStorage.setItem('bannerSettings', JSON.stringify(bannerSettings));
-    }, 500); // Debounce saves by 500ms
-
-    return () => clearTimeout(timer);
-  }, [bannerSettings]);
+  // Save banner settings to database
+  const saveBannerSettings = async () => {
+    try {
+      updateStatus('💾 Saving banner settings...');
+      
+      const response = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          key: 'banner_settings', 
+          value: bannerSettings 
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      console.log('Banner save result:', result);
+      
+      if (result.success) {
+        // Also save to localStorage for immediate use
+        localStorage.setItem('bannerSettings', JSON.stringify(bannerSettings));
+        updateStatus('✅ Banner settings saved successfully!');
+      } else {
+        updateStatus(`❌ Failed to save banner: ${result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error saving banner settings:', error);
+      updateStatus(`❌ Error saving banner settings: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
 
   // Console helper functions
   const updateStatus = (message: string) => {
@@ -267,10 +317,27 @@ function AdminDashboard() {
 
   // Load featured IDs
   useEffect(() => {
-    fetch('/api/settings?key=homepage_featured_vehicle_ids')
-      .then(r => r.json())
-      .then(res => setFeatured(Array.isArray(res?.value) ? res.value : []))
-      .catch(() => {});
+    const loadFeatured = async () => {
+      try {
+        console.log('Loading featured vehicles...');
+        const response = await fetch('/api/settings?key=homepage_featured_vehicle_ids');
+        const result = await response.json();
+        console.log('Featured vehicles response:', result);
+        
+        if (result.value && Array.isArray(result.value)) {
+          setFeatured(result.value);
+          console.log('Loaded featured vehicles:', result.value);
+        } else {
+          setFeatured([]);
+          console.log('No featured vehicles found, using empty array');
+        }
+      } catch (error) {
+        console.error('Error loading featured vehicles:', error);
+        setFeatured([]);
+      }
+    };
+
+    loadFeatured();
   }, []);
 
   // Load rental data
@@ -333,6 +400,9 @@ function AdminDashboard() {
       
       if (result.success) {
         updateStatus(`✅ Featured vehicles saved successfully! (${idsToSave.length} vehicles)`);
+        // Update local state to match what was saved
+        setFeatured(idsToSave);
+        console.log('Updated local featured state:', idsToSave);
       } else {
         updateStatus(`❌ Failed to save: ${result.error || 'Unknown error'}`);
       }
@@ -1376,6 +1446,32 @@ function AdminDashboard() {
                       />
                     </div>
                   </div>
+
+                  {/* Date Range */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Start Datum
+                      </label>
+                      <input
+                        type="date"
+                        value={bannerSettings.startDate}
+                        onChange={(e) => setBannerSettings(prev => ({ ...prev, startDate: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        End Datum
+                      </label>
+                      <input
+                        type="date"
+                        value={bannerSettings.endDate}
+                        onChange={(e) => setBannerSettings(prev => ({ ...prev, endDate: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1410,14 +1506,32 @@ function AdminDashboard() {
                     </select>
                   </div>
 
-                  {/* Auto-save info */}
+                  {/* Banner Type */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Banner Typ
+                    </label>
+                    <select
+                      value={bannerSettings.type || 'promotion'}
+                      onChange={(e) => setBannerSettings(prev => ({ ...prev, type: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    >
+                      <option value="promotion">🏷️ Promotion</option>
+                      <option value="announcement">📢 Ankündigung</option>
+                      <option value="event">📅 Event</option>
+                      <option value="urgent">⚠️ Wichtig</option>
+                    </select>
+                  </div>
+
+                  {/* Save button */}
                   <div className="pt-4">
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <div className="flex items-center">
-                        <CheckCircle className="w-4 h-4 mr-2 text-blue-600" />
-                        <span className="text-sm text-blue-800 font-medium">Änderungen werden automatisch gespeichert</span>
-                      </div>
-                    </div>
+                    <button
+                      onClick={saveBannerSettings}
+                      className="w-full bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center"
+                    >
+                      <CheckCircle className="w-4 h-4 mr-2" />
+                      Banner-Einstellungen speichern
+                    </button>
                   </div>
                 </div>
               </div>

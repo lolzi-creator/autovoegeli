@@ -15,6 +15,9 @@ interface AdminBannerSettings {
   ctaText: string;
   ctaLink: string;
   iconType: string;
+  type: string;
+  startDate: string;
+  endDate: string;
 }
 
 // Icon mapping
@@ -39,26 +42,82 @@ const ActionBox: React.FC<ActionBoxProps> = ({ className = '', isMobile = false 
   const [bannerConfig, setBannerConfig] = useState(CURRENT_BANNER);
 
   useEffect(() => {
-    // Load admin banner settings from localStorage
-    const savedSettings = localStorage.getItem('bannerSettings');
-    if (savedSettings) {
+    // Load admin banner settings from database
+    const loadBannerSettings = async () => {
       try {
-        const adminSettings: AdminBannerSettings = JSON.parse(savedSettings);
-        // Convert admin settings to banner config format
-        const updatedConfig = {
-          ...CURRENT_BANNER,
-          isActive: adminSettings.enabled,
-          title: adminSettings.title,
-          message: adminSettings.message,
-          ctaText: adminSettings.ctaText,
-          ctaLink: adminSettings.ctaLink,
-          icon: adminSettings.iconType as keyof typeof iconMap,
-        };
-        setBannerConfig(updatedConfig);
+        const response = await fetch('/api/settings?key=banner_settings');
+        const result = await response.json();
+        
+        if (result.value) {
+          const adminSettings: AdminBannerSettings = result.value;
+          // Convert admin settings to banner config format
+          const updatedConfig = {
+            ...CURRENT_BANNER,
+            isActive: adminSettings.enabled,
+            type: adminSettings.type as 'promotion' | 'announcement' | 'event' | 'urgent',
+            title: adminSettings.title,
+            message: adminSettings.message,
+            ctaText: adminSettings.ctaText,
+            ctaLink: adminSettings.ctaLink,
+            icon: adminSettings.iconType as keyof typeof iconMap,
+            startDate: adminSettings.startDate,
+            endDate: adminSettings.endDate,
+          };
+          setBannerConfig(updatedConfig);
+          // Also save to localStorage for immediate use
+          localStorage.setItem('bannerSettings', JSON.stringify(adminSettings));
+        } else {
+          // Fallback to localStorage
+          const savedSettings = localStorage.getItem('bannerSettings');
+          if (savedSettings) {
+            try {
+              const adminSettings: AdminBannerSettings = JSON.parse(savedSettings);
+              const updatedConfig = {
+                ...CURRENT_BANNER,
+                isActive: adminSettings.enabled,
+                type: adminSettings.type as 'promotion' | 'announcement' | 'event' | 'urgent',
+                title: adminSettings.title,
+                message: adminSettings.message,
+                ctaText: adminSettings.ctaText,
+                ctaLink: adminSettings.ctaLink,
+                icon: adminSettings.iconType as keyof typeof iconMap,
+                startDate: adminSettings.startDate,
+                endDate: adminSettings.endDate,
+              };
+              setBannerConfig(updatedConfig);
+            } catch (error) {
+              console.error('Error parsing banner settings:', error);
+            }
+          }
+        }
       } catch (error) {
-        console.error('Error parsing banner settings:', error);
+        console.error('Error loading banner settings:', error);
+        // Fallback to localStorage
+        const savedSettings = localStorage.getItem('bannerSettings');
+        if (savedSettings) {
+          try {
+            const adminSettings: AdminBannerSettings = JSON.parse(savedSettings);
+            const updatedConfig = {
+              ...CURRENT_BANNER,
+              isActive: adminSettings.enabled,
+              type: adminSettings.type as 'promotion' | 'announcement' | 'event' | 'urgent',
+              title: adminSettings.title,
+              message: adminSettings.message,
+              ctaText: adminSettings.ctaText,
+              ctaLink: adminSettings.ctaLink,
+              icon: adminSettings.iconType as keyof typeof iconMap,
+              startDate: adminSettings.startDate,
+              endDate: adminSettings.endDate,
+            };
+            setBannerConfig(updatedConfig);
+          } catch (error) {
+            console.error('Error parsing banner settings:', error);
+          }
+        }
       }
-    }
+    };
+
+    loadBannerSettings();
   }, []);
 
   useEffect(() => {
@@ -66,6 +125,23 @@ const ActionBox: React.FC<ActionBoxProps> = ({ className = '', isMobile = false 
     if (!bannerConfig.isActive) {
       setIsVisible(false);
       return;
+    }
+
+    // Check date range if set
+    const now = new Date();
+    if (bannerConfig.startDate) {
+      const startDate = new Date(bannerConfig.startDate);
+      if (now < startDate) {
+        setIsVisible(false);
+        return;
+      }
+    }
+    if (bannerConfig.endDate) {
+      const endDate = new Date(bannerConfig.endDate);
+      if (now > endDate) {
+        setIsVisible(false);
+        return;
+      }
     }
 
     // Check if user has dismissed it (stored in localStorage)
@@ -81,7 +157,6 @@ const ActionBox: React.FC<ActionBoxProps> = ({ className = '', isMobile = false 
     // Check auto-hide logic
     if (bannerConfig.autoHide && bannerConfig.hideAfterDays) {
       const createdDate = new Date(bannerConfig.createdAt);
-      const now = new Date();
       const daysDifference = Math.floor((now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
       
       if (daysDifference >= bannerConfig.hideAfterDays) {
@@ -182,14 +257,14 @@ const ActionBox: React.FC<ActionBoxProps> = ({ className = '', isMobile = false 
               ${isMobile ? 'text-lg' : 'text-xl'} 
               font-bold text-gray-900 leading-tight
             `}>
-              {t('banner.title')}
+              {bannerConfig.title}
             </h3>
             
             <p className={`
               ${isMobile ? 'text-sm' : 'text-base'} 
               text-gray-600 leading-relaxed
             `}>
-              {t('banner.message')}
+              {bannerConfig.message}
             </p>
 
             {/* CTA Button */}
@@ -206,7 +281,7 @@ const ActionBox: React.FC<ActionBoxProps> = ({ className = '', isMobile = false 
                   shadow-md
                 `}
               >
-                {t('banner.cta')}
+                {bannerConfig.ctaText}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             )}

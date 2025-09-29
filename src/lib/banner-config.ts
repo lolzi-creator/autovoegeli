@@ -15,6 +15,8 @@ export interface BannerConfig {
   autoHide: boolean;
   hideAfterDays?: number;
   createdAt: string; // YYYY-MM-DD format
+  startDate?: string; // YYYY-MM-DD format
+  endDate?: string; // YYYY-MM-DD format
 }
 
 // Current active banner configuration
