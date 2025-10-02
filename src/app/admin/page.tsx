@@ -1662,7 +1662,7 @@ function AdminDashboard() {
                     </label>
                     <input
                       type="text"
-                      value={bannerSettings.countdownText}
+                      value={bannerSettings.countdownText || ""}
                       onChange={(e) => setBannerSettings(prev => ({ ...prev, countdownText: e.target.value }))}
                       placeholder="z.B. Noch verfügbar bis Ende März"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
