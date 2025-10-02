@@ -9,11 +9,24 @@ export async function GET(req: NextRequest) {
 
   try {
     console.log(`Settings API GET called for key: ${key}`);
+    console.log('Environment check:', {
+      hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL || !!process.env.SUPABASE_URL,
+      hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || !!process.env.SUPABASE_ANON_KEY,
+      hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      nodeEnv: process.env.NODE_ENV
+    });
     
     const client = supabaseClient || supabaseService;
     if (!client) {
-      console.error('No Supabase client available');
-      return NextResponse.json({ value: null });
+      console.error('No Supabase client available - environment variables missing');
+      return NextResponse.json({ 
+        error: 'Database not configured', 
+        debug: {
+          hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL || !!process.env.SUPABASE_URL,
+          hasAnonKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || !!process.env.SUPABASE_ANON_KEY,
+          hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+        }
+      }, { status: 500 });
     }
 
     const { data, error } = await client.from('settings').select('value').eq('key', key).maybeSingle();
