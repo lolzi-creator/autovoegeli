@@ -71,7 +71,7 @@ export default function RootLayout({
   return (
     <html lang="de">
       <head>
-        <script src="https://cdn.tailwindcss.com" async></script>
+        <script src="https://cdn.tailwindcss.com"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -123,7 +123,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} antialiased`}>
+      <body className={inter.className + " antialiased"}>
         <StructuredData type="organization" />
         <PerformanceOptimizer />
         {/* Google Analytics - disabled for now, using Vercel Analytics */}

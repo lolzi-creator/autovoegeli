@@ -86,7 +86,7 @@ const Hero = () => {
         const ids: string[] = Array.isArray(j?.value) ? j.value : [];
         if (ids.length === 0) return; // keep default
         const all = await loadMultilingualVehicleData();
-        const pick = all.filter(v => ids.includes(v.id)).slice(0, 3);
+        const pick = all.filter(v => ids.includes(v.id)).slice(0, 5);
         if (pick.length === 0) return;
         const mapped: ScrapedVehicle[] = pick.map((v: MultilingualVehicle) => ({
           id: v.id,

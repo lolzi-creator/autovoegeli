@@ -68,6 +68,26 @@ function AdminDashboard() {
   const [lastSyncTime] = useState<string | null>(null);
   const [featured, setFeatured] = useState<string[]>([]);
   const maxFeatured = 5;
+  const [saveNotification, setSaveNotification] = useState<{show: boolean, message: string, type: 'success' | 'error' | 'loading'}>({
+    show: false,
+    message: '',
+    type: 'loading'
+  });
+  const [bannerSaveNotification, setBannerSaveNotification] = useState<{show: boolean, message: string, type: 'success' | 'error' | 'loading'}>({
+    show: false,
+    message: '',
+    type: 'loading'
+  });
+  const [previewCountdown, setPreviewCountdown] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
+  const [saveProgress, setSaveProgress] = useState(0);
+  const [isUpdatingVehicles, setIsUpdatingVehicles] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [saveModalStep, setSaveModalStep] = useState<'saving' | 'updating' | 'complete' | 'error'>('saving');
   
   // Rental Management State
   const [rentalCategories, setRentalCategories] = useState<{
@@ -185,10 +205,43 @@ function AdminDashboard() {
     loadBannerSettings();
   }, []);
 
+  // Live countdown preview for admin
+  useEffect(() => {
+    const calculatePreviewCountdown = () => {
+      if (!bannerSettings.endDate) {
+        setPreviewCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      const difference = +new Date(bannerSettings.endDate) - +new Date();
+      
+      if (difference > 0) {
+        setPreviewCountdown({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60)
+        });
+      } else {
+        setPreviewCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+    };
+
+    calculatePreviewCountdown();
+    const timer = setInterval(calculatePreviewCountdown, 1000);
+
+    return () => clearInterval(timer);
+  }, [bannerSettings.endDate]);
+
   // Save banner settings to database
   const saveBannerSettings = async () => {
     try {
-      updateStatus('💾 Saving banner settings...');
+      // Show loading notification
+      setBannerSaveNotification({
+        show: true,
+        message: 'Saving banner settings...',
+        type: 'loading'
+      });
       
       const response = await fetch('/api/settings', {
         method: 'POST',
@@ -209,13 +262,28 @@ function AdminDashboard() {
       if (result.success) {
         // Also save to localStorage for immediate use
         localStorage.setItem('bannerSettings', JSON.stringify(bannerSettings));
-        updateStatus('✅ Banner settings saved successfully!');
+        setBannerSaveNotification({
+          show: true,
+          message: '✅ Banner settings saved successfully!',
+          type: 'success'
+        });
+        setTimeout(() => setBannerSaveNotification({show: false, message: '', type: 'loading'}), 3000);
       } else {
-        updateStatus(`❌ Failed to save banner: ${result.error || 'Unknown error'}`);
+        setBannerSaveNotification({
+          show: true,
+          message: `Failed to save banner: ${result.error || 'Unknown error'}`,
+          type: 'error'
+        });
+        setTimeout(() => setBannerSaveNotification({show: false, message: '', type: 'loading'}), 3000);
       }
     } catch (error) {
       console.error('Error saving banner settings:', error);
-      updateStatus(`❌ Error saving banner settings: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setBannerSaveNotification({
+        show: true,
+        message: `Error saving banner settings: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        type: 'error'
+      });
+      setTimeout(() => setBannerSaveNotification({show: false, message: '', type: 'loading'}), 3000);
     }
   };
 
@@ -379,36 +447,145 @@ function AdminDashboard() {
       console.log('Saving featured vehicles:', idsToSave);
       
       if (!idsToSave || idsToSave.length === 0) {
-        updateStatus('❌ No featured vehicles selected to save');
+        setSaveNotification({
+          show: true,
+          message: 'No featured vehicles selected to save',
+          type: 'error'
+        });
+        setTimeout(() => setSaveNotification({show: false, message: '', type: 'loading'}), 3000);
         return;
       }
       
-      updateStatus('💾 Saving featured vehicles...');
+      // Show modal and start process
+      setShowSaveModal(true);
+      setIsUpdatingVehicles(true);
+      setSaveProgress(0);
+      setSaveModalStep('saving');
       
-      const response = await fetch('/api/settings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: 'homepage_featured_vehicle_ids', value: idsToSave })
-      });
+      // Start the actual API call immediately
+      const performActualSave = async () => {
+        try {
+          const response = await fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ key: 'homepage_featured_vehicle_ids', value: idsToSave })
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          
+          const result = await response.json();
+          console.log('Save result:', result);
+          
+          if (result.success) {
+            // Update local state
+            setFeatured(idsToSave);
+            console.log('Updated local featured state:', idsToSave);
+            
+            // Refresh vehicle list
+            try {
+              const vehicleData = await loadMultilingualVehicleData();
+              const vehicleListings: VehicleListing[] = vehicleData.map((vehicle: MultilingualVehicle) => ({
+                id: vehicle.id,
+                brand: vehicle.brand,
+                model: vehicle.model,
+                year: vehicle.year ? parseInt(vehicle.year.toString()) : new Date().getFullYear(),
+                price: vehicle.price ? parseInt(vehicle.price.toString().replace(/[^\d]/g, '')) : 0,
+                views: Math.floor(Math.random() * 100),
+                inquiries: Math.floor(Math.random() * 20),
+                status: 'active' as const,
+                dateAdded: vehicle.firstRegistration || new Date().toISOString().split('T')[0]
+              }));
+              
+              setVehicles(vehicleListings);
+              console.log('Refreshed vehicle list with updated featured status');
+              return true; // Success
+            } catch (refreshError) {
+              console.error('Error refreshing vehicle list:', refreshError);
+              return true; // Still consider it success even if refresh fails
+            }
+          } else {
+            throw new Error(result.error || 'Unknown error');
+          }
+        } catch (error) {
+          console.error('Error in performActualSave:', error);
+          throw error; // Re-throw to handle in main try-catch
+        }
+      };
+
+      // Start API call immediately but don't await it
+      let apiCallCompleted = false;
+      performActualSave()
+        .then(() => {
+          apiCallCompleted = true;
+        })
+        .catch((error) => {
+          apiCallCompleted = true; // Mark as completed even on error
+          setSaveModalStep('error');
+        });
       
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      // Realistic progress simulation over ~60 seconds
+      let currentProgress = 0;
+      const totalDuration = 60000; // 60 seconds
+      const updateInterval = 500; // Update every 500ms
+      const progressIncrement = (100 / (totalDuration / updateInterval));
       
-      const result = await response.json();
-      console.log('Save result:', result);
+      const progressInterval = setInterval(() => {
+        currentProgress += progressIncrement;
+        
+        // Change step at 70% progress
+        if (currentProgress >= 70 && saveModalStep === 'saving') {
+          setSaveModalStep('updating');
+        }
+        
+        // Complete when progress reaches 100% AND API call is done
+        if (currentProgress >= 100) {
+          currentProgress = 100;
+          clearInterval(progressInterval);
+          
+          // Wait for API call to complete if it hasn't already
+          if (apiCallCompleted) {
+            if (saveModalStep !== 'error') {
+              setSaveModalStep('complete');
+              // Auto close after 2 seconds
+              setTimeout(() => {
+                setShowSaveModal(false);
+                setIsUpdatingVehicles(false);
+                setSaveProgress(0);
+                setSaveModalStep('saving');
+              }, 2000);
+            }
+          } else {
+            // If API call is still running, wait for it
+            const waitForApi = setInterval(() => {
+              if (apiCallCompleted) {
+                clearInterval(waitForApi);
+                if (saveModalStep !== 'error') {
+                  setSaveModalStep('complete');
+                  setTimeout(() => {
+                    setShowSaveModal(false);
+                    setIsUpdatingVehicles(false);
+                    setSaveProgress(0);
+                    setSaveModalStep('saving');
+                  }, 2000);
+                }
+              }
+            }, 100);
+          }
+        }
+        setSaveProgress(Math.min(currentProgress, 100));
+      }, updateInterval);
       
-      if (result.success) {
-        updateStatus(`✅ Featured vehicles saved successfully! (${idsToSave.length} vehicles)`);
-        // Update local state to match what was saved
-        setFeatured(idsToSave);
-        console.log('Updated local featured state:', idsToSave);
-      } else {
-        updateStatus(`❌ Failed to save: ${result.error || 'Unknown error'}`);
-      }
     } catch (error) {
       console.error('Error saving featured vehicles:', error);
-      updateStatus(`❌ Error saving featured vehicles: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setSaveModalStep('error');
+      setTimeout(() => {
+        setShowSaveModal(false);
+        setIsUpdatingVehicles(false);
+        setSaveProgress(0);
+        setSaveModalStep('saving');
+      }, 3000);
     }
   };
 
@@ -751,17 +928,21 @@ function AdminDashboard() {
                 </button>
                 <button 
                   onClick={() => saveFeatured()} 
-                  disabled={featured.length === 0}
-                  className={`px-3 sm:px-4 py-2 rounded-lg text-sm transition-colors ${
-                    featured.length === 0 
+                  disabled={featured.length === 0 || isUpdatingVehicles}
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-sm transition-colors flex items-center ${
+                    featured.length === 0 || isUpdatingVehicles
                       ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
                       : 'bg-purple-600 text-white hover:bg-purple-700'
                   }`}
                 >
-                  Featured speichern ({featured.length})
+                  {isUpdatingVehicles && (
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                  )}
+                  {isUpdatingVehicles ? 'Updating...' : `Featured speichern (${featured.length})`}
                 </button>
               </div>
             </div>
+
 
             {/* Mobile-first responsive vehicle list */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -1472,6 +1653,36 @@ function AdminDashboard() {
                       />
                     </div>
                   </div>
+
+                  {/* Live Countdown Preview */}
+                  {bannerSettings.endDate && (
+                    <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border border-green-200">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-2">Live Countdown Preview:</h4>
+                      <div className="flex justify-center space-x-4">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-600">{previewCountdown.days}</div>
+                          <div className="text-xs text-gray-600">TAGE</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-600">{previewCountdown.hours}</div>
+                          <div className="text-xs text-gray-600">STD</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-600">{previewCountdown.minutes}</div>
+                          <div className="text-xs text-gray-600">MIN</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-600">{previewCountdown.seconds}</div>
+                          <div className="text-xs text-gray-600">SEK</div>
+                        </div>
+                      </div>
+                      {previewCountdown.days === 0 && previewCountdown.hours === 0 && previewCountdown.minutes === 0 && previewCountdown.seconds === 0 && (
+                        <div className="text-center mt-2 text-red-600 text-sm font-medium">
+                          ⚠️ Countdown expired or invalid date
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1536,6 +1747,36 @@ function AdminDashboard() {
                 </div>
               </div>
             </div>
+
+            {/* Banner Save Notification */}
+            {bannerSaveNotification.show && (
+              <div className={`fixed top-4 left-4 z-50 p-4 rounded-lg shadow-lg border-l-4 max-w-md ${
+                bannerSaveNotification.type === 'success' 
+                  ? 'bg-green-50 border-green-400 text-green-800' 
+                  : bannerSaveNotification.type === 'error'
+                  ? 'bg-red-50 border-red-400 text-red-800'
+                  : 'bg-blue-50 border-blue-400 text-blue-800'
+              }`}>
+                <div className="flex items-center">
+                  {bannerSaveNotification.type === 'loading' && (
+                    <RefreshCw className="w-5 h-5 mr-2 animate-spin" />
+                  )}
+                  {bannerSaveNotification.type === 'success' && (
+                    <CheckCircle className="w-5 h-5 mr-2" />
+                  )}
+                  {bannerSaveNotification.type === 'error' && (
+                    <AlertCircle className="w-5 h-5 mr-2" />
+                  )}
+                  <span className="font-medium">{bannerSaveNotification.message}</span>
+                  <button
+                    onClick={() => setBannerSaveNotification({show: false, message: '', type: 'loading'})}
+                    className="ml-auto pl-3"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Quick Actions */}
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
@@ -2316,6 +2557,88 @@ function AdminDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Save Progress Modal */}
+      {showSaveModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div className="text-center">
+              {/* Icon */}
+              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 mb-4">
+                {saveModalStep === 'saving' && (
+                  <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
+                )}
+                {saveModalStep === 'updating' && (
+                  <RefreshCw className="h-8 w-8 text-green-600 animate-spin" />
+                )}
+                {saveModalStep === 'complete' && (
+                  <CheckCircle className="h-8 w-8 text-green-600" />
+                )}
+                {saveModalStep === 'error' && (
+                  <AlertCircle className="h-8 w-8 text-red-600" />
+                )}
+              </div>
+
+              {/* Title */}
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {saveModalStep === 'saving' && 'Speichere Featured Fahrzeuge...'}
+                {saveModalStep === 'updating' && 'Aktualisiere Fahrzeugliste...'}
+                {saveModalStep === 'complete' && 'Erfolgreich gespeichert!'}
+                {saveModalStep === 'error' && 'Fehler beim Speichern'}
+              </h3>
+
+              {/* Message */}
+              <p className="text-gray-600 mb-6">
+                {saveModalStep === 'saving' && 'Die Featured-Fahrzeuge werden in der Datenbank gespeichert.'}
+                {saveModalStep === 'updating' && 'Die Fahrzeugliste wird mit den neuen Featured-Status aktualisiert.'}
+                {saveModalStep === 'complete' && 'Alle Änderungen wurden erfolgreich gespeichert und die Fahrzeugliste wurde aktualisiert.'}
+                {saveModalStep === 'error' && 'Es ist ein Fehler beim Speichern aufgetreten. Bitte versuchen Sie es erneut.'}
+              </p>
+
+              {/* Progress Bar */}
+              <div className="mb-6">
+                <div className="flex justify-between text-sm text-gray-600 mb-2">
+                  <span>Fortschritt</span>
+                  <span>{Math.round(saveProgress)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div 
+                    className={`h-3 rounded-full transition-all duration-500 ease-out ${
+                      saveModalStep === 'error' ? 'bg-red-500' : 
+                      saveModalStep === 'complete' ? 'bg-green-500' : 'bg-blue-500'
+                    }`}
+                    style={{ width: `${saveProgress}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* Status Text */}
+              <div className="text-sm text-gray-500">
+                {saveModalStep === 'saving' && saveProgress < 30 && 'Verbindung zur Datenbank...'}
+                {saveModalStep === 'saving' && saveProgress >= 30 && saveProgress < 70 && 'Speichere Daten...'}
+                {saveModalStep === 'updating' && 'Lade Fahrzeugdaten neu...'}
+                {saveModalStep === 'complete' && 'Vorgang abgeschlossen'}
+                {saveModalStep === 'error' && 'Vorgang fehlgeschlagen'}
+              </div>
+
+              {/* Close button for error state */}
+              {saveModalStep === 'error' && (
+                <button
+                  onClick={() => {
+                    setShowSaveModal(false);
+                    setIsUpdatingVehicles(false);
+                    setSaveProgress(0);
+                    setSaveModalStep('saving');
+                  }}
+                  className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                >
+                  Schließen
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}

@@ -63,10 +63,14 @@ const ActionHero = () => {
   useEffect(() => {
     const loadBannerSettings = async () => {
       try {
-        const response = await fetch('/api/settings?key=banner_settings');
+        // Add cache busting parameter to ensure fresh data
+        const cacheBuster = Date.now();
+        const response = await fetch(`/api/settings?key=banner_settings&t=${cacheBuster}`);
         const result = await response.json();
+        console.log('ActionHero: Loading banner settings:', result);
         
         if (result.value) {
+          console.log('ActionHero: Using database settings:', result.value);
           setBannerSettings(result.value);
           // Also save to localStorage for immediate use
           localStorage.setItem('bannerSettings', JSON.stringify(result.value));
@@ -76,6 +80,7 @@ const ActionHero = () => {
           if (savedSettings) {
             try {
               const adminSettings: AdminBannerSettings = JSON.parse(savedSettings);
+              console.log('ActionHero: Using localStorage settings:', adminSettings);
               setBannerSettings(adminSettings);
             } catch (error) {
               console.error('Error parsing banner settings:', error);
@@ -89,6 +94,7 @@ const ActionHero = () => {
         if (savedSettings) {
           try {
             const adminSettings: AdminBannerSettings = JSON.parse(savedSettings);
+            console.log('ActionHero: Using localStorage fallback:', adminSettings);
             setBannerSettings(adminSettings);
           } catch (error) {
             console.error('Error parsing banner settings:', error);
@@ -115,7 +121,9 @@ const ActionHero = () => {
     const calculateTimeLeft = () => {
       // Use endDate from banner settings, fallback to March 31, 2024
       const endDate = bannerSettings.endDate || '2024-03-31';
+      console.log('ActionHero: Calculating countdown for endDate:', endDate);
       const difference = +new Date(endDate) - +new Date();
+      console.log('ActionHero: Time difference:', difference);
       
       if (difference > 0) {
         setTimeLeft({

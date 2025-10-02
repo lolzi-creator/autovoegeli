@@ -8,10 +8,16 @@ import { tfoot } from 'framer-motion/client';
 const OfficialDealership = () => {
   const { t, locale } = useTranslation();
   const [mounted, setMounted] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
+    // Add a small delay to ensure CSS is loaded
+    const timer = setTimeout(() => {
+      setImagesLoaded(true);
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
   
   const brands = [
@@ -47,7 +53,7 @@ const OfficialDealership = () => {
     }
   ];
 
-  if (!mounted) {
+  if (!mounted || !imagesLoaded) {
     return (
       <section className="relative py-14 md:py-20 bg-gradient-to-b from-white via-green-50/50 to-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
