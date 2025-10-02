@@ -481,7 +481,10 @@ export default function VehicleDetailPage({ vehicle }: VehicleDetailPageProps) {
 
                 <div className="text-center text-gray-500">
                   <p className="text-lg font-medium mb-2">Öffnungszeiten:</p>
-                  <p>Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</p>
+                  <div>
+                    <p>Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</p>
+                    <p>Sa. / 09:00 - 12:00</p>
+                  </div>
                 </div>
               </div>
             )}

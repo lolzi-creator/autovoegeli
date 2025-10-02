@@ -98,7 +98,8 @@ const Header = () => {
                 <ContactOptions variant="inline" />
               </div>
               <div className="text-gray-300">
-                Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30
+                <div>Mo. - Fr. / 07:30 - 12:00 / 13:30 - 17:30</div>
+                <div>Sa. / 09:00 - 12:00</div>
               </div>
             </div>
           </div>

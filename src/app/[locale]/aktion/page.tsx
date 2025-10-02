@@ -3,9 +3,6 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StructuredData from '@/components/StructuredData';
 import ActionHero from '@/components/ActionHero';
-import FeaturedShowcase from '@/components/FeaturedShowcase';
-
-// Replace previous carousel with the same featured selection used on the homepage
 
 export const metadata: Metadata = {
   title: "🎉 Frühjahrs-Aktion - Auto Vögeli | Bis zu 15% Rabatt auf alle Motorräder",
@@ -49,9 +46,6 @@ export default function AktionPage() {
       
       {/* Action Hero Section */}
       <ActionHero />
-      
-      {/* Featured vehicles from admin selection */}
-      <FeaturedShowcase />
       
       <Footer />
     </main>

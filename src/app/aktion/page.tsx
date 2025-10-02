@@ -1,21 +1,8 @@
 import { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import StructuredData from '@/components/StructuredData';
 import ActionHero from '@/components/ActionHero';
-
-// Dynamically import vehicle showcase for better performance
-const VehicleShowcase = dynamic(() => import('@/components/VehicleCarousel'), {
-  loading: () => (
-    <div className="py-16 bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Fahrzeuge werden geladen...</p>
-      </div>
-    </div>
-  )
-});
 
 export const metadata: Metadata = {
   title: "🎉 Frühjahrs-Aktion - Auto Vögeli | Bis zu 15% Rabatt auf alle Motorräder",
@@ -59,9 +46,6 @@ export default function AktionPage() {
       
       {/* Action Hero Section */}
       <ActionHero />
-      
-      {/* Vehicle Showcase */}
-      <VehicleShowcase />
       
       <Footer />
     </main>
