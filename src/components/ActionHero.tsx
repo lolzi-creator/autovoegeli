@@ -28,6 +28,7 @@ interface AdminBannerSettings {
   type: string;
   startDate: string;
   endDate: string;
+  countdownText: string;
 }
 
 // Icon mapping
@@ -50,7 +51,8 @@ const ActionHero = () => {
     iconType: "gift",
     type: "promotion",
     startDate: "",
-    endDate: ""
+    endDate: "",
+    countdownText: "Noch verfügbar bis Ende März"
   });
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
@@ -240,8 +242,8 @@ const ActionHero = () => {
           >
             <div className="flex items-center justify-center mb-4">
               <Clock className="h-5 w-5 text-green-600 mr-2" />
-              <span className="text-sm font-semibold text-gray-600 uppercase tracking-wider">
-                Noch verfügbar bis Ende März
+              <span className="text-sm font-semibold text-gray-600 tracking-wider">
+                {bannerSettings.countdownText || 'Noch verfügbar bis Ende März'}
               </span>
             </div>
             <div className="grid grid-cols-4 gap-2 md:gap-4">

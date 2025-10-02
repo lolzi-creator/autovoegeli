@@ -171,7 +171,8 @@ function AdminDashboard() {
     iconType: "gift",
     type: "promotion",
     startDate: "",
-    endDate: ""
+    endDate: "",
+    countdownText: "Noch verfügbar bis Ende März"
   });
 
   // Load banner settings from database
@@ -1652,6 +1653,20 @@ function AdminDashboard() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       />
                     </div>
+                  </div>
+
+                  {/* Countdown Text */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Countdown Text
+                    </label>
+                    <input
+                      type="text"
+                      value={bannerSettings.countdownText}
+                      onChange={(e) => setBannerSettings(prev => ({ ...prev, countdownText: e.target.value }))}
+                      placeholder="z.B. Noch verfügbar bis Ende März"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
                   </div>
 
                   {/* Live Countdown Preview */}
